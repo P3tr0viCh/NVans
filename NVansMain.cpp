@@ -217,7 +217,6 @@ void __fastcall TMain::btnServerLoadClick(TObject *Sender) {
 			ADOQuery1->Open();
 			try {
 				if (ADOQuery1->IsEmpty()) {
-					eRWNum->SetFocus();
 					MsgBox(Format(IDS_ERROR_RWNUM_NOT_EXISTS, eRWNum->Text));
 					return;
 				}
