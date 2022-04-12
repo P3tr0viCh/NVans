@@ -1,0 +1,28 @@
+#include "NVansStrings.h"
+
+STRINGTABLE
+BEGIN
+IDS_COPYRIGHT,
+        "© Константин Дураев (Уральская Сталь)|@P3tr0viCh@yandex.ru"
+IDS_COPYRIGHT_STATUS,
+        "© Константин Дураев"
+
+IDS_QUESTION_CLOSE_PROGRAM,
+        "Закрыть программу?"
+
+IDS_ERROR_UNKNOWN,
+        "Неизвестная ошибка"
+IDS_ERROR_UNKNOWN_EXCEPTION,
+        "Возникла непредвиденная ошибка:\n\n%s"
+IDS_ERROR_NEED_RWNUM,
+        "Не указан номер поезда"
+IDS_ERROR_RWNUM_NOT_EXISTS,
+        "Поезд с номером «%s» в базе данных отсутствует"
+
+IDS_LOG_START_PROGRAM,
+        ">>>>>>> START PROGRAM NVANS %s"
+IDS_LOG_STOP_PROGRAM,
+        "<<<<<<< STOP PROGRAM"
+IDS_LOG_EXCEPTION,
+        "exception: %s"
+END
