@@ -42,8 +42,6 @@ object Main: TMain
       end>
     ParentFont = True
     UseSystemFont = False
-    ExplicitTop = 280
-    ExplicitWidth = 635
   end
   object sgServer: TStringGrid
     Left = 0
@@ -57,8 +55,7 @@ object Main: TMain
     Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goTabs, goFixedColClick]
     TabOrder = 1
     OnDrawCell = sgServerDrawCell
-    ExplicitTop = 58
-    ExplicitWidth = 880
+    OnFixedCellClick = sgServerFixedCellClick
   end
   object sgLocal: TStringGrid
     Left = 0
@@ -72,10 +69,6 @@ object Main: TMain
     Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goTabs, goFixedColClick]
     TabOrder = 2
     OnDrawCell = sgLocalDrawCell
-    ExplicitLeft = 24
-    ExplicitTop = 248
-    ExplicitWidth = 737
-    ExplicitHeight = 97
   end
   object PanelServer: TPanel
     Left = 0
@@ -95,7 +88,7 @@ object Main: TMain
       Height = 40
       Anchors = [akTop, akRight]
       Caption = #1047#1072#1082#1088#1099#1090#1100
-      TabOrder = 2
+      TabOrder = 3
       OnClick = btnCloseClick
     end
     object eRWNum: TLabeledEdit
@@ -120,6 +113,16 @@ object Main: TMain
       Caption = #1047#1072#1075#1088#1091#1079#1080#1090#1100
       TabOrder = 1
       OnClick = btnServerLoadClick
+    end
+    object btnOptions: TButton
+      Left = 618
+      Top = 16
+      Width = 101
+      Height = 40
+      Anchors = [akTop, akRight]
+      Caption = #1053#1072#1089#1090#1088#1086#1081#1082#1080
+      TabOrder = 2
+      OnClick = btnOptionsClick
     end
   end
   object ApplicationEvents: TApplicationEvents

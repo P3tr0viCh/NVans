@@ -16,6 +16,8 @@
 #define IDS_LOG_START_PROGRAM			2000
 #define IDS_LOG_STOP_PROGRAM			2001
 #define IDS_LOG_EXCEPTION				2002
+#define IDS_LOG_OPTIONS_SAVE			2003
+#define IDS_LOG_OPTIONS_CANCEL			2004
 
 // ---------------------------------------------------------------------------
 #endif

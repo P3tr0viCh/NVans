@@ -5,8 +5,9 @@
 #include <tchar.h>
 // ---------------------------------------------------------------------------
 USEFORM("NVansMain.cpp", Main);
-
-// ---------------------------------------------------------------------------
+USEFORM("NVansOptions.cpp", frmOptions);
+USEFORM("NVansLogin.cpp", frmLogin);
+//---------------------------------------------------------------------------
 int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int) {
 	try {
 		Application->Initialize();

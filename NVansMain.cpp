@@ -9,6 +9,7 @@
 #include <UtilsKAndM.h>
 #include <UtilsFiles.h>
 #include <UtilsFileIni.h>
+#include <UtilsStringGrid.h>
 
 #include "NVansDebug.h"
 
@@ -16,6 +17,9 @@
 #include "NVansStrings.h"
 #include "NVansStringsGridHeader.h"
 #include "NVansColumns.h"
+
+#include "NVansLogin.h"
+#include "NVansOptions.h"
 
 #include "NVansMain.h"
 
@@ -49,16 +53,26 @@ void __fastcall TMain::FormCreate(TObject *Sender) {
 	sgServer->DefaultRowHeight = Main->DefaultRowHeight; // >> ComboBox->Height;
 	sgLocal->DefaultRowHeight = Main->DefaultRowHeight;
 
+	sgServer->Options = sgServer->Options << goColSizing;
+	sgLocal->Options = sgLocal->Options << goColSizing;
+
 	TFileIni * FileIni = TFileIni::GetNewInstance();
 	try {
 		FileIni->ReadFormBounds(this);
-		sgServer->Height = FileIni->ReadInteger(Name, "ListHeight",
+
+		sgServer->Height = FileIni->ReadInteger(Name, "ServerHeight",
 			sgServer->Height);
+
+		StringGridColWidthsReadFromIni(sgServer, FileIni, Name,
+			"ServerColWidths");
+		StringGridColWidthsReadFromIni(sgLocal, FileIni, Name,
+			"LocalColWidths");
 	}
 	__finally {
 		delete FileIni;
 	}
 
+	// TODO
 	eRWNum->Text = "42";
 }
 
@@ -67,7 +81,12 @@ void __fastcall TMain::FormDestroy(TObject *Sender) {
 	TFileIni * FileIni = TFileIni::GetNewInstance();
 	try {
 		FileIni->WriteFormBounds(this);
-		FileIni->WriteInteger(Name, "ListHeight", sgServer->Height);
+
+		FileIni->WriteInteger(Name, "ServerHeight", sgServer->Height);
+
+		StringGridColWidthsWriteToIni(sgServer, FileIni, Name,
+			"ServerColWidths");
+		StringGridColWidthsWriteToIni(sgLocal, FileIni, Name, "LocalColWidths");
 	}
 	__finally {
 		delete FileIni;
@@ -172,6 +191,17 @@ void __fastcall TMain::eRWNumKeyDown(TObject *Sender, WORD &Key,
 }
 
 // ---------------------------------------------------------------------------
+void TMain::SetControlsEnabled(const bool Enabled) {
+	eRWNum->Enabled = Enabled;
+	btnServerLoad->Enabled = Enabled;
+	btnOptions->Enabled = Enabled;
+
+	sgServer->Enabled = Enabled;
+	Splitter->Enabled = Enabled;
+	sgLocal->Enabled = Enabled;
+}
+
+// ---------------------------------------------------------------------------
 void __fastcall TMain::btnServerLoadClick(TObject *Sender) {
 	StringGridClear(sgServer);
 
@@ -185,11 +215,7 @@ void __fastcall TMain::btnServerLoadClick(TObject *Sender) {
 		"DRIVER={Oracle in instantclient_21_3};UID=CVTS;PWD=7;DBQ=localhost/xepdb1;";
 
 	ShowWaitCursor();
-	eRWNum->Enabled = false;
-	btnServerLoad->Enabled = false;
-	sgServer->Enabled = false;
-	Splitter->Enabled = false;
-	sgLocal->Enabled = false;
+	SetControlsEnabled(false);
 
 	ProcMess();
 
@@ -269,13 +295,24 @@ void __fastcall TMain::btnServerLoadClick(TObject *Sender) {
 		}
 	}
 	__finally {
-		eRWNum->Enabled = true;
-		btnServerLoad->Enabled = true;
-		sgServer->Enabled = true;
-		Splitter->Enabled = true;
-		sgLocal->Enabled = true;
+		SetControlsEnabled(true);
 
 		RestoreCursor();
+	}
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TMain::sgServerFixedCellClick(TObject *Sender, int ACol,
+	int ARow) {
+	StringGridSelectRowAfterFixedCellClick((TStringGrid*)Sender, ARow);
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TMain::btnOptionsClick(TObject *Sender) {
+	if (TfrmLogin::Show()) {
+		if (TfrmOptions::Show()) {
+			MsgBox();
+		}
 	}
 }
 // ---------------------------------------------------------------------------

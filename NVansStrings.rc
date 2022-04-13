@@ -25,4 +25,8 @@ IDS_LOG_STOP_PROGRAM,
         "<<<<<<< STOP PROGRAM"
 IDS_LOG_EXCEPTION,
         "exception: %s"
+IDS_LOG_OPTIONS_SAVE,
+        "options: save"
+IDS_LOG_OPTIONS_CANCEL,
+        "options: cancel"
 END

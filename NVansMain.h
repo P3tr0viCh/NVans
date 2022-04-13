@@ -31,6 +31,7 @@ __published:
 	TButton *btnServerLoad;
 	TADOConnection *ADOConnection1;
 	TADOQuery *ADOQuery1;
+	TButton *btnOptions;
 
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
@@ -44,6 +45,8 @@ __published:
 	void __fastcall eRWNumKeyDown(TObject *Sender, WORD &Key,
 		TShiftState Shift);
 	void __fastcall btnServerLoadClick(TObject *Sender);
+	void __fastcall sgServerFixedCellClick(TObject *Sender, int ACol, int ARow);
+	void __fastcall btnOptionsClick(TObject *Sender);
 
 private:
 	TSettings * FSettings;
@@ -55,6 +58,8 @@ public:
 	__fastcall TMain(TComponent* Owner);
 
 	int DefaultRowHeight;
+
+	void SetControlsEnabled(const bool Enabled);
 
 	__property TSettings * Settings = {read = FSettings};
 };

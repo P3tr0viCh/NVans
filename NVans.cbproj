@@ -144,7 +144,6 @@
             <BuildOrder>18</BuildOrder>
         </None>
         <ResourceCompile Include="..\!UtilsAndComps\UtilsFilesStr.rc">
-            <ModuleName>UtilsFilesStr.rc</ModuleName>
             <Form>UtilsFilesStr.res</Form>
             <BuildOrder>19</BuildOrder>
         </ResourceCompile>
@@ -160,7 +159,6 @@
             <BuildOrder>20</BuildOrder>
         </None>
         <ResourceCompile Include="..\!UtilsAndComps\UtilsLogStr.rc">
-            <ModuleName>UtilsLogStr.rc</ModuleName>
             <Form>UtilsLogStr.res</Form>
             <BuildOrder>21</BuildOrder>
         </ResourceCompile>
@@ -171,6 +169,10 @@
         <CppCompile Include="..\!UtilsAndComps\UtilsStr.cpp">
             <DependentOn>..\!UtilsAndComps\UtilsStr.h</DependentOn>
             <BuildOrder>8</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\!UtilsAndComps\UtilsStringGrid.cpp">
+            <DependentOn>..\!UtilsAndComps\UtilsStringGrid.h</DependentOn>
+            <BuildOrder>22</BuildOrder>
         </CppCompile>
         <CppCompile Include="NVans.cpp">
             <BuildOrder>0</BuildOrder>
@@ -188,11 +190,23 @@
         <None Include="NVansEncKey.h">
             <BuildOrder>12</BuildOrder>
         </None>
+        <CppCompile Include="NVansLogin.cpp">
+            <Form>frmLogin</Form>
+            <FormType>dfm</FormType>
+            <DependentOn>NVansLogin.h</DependentOn>
+            <BuildOrder>24</BuildOrder>
+        </CppCompile>
         <CppCompile Include="NVansMain.cpp">
             <Form>Main</Form>
             <FormType>dfm</FormType>
             <DependentOn>NVansMain.h</DependentOn>
             <BuildOrder>2</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="NVansOptions.cpp">
+            <Form>frmOptions</Form>
+            <FormType>dfm</FormType>
+            <DependentOn>NVansOptions.h</DependentOn>
+            <BuildOrder>23</BuildOrder>
         </CppCompile>
         <PCHCompile Include="NVansPCH.h">
             <BuildOrder>1</BuildOrder>
@@ -202,7 +216,6 @@
             <BuildOrder>9</BuildOrder>
         </None>
         <ResourceCompile Include="NVansStrings.rc">
-            <ModuleName>NVansStrings.rc</ModuleName>
             <Form>NVansStrings.res</Form>
             <BuildOrder>10</BuildOrder>
         </ResourceCompile>
@@ -210,7 +223,6 @@
             <BuildOrder>14</BuildOrder>
         </None>
         <ResourceCompile Include="NVansStringsGridHeader.rc">
-            <ModuleName>NVansStringsGridHeader.rc</ModuleName>
             <Form>NVansStringsGridHeader.res</Form>
             <BuildOrder>15</BuildOrder>
         </ResourceCompile>
@@ -219,6 +231,8 @@
             <BuildOrder>17</BuildOrder>
         </CppCompile>
         <FormResources Include="NVansMain.dfm"/>
+        <FormResources Include="NVansOptions.dfm"/>
+        <FormResources Include="NVansLogin.dfm"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -253,9 +267,9 @@
                 </Excluded_Packages>
             </CPlusPlusBuilder.Personality>
             <Deployment Version="3">
-                <DeployFile LocalName="..\..\..\Projects.exe\NVans\Win32\Debug\NVans.exe" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="..\..\..\Projects.exe\NVans\Win32\Debug\NVans.tds" Configuration="Debug" Class="DebugSymbols">
                     <Platform Name="Win32">
-                        <RemoteName>NVans.exe</RemoteName>
+                        <RemoteName>NVans.tds</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -266,6 +280,12 @@
                 </DeployFile>
                 <DeployFile Condition="'$(DynamicRTL)'=='true' And '$(Multithreaded)'!='true'" LocalName="$(BDS)\bin\cc32c250.dll" Class="DependencyModule">
                     <Platform Name="Win32">
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="..\..\..\Projects.exe\NVans\Win32\Debug\NVans.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
+                        <RemoteName>NVans.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -281,12 +301,6 @@
                 </DeployFile>
                 <DeployFile Condition="'$(UsingDelphiRTL)'=='true'" LocalName="$(BDS)\bin\borlndmm.dll" Class="DependencyModule">
                     <Platform Name="Win32">
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="..\..\..\Projects.exe\NVans\Win32\Debug\NVans.tds" Configuration="Debug" Class="DebugSymbols">
-                    <Platform Name="Win32">
-                        <RemoteName>NVans.tds</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
