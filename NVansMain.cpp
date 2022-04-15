@@ -37,10 +37,17 @@ __fastcall TMain::TMain(TComponent* Owner) : TForm(Owner) {
 
 // ---------------------------------------------------------------------------
 void __fastcall TMain::FormCreate(TObject *Sender) {
-	WriteToLog(Format(IDS_LOG_START_PROGRAM,
-		ARRAYOFCONST((GetFileVer(Application->ExeName, false)))));
+	WriteToLogProgramStart();
 
 	FSettings = new TSettings();
+
+	if (!Settings->Load()) {
+		MsgBoxErr(IDS_ERROR_LOAD_SETTINGS);
+
+		Application->Terminate();
+
+		return;
+	}
 
 	DefaultRowHeight = Canvas->TextHeight("ComboBox") + 8;
 
@@ -94,7 +101,7 @@ void __fastcall TMain::FormDestroy(TObject *Sender) {
 
 	FSettings->Free();
 
-	WriteToLog(IDS_LOG_STOP_PROGRAM);
+	WriteToLogProgramStop();
 }
 
 // ---------------------------------------------------------------------------
@@ -112,7 +119,7 @@ void __fastcall TMain::FormCloseQuery(TObject *Sender, bool &CanClose) {
 
 void __fastcall TMain::ApplicationEventsException(TObject *Sender, Exception *E)
 {
-	WriteToLog(Format(IDS_LOG_EXCEPTION, E->Message));
+	WriteToLog(Format(IDS_LOG_ERROR_EXCEPTION, E->Message));
 	MsgBoxErr(Format(IDS_ERROR_UNKNOWN_EXCEPTION, E->Message));
 }
 
@@ -212,7 +219,7 @@ void __fastcall TMain::btnServerLoadClick(TObject *Sender) {
 	}
 
 	ADOConnection1->ConnectionString =
-		"DRIVER={Oracle in instantclient_21_3};UID=CVTS;PWD=7;DBQ=localhost/xepdb1;";
+		Settings->ServerOracleConnection->ConnectionString;
 
 	ShowWaitCursor();
 	SetControlsEnabled(false);
@@ -238,7 +245,7 @@ void __fastcall TMain::btnServerLoadClick(TObject *Sender) {
 			Param->DataType = ftFixedWideChar;
 			Param->Value = eRWNum->Text;
 
-			WriteToLog(ADOQuery1->SQL->Text);
+			// WriteToLog(ADOQuery1->SQL->Text);
 
 			ADOQuery1->Open();
 			try {
@@ -309,9 +316,16 @@ void __fastcall TMain::sgServerFixedCellClick(TObject *Sender, int ACol,
 
 // ---------------------------------------------------------------------------
 void __fastcall TMain::btnOptionsClick(TObject *Sender) {
-	if (TfrmLogin::Show()) {
-		if (TfrmOptions::Show()) {
-			MsgBox();
+#ifndef FORCELOGON
+	if (TfrmLogin::Show(Settings->OptionsPass))
+#endif
+	{
+		if (TfrmOptions::Show(Settings)) {
+			if (!Settings->Load()) {
+				MsgBoxErr(IDS_ERROR_LOAD_SETTINGS);
+
+				Application->Terminate();
+			}
 		}
 	}
 }

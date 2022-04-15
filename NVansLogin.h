@@ -16,14 +16,20 @@ __published:
 	TButton *btnOK;
 	TButton *btnCancel;
 	TLabeledEdit *ePass;
+
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
+	void __fastcall btnOKClick(TObject *Sender);
 
 private:
+	String RightPass;
+
 public:
 	__fastcall TfrmLogin(TComponent* Owner);
 
-	static bool Show();
+	static bool Show(String RightPass);
+
+	bool CheckPass();
 };
 
 // ---------------------------------------------------------------------------

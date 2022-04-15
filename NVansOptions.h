@@ -8,20 +8,50 @@
 #include <Vcl.Controls.hpp>
 #include <Vcl.StdCtrls.hpp>
 #include <Vcl.Forms.hpp>
+#include <Vcl.ComCtrls.hpp>
+#include <Vcl.ExtCtrls.hpp>
+
+#include "NVansTSettings.h"
 
 // ---------------------------------------------------------------------------
 class TfrmOptions : public TForm {
 __published:
+	TPanel *PanelMain;
+	TPanel *PanelButtons;
 	TButton *btnOK;
 	TButton *btnCancel;
+	TPageControl *PageControl;
+	TTabSheet *tsLocalDatabase;
+	TTabSheet *tsServerOracleDatabase;
+	TTabSheet *tsServerMySQLDatabase;
+	TLabel *Label1;
+	TLabel *Label2;
+	TTabSheet *tsProgram;
+	TLabeledEdit *eOptionsPass;
+	TLabeledEdit *eOptionsPass2;
+	TLabeledEdit *eOracleHost;
+	TLabeledEdit *eOracleService;
+	TLabeledEdit *eOracleUser;
+	TLabeledEdit *eOraclePass;
+	TComboBox *cboxOracleDriver;
+	TLabel *lblOracleLDriver;
+
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
+	void __fastcall btnOKClick(TObject *Sender);
 
 private:
+	TSettings * Settings;
+
+	void ControlSetFocus(TWinControl * Control);
+
+	void UpdateForm();
+	void UpdateSettings();
+
 public:
 	__fastcall TfrmOptions(TComponent* Owner);
 
-	static bool Show();
+	static bool Show(TSettings * Settings);
 };
 
 // ---------------------------------------------------------------------------

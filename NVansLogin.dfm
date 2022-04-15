@@ -4,57 +4,50 @@ object frmLogin: TfrmLogin
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = #1053#1072#1089#1090#1088#1086#1081#1082#1080
-  ClientHeight = 166
-  ClientWidth = 270
+  ClientHeight = 112
+  ClientWidth = 240
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
-  Font.Height = -11
-  Font.Name = 'Tahoma'
+  Font.Height = -13
+  Font.Name = 'Segoe UI'
   Font.Style = []
   OldCreateOrder = False
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  DesignSize = (
-    270
-    166)
   PixelsPerInch = 96
-  TextHeight = 13
+  TextHeight = 17
   object btnOK: TButton
-    Left = 70
-    Top = 108
-    Width = 78
-    Height = 25
-    Anchors = [akRight, akBottom]
+    Left = 64
+    Top = 72
+    Width = 80
+    Height = 32
     Caption = 'OK'
     Default = True
     ModalResult = 1
-    TabOrder = 0
-    ExplicitLeft = 328
-    ExplicitTop = 152
+    TabOrder = 1
+    OnClick = btnOKClick
   end
   object btnCancel: TButton
-    Left = 166
-    Top = 108
-    Width = 78
-    Height = 25
-    Anchors = [akRight, akBottom]
+    Left = 152
+    Top = 72
+    Width = 80
+    Height = 32
     Cancel = True
     Caption = #1054#1090#1084#1077#1085#1072
     ModalResult = 2
-    TabOrder = 1
-    ExplicitLeft = 424
-    ExplicitTop = 152
+    TabOrder = 2
   end
   object ePass: TLabeledEdit
-    Left = 24
-    Top = 48
-    Width = 220
-    Height = 21
-    EditLabel.Width = 37
-    EditLabel.Height = 13
+    Left = 8
+    Top = 32
+    Width = 224
+    Height = 25
+    EditLabel.Width = 46
+    EditLabel.Height = 17
     EditLabel.Caption = #1055#1072#1088#1086#1083#1100
+    LabelSpacing = 4
     PasswordChar = '#'
-    TabOrder = 2
+    TabOrder = 0
   end
 end
