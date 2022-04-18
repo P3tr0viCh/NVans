@@ -14,6 +14,8 @@
 
 #include "NVansMain.h"
 
+#include "NVansTDBCheckOracle.h"
+
 #include "NVansOptions.h"
 
 // ---------------------------------------------------------------------------
@@ -136,4 +138,65 @@ void __fastcall TfrmOptions::btnOKClick(TObject *Sender) {
 	}
 }
 
+// ---------------------------------------------------------------------------
+TConnectionInfo * TfrmOptions::GetConnectionInfo(TConnectionType Type) {
+	TConnectionInfo * Connection;
+
+	switch (Type) {
+	case ctServerOracle:
+		Connection = new TConnectionOracle();
+
+		Connection->User = eOracleUser->Text;
+		Connection->Password = eOraclePass->Text;
+
+		((TConnectionOracle*) Connection)->Driver = cboxOracleDriver->Text;
+		((TConnectionOracle*) Connection)->Host = eOracleHost->Text;
+		((TConnectionOracle*) Connection)->Service = eOracleService->Text;
+
+		break;
+	}
+
+	return Connection;
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TfrmOptions::btnOracleCheckClick(TObject *Sender) {
+	TConnectionInfo * ConnectionInfo;
+	TDatabaseOperation * DatabaseOperation;
+
+	bool Result = false;
+	String ResultMessage;
+
+	ShowWaitCursor();
+	try {
+		ConnectionInfo = GetConnectionInfo(ctServerOracle);
+
+		DatabaseOperation = new TDBCheckOracle((TConnectionOracle*) ConnectionInfo);
+
+		Result = DatabaseOperation->Execute();
+
+		if (Result) {
+			ResultMessage = Format(IDS_MSG_DATABASE_CONNECT_OK,
+				((TDBCheckOracle*) DatabaseOperation)->DBVersion);
+		}
+		else {
+			ResultMessage = Format(IDS_MSG_DATABASE_CONNECT_FAIL,
+				DatabaseOperation->ErrorMessage);
+		}
+	}
+	__finally {
+		DatabaseOperation->Free();
+		ConnectionInfo->Free();
+
+		RestoreCursor();
+	}
+
+	if (Result) {
+		MsgBox(ResultMessage);
+	}
+	else {
+		MsgBoxErr(ResultMessage);
+	}
+
+}
 // ---------------------------------------------------------------------------

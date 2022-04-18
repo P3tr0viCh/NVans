@@ -5,10 +5,10 @@
 
 #include <System.Classes.hpp>
 
-#include "NVansTConnection.h"
+#include "NVansTConnectionInfo.h"
 
 // ---------------------------------------------------------------------------
-class TConnectionServer : public TConnection {
+class TConnectionServer : public TConnectionInfo {
 private:
 	String FDriver;
 

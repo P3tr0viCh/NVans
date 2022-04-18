@@ -12,13 +12,14 @@ class TConnectionMySQL : public TConnectionServer {
 private:
 	String FDatabase;
 
+	// -----------------------------------------------------------------------
 	String GetConnectionString();
 
 public:
 	__fastcall TConnectionMySQL();
 
 	bool __fastcall Equals(TObject * Obj);
-	void __fastcall Assign(TConnection * Source);
+	void __fastcall Assign(TConnectionInfo * Source);
 	String __fastcall ToString();
 
 	// -----------------------------------------------------------------------

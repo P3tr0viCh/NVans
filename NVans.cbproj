@@ -219,9 +219,16 @@
             <Form>NVansStringsGridHeader.res</Form>
             <BuildOrder>15</BuildOrder>
         </ResourceCompile>
-        <CppCompile Include="NVansTConnection.cpp">
-            <DependentOn>NVansTConnection.h</DependentOn>
-            <BuildOrder>26</BuildOrder>
+        <None Include="NVansStringsSQL.h">
+            <BuildOrder>36</BuildOrder>
+        </None>
+        <ResourceCompile Include="NVansStringsSQL.rc">
+            <Form>NVansStringsQuery.res</Form>
+            <BuildOrder>34</BuildOrder>
+        </ResourceCompile>
+        <CppCompile Include="NVansTConnectionInfo.cpp">
+            <DependentOn>NVansTConnectionInfo.h</DependentOn>
+            <BuildOrder>34</BuildOrder>
         </CppCompile>
         <CppCompile Include="NVansTConnectionMySQL.cpp">
             <DependentOn>NVansTConnectionMySQL.h</DependentOn>
@@ -235,13 +242,33 @@
             <DependentOn>NVansTConnectionServer.h</DependentOn>
             <BuildOrder>28</BuildOrder>
         </CppCompile>
+        <CppCompile Include="NVansTDatabaseOperation.cpp">
+            <DependentOn>NVansTDatabaseOperation.h</DependentOn>
+            <BuildOrder>30</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="NVansTDBCheck.cpp">
+            <DependentOn>NVansTDBCheck.h</DependentOn>
+            <BuildOrder>31</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="NVansTDBCheckOracle.cpp">
+            <DependentOn>NVansTDBCheckOracle.h</DependentOn>
+            <BuildOrder>32</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="NVansTDBOracleLoadTrain.cpp">
+            <DependentOn>NVansTDBOracleLoadTrain.h</DependentOn>
+            <BuildOrder>35</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="NVansTOracleVan.cpp">
+            <DependentOn>NVansTOracleVan.h</DependentOn>
+            <BuildOrder>36</BuildOrder>
+        </CppCompile>
         <CppCompile Include="NVansTSettings.cpp">
             <DependentOn>NVansTSettings.h</DependentOn>
             <BuildOrder>17</BuildOrder>
         </CppCompile>
-        <FormResources Include="NVansLogin.dfm"/>
-        <FormResources Include="NVansMain.dfm"/>
         <FormResources Include="NVansOptions.dfm"/>
+        <FormResources Include="NVansMain.dfm"/>
+        <FormResources Include="NVansLogin.dfm"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

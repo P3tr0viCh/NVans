@@ -1,12 +1,12 @@
 // ---------------------------------------------------------------------------
 
-#ifndef NVansTConnectionH
-#define NVansTConnectionH
+#ifndef NVansTConnectionInfoH
+#define NVansTConnectionInfoH
 
 #include <System.Classes.hpp>
 
 // ---------------------------------------------------------------------------
-class TConnection : public TObject {
+class TConnectionInfo : public TObject {
 private:
 	String FUser;
 	String FPassword;
@@ -14,10 +14,10 @@ private:
 	virtual String GetConnectionString() = 0;
 
 public:
-	__fastcall TConnection();
+	__fastcall TConnectionInfo();
 
 	virtual bool __fastcall Equals(TObject * Obj) = 0;
-	virtual void __fastcall Assign(TConnection * Source) = 0;
+	virtual void __fastcall Assign(TConnectionInfo * Source) = 0;
 	virtual String __fastcall ToString() = 0;
 
 	// -----------------------------------------------------------------------

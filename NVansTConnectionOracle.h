@@ -18,7 +18,7 @@ public:
 	__fastcall TConnectionOracle();
 
 	bool __fastcall Equals(TObject * Obj);
-	void __fastcall Assign(TConnection * Source);
+	void __fastcall Assign(TConnectionInfo * Source);
 	String __fastcall ToString();
 
 	// -----------------------------------------------------------------------

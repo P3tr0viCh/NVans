@@ -139,6 +139,15 @@ object frmOptions: TfrmOptions
           Height = 25
           TabOrder = 4
         end
+        object btnOracleCheck: TButton
+          Left = 8
+          Top = 200
+          Width = 80
+          Height = 32
+          Caption = #1055#1088#1086#1074#1077#1088#1082#1072
+          TabOrder = 5
+          OnClick = btnOracleCheckClick
+        end
       end
       object tsServerMySQLDatabase: TTabSheet
         Caption = #1057#1077#1088#1074#1077#1088' MySQL'

@@ -6,13 +6,13 @@
 
 #include "NVansStrings.h"
 
-#include "NVansTConnection.h"
+#include "NVansTConnectionInfo.h"
 
 // ---------------------------------------------------------------------------
 #pragma package(smart_init)
 
 // ---------------------------------------------------------------------------
-__fastcall TConnection::TConnection() {
+__fastcall TConnectionInfo::TConnectionInfo() {
 	FUser = "root";
 	FPassword = "";
 }

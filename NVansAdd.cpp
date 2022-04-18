@@ -38,6 +38,16 @@ String LoadSQL(NativeUInt Ident) {
 }
 
 // ---------------------------------------------------------------------------
+String SQLMake(String S1, String S2) {
+	return ConcatStrings(S1, S2, SPACE);
+}
+
+// ---------------------------------------------------------------------------
+String SQLMake(String S1, NativeUInt Ident) {
+	return ConcatStrings(S1, LoadStr(Ident), SPACE);
+}
+
+// ---------------------------------------------------------------------------
 String DateTimeToSQLStr(TDateTime ADateTime) {
 	return FormatDateTime("yyyyMMddhhnnss", ADateTime);
 }

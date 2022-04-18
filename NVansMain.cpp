@@ -14,9 +14,10 @@
 #include "NVansDebug.h"
 
 #include "NVansAdd.h"
+#include "NVansColumns.h"
 #include "NVansStrings.h"
 #include "NVansStringsGridHeader.h"
-#include "NVansColumns.h"
+#include "NVansTDBOracleLoadTrain.h"
 
 #include "NVansLogin.h"
 #include "NVansOptions.h"
@@ -40,6 +41,8 @@ void __fastcall TMain::FormCreate(TObject *Sender) {
 	WriteToLogProgramStart();
 
 	FSettings = new TSettings();
+
+	FServerVanList = new TOracleVanList();
 
 	if (!Settings->Load()) {
 		MsgBoxErr(IDS_ERROR_LOAD_SETTINGS);
@@ -80,7 +83,13 @@ void __fastcall TMain::FormCreate(TObject *Sender) {
 	}
 
 	// TODO
+#ifdef _DEBUG
 	eRWNum->Text = "42";
+#else
+	sgLocal->Visible = false;
+	Splitter->Visible = false;
+	sgServer->Align = alClient;
+#endif
 }
 
 // ---------------------------------------------------------------------------
@@ -98,6 +107,8 @@ void __fastcall TMain::FormDestroy(TObject *Sender) {
 	__finally {
 		delete FileIni;
 	}
+
+	FServerVanList->Free();
 
 	FSettings->Free();
 
@@ -209,103 +220,93 @@ void TMain::SetControlsEnabled(const bool Enabled) {
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TMain::btnServerLoadClick(TObject *Sender) {
+int TMain::SetServerVan(int Index, TOracleVan * Van) {
+	if (Index < 0) {
+		if (!StringGridIsEmpty(sgServer)) {
+			sgServer->RowCount++;
+		}
+		Index = sgServer->RowCount - 1;
+	}
+
+	sgServer->Cells[ServerColumns.NUM][Index] = IntToStr(Van->Num);
+
+	sgServer->Cells[ServerColumns.VANNUM][Index] = Van->VanNum;
+
+	sgServer->Cells[ServerColumns.CARGOTYPE][Index] = Van->CargoType;
+
+	sgServer->Cells[ServerColumns.INVOICE_NUM][Index] = Van->InvoiceNum;
+
+	sgServer->Cells[ServerColumns.INVOICE_SUPPLIER][Index] =
+		Van->InvoiceSupplier;
+	sgServer->Cells[ServerColumns.INVOICE_RECIPIENT][Index] =
+		Van->InvoiceRecipient;
+	sgServer->Cells[ServerColumns.DEPART_STATION][Index] = Van->DepartStation;
+	sgServer->Cells[ServerColumns.PURPOSE_STATION][Index] = Van->PurposeStation;
+
+	return Index;
+}
+
+// ---------------------------------------------------------------------------
+void TMain::UpdateServerTrain() {
 	StringGridClear(sgServer);
 
+	for (int i = 0; i < ServerVanList->Count; i++) {
+		SetServerVan(-1, ServerVanList->Items[i]);
+	}
+}
+
+// ---------------------------------------------------------------------------
+bool TMain::LoadTrain(String TrainNum) {
+	bool Result;
+
+	String ResultMessage;
+
+	ShowWaitCursor();
+
+	SetControlsEnabled(false);
+
+	ServerVanList->Clear();
+	StringGridClear(sgServer);
+
+    ProcMess();
+
+	TDBOracleLoadTrain * DBOracleLoadTrain =
+		new TDBOracleLoadTrain(Main->Settings->ServerOracleConnection,
+		TrainNum);
+	try {
+		Result = DBOracleLoadTrain->Execute();
+
+		ResultMessage = DBOracleLoadTrain->ErrorMessage;
+
+		ServerVanList->Assign(DBOracleLoadTrain->VanList);
+	}
+	__finally {
+		DBOracleLoadTrain->Free();
+
+		SetControlsEnabled(true);
+
+		RestoreCursor();
+	}
+
+	if (Result) {
+		UpdateServerTrain();
+	}
+	else {
+		MsgBoxErr(Format(IDS_ERROR_TRAIN_LOAD, ResultMessage));
+	}
+
+	return Result;
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TMain::btnServerLoadClick(TObject *Sender) {
 	if (IsEmpty(eRWNum->Text)) {
 		eRWNum->SetFocus();
 		MsgBoxErr(IDS_ERROR_NEED_RWNUM);
 		return;
 	}
 
-	ADOConnection1->ConnectionString =
-		Settings->ServerOracleConnection->ConnectionString;
-
-	ShowWaitCursor();
-	SetControlsEnabled(false);
-
-	ProcMess();
-
-	try {
-		ADOConnection1->Open();
-
-		try {
-			ADOQuery1->Connection = ADOConnection1;
-
-			ADOQuery1->SQL->Clear();
-
-			ADOQuery1->SQL->Add
-				("SELECT INVNUM, TO_NCHAR(CARGOTYPE) CARGOTYPE, TO_NCHAR(INVOICE_NUM) INVOICE_NUM, TO_NCHAR(INVOICE_SUPPLIER) INVOICE_SUPPLIER, TO_NCHAR(INVOICE_CONSIGN) INVOICE_CONSIGN, TO_NCHAR(DEPART_STATION) DEPART_STATION, TO_NCHAR(PURPOSE_STATION) PURPOSE_STATION"
-				);
-			ADOQuery1->SQL->Add("FROM BPTL.RP_NVANS");
-			ADOQuery1->SQL->Add("WHERE RWNUM=:RWNUM");
-			ADOQuery1->SQL->Add("ORDER BY NUM");
-
-			TParameter * Param = ADOQuery1->Parameters->ParamByName("RWNUM");
-			Param->DataType = ftFixedWideChar;
-			Param->Value = eRWNum->Text;
-
-			// WriteToLog(ADOQuery1->SQL->Text);
-
-			ADOQuery1->Open();
-			try {
-				if (ADOQuery1->IsEmpty()) {
-					MsgBox(Format(IDS_ERROR_RWNUM_NOT_EXISTS, eRWNum->Text));
-					return;
-				}
-
-				while (!ADOQuery1->Eof) {
-					ProcMess();
-
-					if (!StringGridIsEmpty(sgServer)) {
-						sgServer->RowCount++;
-					}
-
-					sgServer->Cells[ServerColumns.NUM][sgServer->RowCount - 1] =
-						IntToStr(sgServer->RowCount - 1);
-					sgServer->Cells[ServerColumns.VANNUM][sgServer->RowCount -
-						1] = ADOQuery1->FieldByName("INVNUM")->AsString;
-
-					sgServer->Cells[ServerColumns.CARGOTYPE]
-						[sgServer->RowCount - 1] =
-						Trim(ADOQuery1->FieldByName("CARGOTYPE")->AsString);
-
-					sgServer->Cells[ServerColumns.INVOICE_NUM]
-						[sgServer->RowCount - 1] =
-						Trim(ADOQuery1->FieldByName("INVOICE_NUM")->AsString);
-					sgServer->Cells[ServerColumns.INVOICE_SUPPLIER]
-						[sgServer->RowCount - 1] =
-						Trim(ADOQuery1->FieldByName("INVOICE_SUPPLIER")
-						->AsString);
-					sgServer->Cells[ServerColumns.INVOICE_RECIPIENT]
-						[sgServer->RowCount - 1] =
-						Trim(ADOQuery1->FieldByName("INVOICE_CONSIGN")
-						->AsString);
-					sgServer->Cells[ServerColumns.DEPART_STATION]
-						[sgServer->RowCount - 1] =
-						Trim(ADOQuery1->FieldByName("DEPART_STATION")
-						->AsString);
-					sgServer->Cells[ServerColumns.PURPOSE_STATION]
-						[sgServer->RowCount - 1] =
-						Trim(ADOQuery1->FieldByName("PURPOSE_STATION")
-						->AsString);
-
-					ADOQuery1->Next();
-				}
-			}
-			__finally {
-				ADOQuery1->Close();
-			}
-		}
-		__finally {
-			ADOConnection1->Close();
-		}
-	}
-	__finally {
-		SetControlsEnabled(true);
-
-		RestoreCursor();
-	}
+	LoadTrain(eRWNum->Text);
 }
 
 // ---------------------------------------------------------------------------
@@ -327,6 +328,13 @@ void __fastcall TMain::btnOptionsClick(TObject *Sender) {
 				Application->Terminate();
 			}
 		}
+	}
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TMain::FormResize(TObject *Sender) {
+	if (Splitter->Top >= ClientHeight - 112) {
+		sgServer->Height = ClientHeight - 224;
 	}
 }
 // ---------------------------------------------------------------------------

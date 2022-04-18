@@ -35,10 +35,12 @@ __published:
 	TLabeledEdit *eOraclePass;
 	TComboBox *cboxOracleDriver;
 	TLabel *lblOracleLDriver;
+	TButton *btnOracleCheck;
 
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
 	void __fastcall btnOKClick(TObject *Sender);
+	void __fastcall btnOracleCheckClick(TObject *Sender);
 
 private:
 	TSettings * Settings;
@@ -47,6 +49,12 @@ private:
 
 	void UpdateForm();
 	void UpdateSettings();
+
+	enum TConnectionType {
+		ctServerOracle
+	};
+
+	TConnectionInfo * GetConnectionInfo(TConnectionType Type);
 
 public:
 	__fastcall TfrmOptions(TComponent* Owner);

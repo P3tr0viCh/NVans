@@ -35,7 +35,7 @@ bool __fastcall TConnectionOracle::Equals(TObject * Obj) {
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TConnectionOracle::Assign(TConnection * Source) {
+void __fastcall TConnectionOracle::Assign(TConnectionInfo * Source) {
 	TConnectionOracle * Connection = (TConnectionOracle*) Source;
 
 	Driver = Connection->Driver;

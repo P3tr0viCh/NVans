@@ -5,7 +5,6 @@
 
 #include <System.Classes.hpp>
 
-#include "NVansTConnection.h"
 #include "NVansTConnectionMySQL.h"
 #include "NVansTConnectionOracle.h"
 

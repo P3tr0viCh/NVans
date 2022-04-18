@@ -35,7 +35,7 @@ bool __fastcall TConnectionMySQL::Equals(TObject * Obj) {
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TConnectionMySQL::Assign(TConnection * Source) {
+void __fastcall TConnectionMySQL::Assign(TConnectionInfo * Source) {
 	TConnectionMySQL * Connection = (TConnectionMySQL*) Source;
 
 	Driver = Connection->Driver;

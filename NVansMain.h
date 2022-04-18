@@ -11,11 +11,10 @@
 #include <Vcl.ComCtrls.hpp>
 #include <Vcl.Grids.hpp>
 #include <Vcl.AppEvnts.hpp>
+#include <Vcl.ExtCtrls.hpp>
 
 #include "NVansTSettings.h"
-#include <Vcl.ExtCtrls.hpp>
-#include <Data.DB.hpp>
-#include <Data.Win.ADODB.hpp>
+#include "NVansTOracleVan.h"
 
 // ---------------------------------------------------------------------------
 class TMain : public TForm {
@@ -29,8 +28,6 @@ __published:
 	TSplitter *Splitter;
 	TLabeledEdit *eRWNum;
 	TButton *btnServerLoad;
-	TADOConnection *ADOConnection1;
-	TADOQuery *ADOQuery1;
 	TButton *btnOptions;
 
 	void __fastcall FormCreate(TObject *Sender);
@@ -47,12 +44,22 @@ __published:
 	void __fastcall btnServerLoadClick(TObject *Sender);
 	void __fastcall sgServerFixedCellClick(TObject *Sender, int ACol, int ARow);
 	void __fastcall btnOptionsClick(TObject *Sender);
+	void __fastcall FormResize(TObject *Sender);
 
 private:
 	TSettings * FSettings;
 
+	TOracleVanList * FServerVanList;
+
+	// -----------------------------------------------------------------------
 	void CreateServerColumns();
 	void CreateLocalColumns();
+
+	int SetServerVan(int Index, TOracleVan * Van);
+
+	void UpdateServerTrain();
+
+	bool LoadTrain(String TrainNum);
 
 public:
 	__fastcall TMain(TComponent* Owner);
@@ -61,7 +68,10 @@ public:
 
 	void SetControlsEnabled(const bool Enabled);
 
+	// -----------------------------------------------------------------------
 	__property TSettings * Settings = {read = FSettings};
+
+	__property TOracleVanList * ServerVanList = {read = FServerVanList};
 };
 
 // ---------------------------------------------------------------------------
