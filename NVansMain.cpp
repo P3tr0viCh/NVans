@@ -21,6 +21,7 @@
 
 #include "NVansLogin.h"
 #include "NVansOptions.h"
+#include "NVansServerList.h"
 
 #include "NVansMain.h"
 
@@ -41,6 +42,8 @@ void __fastcall TMain::FormCreate(TObject *Sender) {
 	WriteToLogProgramStart();
 
 	FSettings = new TSettings();
+
+	FTrainNum = "";
 
 	FServerVanList = new TOracleVanList();
 
@@ -247,7 +250,23 @@ int TMain::SetServerVan(int Index, TOracleVan * Van) {
 }
 
 // ---------------------------------------------------------------------------
-void TMain::UpdateServerTrain() {
+void TMain::SetTrainNum(String Value) {
+	FTrainNum = Value;
+
+	eRWNum->Text = TrainNum;
+
+	LoadTrain(TrainNum);
+}
+
+// ---------------------------------------------------------------------------
+void TMain::SetServerVanList(TOracleVanList * Value) {
+	if (Value == NULL) {
+		ServerVanList->Clear();
+	}
+	else {
+		ServerVanList->Assign(Value);
+	}
+
 	StringGridClear(sgServer);
 
 	for (int i = 0; i < ServerVanList->Count; i++) {
@@ -265,10 +284,9 @@ bool TMain::LoadTrain(String TrainNum) {
 
 	SetControlsEnabled(false);
 
-	ServerVanList->Clear();
-	StringGridClear(sgServer);
+	ServerVanList = NULL;
 
-    ProcMess();
+	ProcMess();
 
 	TDBOracleLoadTrain * DBOracleLoadTrain =
 		new TDBOracleLoadTrain(Main->Settings->ServerOracleConnection,
@@ -278,7 +296,7 @@ bool TMain::LoadTrain(String TrainNum) {
 
 		ResultMessage = DBOracleLoadTrain->ErrorMessage;
 
-		ServerVanList->Assign(DBOracleLoadTrain->VanList);
+		ServerVanList = DBOracleLoadTrain->VanList;
 	}
 	__finally {
 		DBOracleLoadTrain->Free();
@@ -289,7 +307,9 @@ bool TMain::LoadTrain(String TrainNum) {
 	}
 
 	if (Result) {
-		UpdateServerTrain();
+		if (ServerVanList->Count == 0) {
+			MsgBox(Format(IDS_ERROR_RWNUM_NOT_EXISTS, TrainNum));
+		}
 	}
 	else {
 		MsgBoxErr(Format(IDS_ERROR_TRAIN_LOAD, ResultMessage));
@@ -306,7 +326,7 @@ void __fastcall TMain::btnServerLoadClick(TObject *Sender) {
 		return;
 	}
 
-	LoadTrain(eRWNum->Text);
+	TrainNum = eRWNum->Text;
 }
 
 // ---------------------------------------------------------------------------
@@ -336,5 +356,10 @@ void __fastcall TMain::FormResize(TObject *Sender) {
 	if (Splitter->Top >= ClientHeight - 112) {
 		sgServer->Height = ClientHeight - 224;
 	}
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TMain::btnServerListClick(TObject *Sender) {
+	frmServerList->Visible = !frmServerList->Visible;
 }
 // ---------------------------------------------------------------------------

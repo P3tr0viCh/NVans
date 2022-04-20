@@ -17,9 +17,13 @@
 #define IDS_ERROR_PASS_WRONG						206
 #define IDS_ERROR_CHECK_PASS						207
 #define IDS_ERROR_TRAIN_LOAD            			208
+#define IDS_ERROR_TRAINS_LOAD            		   	209
 
 #define IDS_MSG_DATABASE_CONNECT_OK     			300
 #define IDS_MSG_DATABASE_CONNECT_FAIL   			301
+
+#define IDS_STATUS_TRAIN_LIST_DATE   				400
+#define IDS_STATUS_TRAIN_LIST_VAN_COUNT				401
 
 #define IDS_CONNECTION_MYSQL						1000
 #define IDS_CONNECTION_ORACLE						1001
@@ -45,6 +49,8 @@
 #define IDS_LOG_DATABASE_CONNECT_FAIL   			2202
 #define IDS_LOG_ORACLE_LOAD_TRAIN_OK    			2203
 #define IDS_LOG_ORACLE_LOAD_TRAIN_FAIL  			2204
+#define IDS_LOG_ORACLE_LOAD_TRAINS_OK    			2205
+#define IDS_LOG_ORACLE_LOAD_TRAINS_FAIL  			2206
 
 // ---------------------------------------------------------------------------
 #endif

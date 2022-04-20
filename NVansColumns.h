@@ -1,5 +1,25 @@
 // ---------------------------------------------------------------------------
-class TNVansServerColumns {
+class TNVansBaseColumns {
+public:
+	static const VISIBLE_COUNT = 0;
+
+	static const COUNT = 0;
+
+	TNVansBaseColumns() {
+		ReadOnly = TIntegerSet();
+		ComboBox = TIntegerSet();
+		LeftAlign = TIntegerSet();
+	}
+
+	TIntegerSet ReadOnly;
+
+	TIntegerSet ComboBox;
+
+	TIntegerSet LeftAlign;
+};
+
+// ---------------------------------------------------------------------------
+class TNVansServerColumns : public TNVansBaseColumns {
 public:
 	static const NUM = 0;
 	static const VANNUM = 1;
@@ -15,24 +35,15 @@ public:
 	static const COUNT = 8;
 
 	TNVansServerColumns() {
-		ReadOnly = TIntegerSet();
-		ComboBox = TIntegerSet();
 		LeftAlign =
-			TIntegerSet() << VANNUM <<
-			CARGOTYPE << INVOICE_NUM <<
-			INVOICE_SUPPLIER << INVOICE_RECIPIENT <<
-			DEPART_STATION << PURPOSE_STATION;
+			TIntegerSet() << VANNUM << CARGOTYPE << INVOICE_NUM <<
+			INVOICE_SUPPLIER << INVOICE_RECIPIENT << DEPART_STATION <<
+			PURPOSE_STATION;
 	}
-
-	TIntegerSet ReadOnly;
-
-	TIntegerSet ComboBox;
-
-	TIntegerSet LeftAlign;
 };
 
 // ---------------------------------------------------------------------------
-class TNVansLocalColumns {
+class TNVansLocalColumns : public TNVansBaseColumns {
 public:
 	static const NUM = 0;
 	static const DATETIME = 1;
@@ -49,18 +60,27 @@ public:
 	static const COUNT = 9;
 
 	TNVansLocalColumns() {
-		ReadOnly = TIntegerSet();
-		ComboBox = TIntegerSet();
 		LeftAlign =
-			TIntegerSet() << DATETIME << VANNUM <<
-			CARGOTYPE << INVOICE_NUM <<
-			INVOICE_SUPPLIER << INVOICE_RECIPIENT <<
-			DEPART_STATION << PURPOSE_STATION;
+			TIntegerSet() << DATETIME << VANNUM << CARGOTYPE << INVOICE_NUM <<
+			INVOICE_SUPPLIER << INVOICE_RECIPIENT << DEPART_STATION <<
+			PURPOSE_STATION;
 	}
-
-	TIntegerSet ReadOnly;
-
-	TIntegerSet ComboBox;
-
-	TIntegerSet LeftAlign;
 };
+
+// ---------------------------------------------------------------------------
+class TNVansServerListColumns : public TNVansBaseColumns {
+public:
+	static const RWNUM = 0;
+	static const DATETIME = 1;
+	static const VAN_COUNT = 2;
+
+	static const VISIBLE_COUNT = 3;
+
+	static const COUNT = 3;
+
+	TNVansServerListColumns() {
+		LeftAlign = TIntegerSet() << RWNUM << DATETIME;
+	}
+};
+
+// ---------------------------------------------------------------------------

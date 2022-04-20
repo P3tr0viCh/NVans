@@ -12,6 +12,8 @@
 #define IDS_GRID_HEADER_INVOICE_RECIPIENT   5006
 #define IDS_GRID_HEADER_DEPART_STATION      5007
 #define IDS_GRID_HEADER_PURPOSE_STATION     5008
+#define IDS_GRID_HEADER_RWNUM               5009
+#define IDS_GRID_HEADER_VAN_COUNT           5010
 
 // ---------------------------------------------------------------------------
 #endif

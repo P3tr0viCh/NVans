@@ -5,7 +5,6 @@
 
 #include <System.Classes.hpp>
 #include <System.SysUtils.hpp>
-#include <Vcl.Grids.hpp>
 
 // ---------------------------------------------------------------------------
 const TIntegerSet NUSet;

@@ -29,6 +29,7 @@ __published:
 	TLabeledEdit *eRWNum;
 	TButton *btnServerLoad;
 	TButton *btnOptions;
+	TButton *btnServerList;
 
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
@@ -45,9 +46,12 @@ __published:
 	void __fastcall sgServerFixedCellClick(TObject *Sender, int ACol, int ARow);
 	void __fastcall btnOptionsClick(TObject *Sender);
 	void __fastcall FormResize(TObject *Sender);
+	void __fastcall btnServerListClick(TObject *Sender);
 
 private:
 	TSettings * FSettings;
+
+	String FTrainNum;
 
 	TOracleVanList * FServerVanList;
 
@@ -55,9 +59,12 @@ private:
 	void CreateServerColumns();
 	void CreateLocalColumns();
 
+	void SetControlsEnabled(const bool Enabled);
+
 	int SetServerVan(int Index, TOracleVan * Van);
 
-	void UpdateServerTrain();
+	void SetTrainNum(String Value);
+	void SetServerVanList(TOracleVanList * Value);
 
 	bool LoadTrain(String TrainNum);
 
@@ -66,12 +73,12 @@ public:
 
 	int DefaultRowHeight;
 
-	void SetControlsEnabled(const bool Enabled);
-
 	// -----------------------------------------------------------------------
 	__property TSettings * Settings = {read = FSettings};
 
-	__property TOracleVanList * ServerVanList = {read = FServerVanList};
+	__property String TrainNum = {read = FTrainNum, write = SetTrainNum};
+	__property TOracleVanList * ServerVanList = {
+		read = FServerVanList, write = SetServerVanList};
 };
 
 // ---------------------------------------------------------------------------

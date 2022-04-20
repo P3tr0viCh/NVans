@@ -41,7 +41,14 @@ void TDBCheck::Operation() {
 		try {
 			DataSet->Recordset = Connection->Execute(FQuery);
 
-			FDBVersion = DataSet->Fields->Fields[0]->AsString;
+			TField * F = DataSet->Fields->FieldByName("BANNER_FULL");
+
+			if (F == NULL) {
+				FDBVersion = DataSet->Fields->Fields[0]->AsString;
+			}
+			else {
+				FDBVersion = F->AsString;
+			}
 		}
 		__finally {
 			DataSet->Free();

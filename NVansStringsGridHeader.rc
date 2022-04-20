@@ -11,4 +11,6 @@ IDS_GRID_HEADER_INVOICE_SUPPLIER,       "Грузоотправитель"
 IDS_GRID_HEADER_INVOICE_RECIPIENT,      "Грузополучатель"
 IDS_GRID_HEADER_DEPART_STATION,         "Станция отправления"
 IDS_GRID_HEADER_PURPOSE_STATION,        "Станция назначения"
+IDS_GRID_HEADER_RWNUM,                  "Номер"
+IDS_GRID_HEADER_VAN_COUNT,              "Вагоны"
 END

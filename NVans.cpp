@@ -7,6 +7,7 @@
 USEFORM("NVansOptions.cpp", frmOptions);
 USEFORM("NVansMain.cpp", Main);
 USEFORM("NVansLogin.cpp", frmLogin);
+USEFORM("NVansServerList.cpp", frmServerList);
 //---------------------------------------------------------------------------
 int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int) {
 	try {
@@ -14,6 +15,7 @@ int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int) {
 		Application->MainFormOnTaskBar = true;
 		Application->Title = "Натурный лист";
 		Application->CreateForm(__classid(TMain), &Main);
+		Application->CreateForm(__classid(TfrmServerList), &frmServerList);
 		Application->Run();
 	}
 	catch (Exception &exception) {

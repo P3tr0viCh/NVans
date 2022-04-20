@@ -8,8 +8,6 @@
 
 #include <ObjList.h>
 
-const TDateTime DEFAULT_DATETIME = 0;
-
 // ---------------------------------------------------------------------------
 class TOracleVan : public TObject {
 private:
