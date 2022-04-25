@@ -59,6 +59,7 @@ object Main: TMain
     TabOrder = 1
     OnDrawCell = sgServerDrawCell
     OnFixedCellClick = sgServerFixedCellClick
+    OnKeyDown = sgServerKeyDown
   end
   object sgLocal: TStringGrid
     Left = 0

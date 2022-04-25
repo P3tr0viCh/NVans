@@ -120,6 +120,16 @@ void TfrmServerList::SetControlsEnabled(const bool Enabled) {
 }
 
 // ---------------------------------------------------------------------------
+void TfrmServerList::StartLoad() {
+	SetControlsEnabled(false);
+}
+
+// ---------------------------------------------------------------------------
+void TfrmServerList::EndLoad() {
+	SetControlsEnabled(true);
+}
+
+// ---------------------------------------------------------------------------
 int TfrmServerList::SetTrain(int Index, TOracleTrain * Train) {
 	if (Index < 0) {
 		if (!StringGridIsEmpty(sgList)) {
@@ -177,7 +187,7 @@ bool TfrmServerList::LoadTrains() {
 
 	ShowWaitCursor();
 
-	SetControlsEnabled(false);
+	Main->StartLoad();
 
 	TrainList = NULL;
 
@@ -195,7 +205,7 @@ bool TfrmServerList::LoadTrains() {
 	__finally {
 		DBOracleLoadTrains->Free();
 
-		SetControlsEnabled(true);
+		Main->EndLoad();
 
 		RestoreCursor();
 	}
@@ -233,4 +243,11 @@ void __fastcall TfrmServerList::sgListSelectCell(TObject *Sender, int ACol,
 
 	SelectedRow = ARow;
 }
+
+// ---------------------------------------------------------------------------
+void __fastcall TfrmServerList::sgListKeyDown(TObject *Sender, WORD &Key,
+	TShiftState Shift) {
+	Main->sgServerKeyDown(Sender, Key, Shift);
+}
+
 // ---------------------------------------------------------------------------

@@ -3,6 +3,8 @@
 #include <vcl.h>
 #pragma hdrstop
 
+#include "Clipbrd.hpp"
+
 #include <UtilsLog.h>
 #include <UtilsStr.h>
 #include <UtilsMisc.h>
@@ -212,14 +214,42 @@ void __fastcall TMain::eRWNumKeyDown(TObject *Sender, WORD &Key,
 }
 
 // ---------------------------------------------------------------------------
+void __fastcall TMain::sgServerKeyDown(TObject *Sender, WORD &Key,
+	TShiftState Shift) {
+	TStringGrid * S = (TStringGrid*) Sender;
+
+	if (StringGridIsEmpty(S)) {
+		return;
+	}
+
+	if (Key == 'C' && Shift == (TShiftState() << ssCtrl)) {
+		Clipboard()->AsText = S->Cells[S->Col][S->Row];
+	}
+}
+
+// ---------------------------------------------------------------------------
 void TMain::SetControlsEnabled(const bool Enabled) {
 	eRWNum->Enabled = Enabled;
 	btnServerLoad->Enabled = Enabled;
+	btnServerList->Enabled = Enabled;
+
 	btnOptions->Enabled = Enabled;
 
 	sgServer->Enabled = Enabled;
 	Splitter->Enabled = Enabled;
 	sgLocal->Enabled = Enabled;
+}
+
+// ---------------------------------------------------------------------------
+void TMain::StartLoad() {
+	SetControlsEnabled(false);
+	frmServerList->StartLoad();
+}
+
+// ---------------------------------------------------------------------------
+void TMain::EndLoad() {
+	frmServerList->EndLoad();
+	SetControlsEnabled(true);
 }
 
 // ---------------------------------------------------------------------------
@@ -231,7 +261,7 @@ int TMain::SetServerVan(int Index, TOracleVan * Van) {
 		Index = sgServer->RowCount - 1;
 	}
 
-	sgServer->Cells[ServerColumns.NUM][Index] = IntToStr(Van->Num);
+	sgServer->Cells[ServerColumns.NUM][Index] = IntToStr(Index);
 
 	sgServer->Cells[ServerColumns.VANNUM][Index] = Van->VanNum;
 
@@ -282,7 +312,7 @@ bool TMain::LoadTrain(String TrainNum) {
 
 	ShowWaitCursor();
 
-	SetControlsEnabled(false);
+	StartLoad();
 
 	ServerVanList = NULL;
 
@@ -301,7 +331,7 @@ bool TMain::LoadTrain(String TrainNum) {
 	__finally {
 		DBOracleLoadTrain->Free();
 
-		SetControlsEnabled(true);
+		EndLoad();
 
 		RestoreCursor();
 	}
@@ -362,4 +392,5 @@ void __fastcall TMain::FormResize(TObject *Sender) {
 void __fastcall TMain::btnServerListClick(TObject *Sender) {
 	frmServerList->Visible = !frmServerList->Visible;
 }
+
 // ---------------------------------------------------------------------------

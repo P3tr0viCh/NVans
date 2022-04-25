@@ -33,6 +33,7 @@ __published:
 	void __fastcall sgListDblClick(TObject *Sender);
 	void __fastcall sgListSelectCell(TObject *Sender, int ACol, int ARow,
 		bool &CanSelect);
+	void __fastcall sgListKeyDown(TObject *Sender, WORD &Key, TShiftState Shift);
 
 private:
 	TDate FDate;
@@ -55,6 +56,10 @@ private:
 
 public:
 	__fastcall TfrmServerList(TComponent* Owner);
+
+	// -----------------------------------------------------------------------
+	void StartLoad();
+	void EndLoad();
 
 	// -----------------------------------------------------------------------
 	__property TDate Date = {read = FDate, write = SetDate};

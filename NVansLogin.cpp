@@ -84,4 +84,5 @@ void __fastcall TfrmLogin::btnOKClick(TObject *Sender) {
 		ModalResult = mrNone;
 	}
 }
+
 // ---------------------------------------------------------------------------

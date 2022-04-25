@@ -26,7 +26,8 @@ IDS_STATUS_TRAIN_LIST_VAN_COUNT,        "Количество: %s"
 
 IDS_CONNECTION_MYSQL,           "DRIVER={%s};SERVER=%s;PORT=%s;DATABASE=%s;USER=%s;PASSWORD=%s;OPTION=3;"
 IDS_CONNECTION_ORACLE,          "DRIVER={%s};DBQ=%s/%s;UID=%s;PWD=%s;"
-IDS_CONNECTION_MYSQL_DRIVER_1,  "MySQL ODBC 8.0 ANSI Driver"
+IDS_CONNECTION_MYSQL_DRIVER_0,  "MySQL ODBC 8.0 ANSI Driver"
+IDS_CONNECTION_ORACLE_DRIVER_0, "Oracle in instantclient_12_1"
 IDS_CONNECTION_ORACLE_DRIVER_1, "Oracle in instantclient_21_3"
 
 IDS_LOG_LOGIN_OK,                       "login: ok"

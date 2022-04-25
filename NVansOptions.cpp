@@ -63,6 +63,7 @@ void __fastcall TfrmOptions::FormCreate(TObject *Sender) {
 		delete FileIni;
 	}
 
+	cboxOracleDriver->Items->Add(LoadStr(IDS_CONNECTION_ORACLE_DRIVER_0));
 	cboxOracleDriver->Items->Add(LoadStr(IDS_CONNECTION_ORACLE_DRIVER_1));
 }
 
@@ -105,6 +106,11 @@ void TfrmOptions::UpdateForm() {
 	eOraclePass->Text = Settings->ServerOracleConnection->Password;
 	cboxOracleDriver->ItemIndex = cboxOracleDriver->Items->IndexOf
 		(Settings->ServerOracleConnection->Driver);
+	if (cboxOracleDriver->ItemIndex == -1) {
+		cboxOracleDriver->ItemIndex =
+			cboxOracleDriver->Items->Add
+			(Settings->ServerOracleConnection->Driver);
+	}
 }
 
 // ---------------------------------------------------------------------------
@@ -171,7 +177,8 @@ void __fastcall TfrmOptions::btnOracleCheckClick(TObject *Sender) {
 	try {
 		ConnectionInfo = GetConnectionInfo(ctServerOracle);
 
-		DatabaseOperation = new TDBCheckOracle((TConnectionOracle*) ConnectionInfo);
+		DatabaseOperation =
+			new TDBCheckOracle((TConnectionOracle*) ConnectionInfo);
 
 		Result = DatabaseOperation->Execute();
 

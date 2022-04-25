@@ -35,9 +35,6 @@ object frmServerList: TfrmServerList
       end>
     ParentFont = True
     UseSystemFont = False
-    ExplicitLeft = -69
-    ExplicitTop = 275
-    ExplicitWidth = 704
   end
   object sgList: TStringGrid
     Left = 0
@@ -53,10 +50,8 @@ object frmServerList: TfrmServerList
     TabOrder = 1
     OnDblClick = sgListDblClick
     OnDrawCell = sgListDrawCell
+    OnKeyDown = sgListKeyDown
     OnSelectCell = sgListSelectCell
-    ExplicitLeft = -69
-    ExplicitWidth = 704
-    ExplicitHeight = 144
   end
   object PanelTop: TPanel
     Left = 0
@@ -66,7 +61,6 @@ object frmServerList: TfrmServerList
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 2
-    ExplicitWidth = 448
     DesignSize = (
       352
       48)
@@ -88,7 +82,6 @@ object frmServerList: TfrmServerList
       Caption = #1047#1072#1082#1088#1099#1090#1100
       TabOrder = 1
       OnClick = btnCloseClick
-      ExplicitLeft = 360
     end
   end
 end

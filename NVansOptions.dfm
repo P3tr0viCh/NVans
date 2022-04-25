@@ -36,6 +36,10 @@ object frmOptions: TfrmOptions
       object tsProgram: TTabSheet
         Caption = #1055#1088#1086#1075#1088#1072#1084#1084#1072
         ImageIndex = 3
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object eOptionsPass: TLabeledEdit
           Left = 8
           Top = 40
@@ -63,22 +67,28 @@ object frmOptions: TfrmOptions
       end
       object tsLocalDatabase: TTabSheet
         Caption = #1051#1086#1082#1072#1083#1100#1085#1072#1103' '#1073#1072#1079#1072' '#1076#1072#1085#1085#1099#1093
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object Label2: TLabel
           Left = 0
           Top = 0
-          Width = 566
-          Height = 278
+          Width = 35
+          Height = 17
           Align = alClient
           Alignment = taCenter
           Caption = 'TODO'
           Layout = tlCenter
-          ExplicitWidth = 35
-          ExplicitHeight = 17
         end
       end
       object tsServerOracleDatabase: TTabSheet
         Caption = #1057#1077#1088#1074#1077#1088' Oracle'
         ImageIndex = 1
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblOracleLDriver: TLabel
           Left = 8
           Top = 136
@@ -152,17 +162,19 @@ object frmOptions: TfrmOptions
       object tsServerMySQLDatabase: TTabSheet
         Caption = #1057#1077#1088#1074#1077#1088' MySQL'
         ImageIndex = 2
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object Label1: TLabel
           Left = 0
           Top = 0
-          Width = 566
-          Height = 278
+          Width = 35
+          Height = 17
           Align = alClient
           Alignment = taCenter
           Caption = 'TODO'
           Layout = tlCenter
-          ExplicitWidth = 35
-          ExplicitHeight = 17
         end
       end
     end

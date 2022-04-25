@@ -47,6 +47,8 @@ __published:
 	void __fastcall btnOptionsClick(TObject *Sender);
 	void __fastcall FormResize(TObject *Sender);
 	void __fastcall btnServerListClick(TObject *Sender);
+	void __fastcall sgServerKeyDown(TObject *Sender, WORD &Key, TShiftState Shift);
+
 
 private:
 	TSettings * FSettings;
@@ -72,6 +74,10 @@ public:
 	__fastcall TMain(TComponent* Owner);
 
 	int DefaultRowHeight;
+
+	// -----------------------------------------------------------------------
+	void StartLoad();
+	void EndLoad();
 
 	// -----------------------------------------------------------------------
 	__property TSettings * Settings = {read = FSettings};
