@@ -55,28 +55,12 @@ void __fastcall TfrmOptions::FormCreate(TObject *Sender) {
 	PageControl->ActivePageIndex = 0;
 #endif
 
-	TFileIni * FileIni = TFileIni::GetNewInstance();
-	try {
-		FileIni->ReadFormPosition(this);
-	}
-	__finally {
-		delete FileIni;
-	}
-
 	cboxOracleDriver->Items->Add(LoadStr(IDS_CONNECTION_ORACLE_DRIVER_0));
 	cboxOracleDriver->Items->Add(LoadStr(IDS_CONNECTION_ORACLE_DRIVER_1));
 }
 
 // ---------------------------------------------------------------------------
 void __fastcall TfrmOptions::FormDestroy(TObject *Sender) {
-	TFileIni * FileIni = TFileIni::GetNewInstance();
-	try {
-		FileIni->WriteFormPosition(this);
-	}
-	__finally {
-		delete FileIni;
-	}
-
 	Settings->Free();
 }
 

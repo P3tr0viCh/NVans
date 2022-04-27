@@ -23,6 +23,7 @@ IDS_MSG_DATABASE_CONNECT_FAIL,  "Не удалось подключиться к базе данных.\n\nОшибк
 
 IDS_STATUS_TRAIN_LIST_DATE,             "Дата: %s"
 IDS_STATUS_TRAIN_LIST_VAN_COUNT,        "Количество: %s"
+IDS_STATUS_TRAIN_LOAD,                  "Загрузка..."
 
 IDS_CONNECTION_MYSQL,           "DRIVER={%s};SERVER=%s;PORT=%s;DATABASE=%s;USER=%s;PASSWORD=%s;OPTION=3;"
 IDS_CONNECTION_ORACLE,          "DRIVER={%s};DBQ=%s/%s;UID=%s;PWD=%s;"

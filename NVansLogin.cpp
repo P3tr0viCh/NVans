@@ -57,28 +57,6 @@ bool TfrmLogin::CheckPass() {
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TfrmLogin::FormCreate(TObject *Sender) {
-	TFileIni * FileIni = TFileIni::GetNewInstance();
-	try {
-		FileIni->ReadFormPosition(this);
-	}
-	__finally {
-		delete FileIni;
-	}
-}
-
-// ---------------------------------------------------------------------------
-void __fastcall TfrmLogin::FormDestroy(TObject *Sender) {
-	TFileIni * FileIni = TFileIni::GetNewInstance();
-	try {
-		FileIni->WriteFormPosition(this);
-	}
-	__finally {
-		delete FileIni;
-	}
-}
-
-// ---------------------------------------------------------------------------
 void __fastcall TfrmLogin::btnOKClick(TObject *Sender) {
 	if (!CheckPass()) {
 		ModalResult = mrNone;

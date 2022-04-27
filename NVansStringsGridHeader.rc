@@ -13,4 +13,6 @@ IDS_GRID_HEADER_DEPART_STATION,         "Станция отправления"
 IDS_GRID_HEADER_PURPOSE_STATION,        "Станция назначения"
 IDS_GRID_HEADER_RWNUM,                  "Номер"
 IDS_GRID_HEADER_VAN_COUNT,              "Вагоны"
+IDS_GRID_HEADER_CARRYING,               "ГП"
+IDS_GRID_HEADER_TARE_T,                 "Тара Т"
 END

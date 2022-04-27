@@ -16,9 +16,6 @@ __published:
 	TButton *btnOK;
 	TButton *btnCancel;
 	TLabeledEdit *ePass;
-
-	void __fastcall FormCreate(TObject *Sender);
-	void __fastcall FormDestroy(TObject *Sender);
 	void __fastcall btnOKClick(TObject *Sender);
 
 private:

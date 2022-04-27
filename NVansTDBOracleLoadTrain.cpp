@@ -102,6 +102,9 @@ void TDBOracleLoadTrain::Operation() {
 			Van->PurposeStation =
 				Trim(Query->FieldByName("PURPOSE_STATION")->AsString);
 
+			Van->Carrying = Query->FieldByName("CARRYING")->AsInteger * 1000;
+			Van->TareT = Query->FieldByName("TARE_T")->AsInteger * 100;
+
 			FVanList->Add(Van);
 
 			Query->Next();

@@ -17,6 +17,9 @@ __fastcall TOracleVan::TOracleVan() {
 // ---------------------------------------------------------------------------
 void TOracleVan::Init() {
 	FNum = 0;
+
+	FCarrying = 0;
+	FTareT = 0;
 }
 
 // ---------------------------------------------------------------------------
@@ -37,7 +40,8 @@ bool __fastcall TOracleVan::Equals(TObject * Obj) {
 		InvoiceSupplier != Van->InvoiceSupplier ||
 		InvoiceRecipient != Van->InvoiceRecipient ||
 		DepartStation != Van->DepartStation ||
-		PurposeStation != Van->PurposeStation) {
+		PurposeStation != Van->PurposeStation || Carrying != Van->Carrying ||
+		TareT != Van->TareT) {
 		return false;
 	}
 
@@ -59,6 +63,9 @@ void __fastcall TOracleVan::Assign(TOracleVan * Source) {
 
 	DepartStation = Source->DepartStation;
 	PurposeStation = Source->PurposeStation;
+
+	Carrying = Source->Carrying;
+	TareT = Source->TareT;
 }
 
 // ---------------------------------------------------------------------------
@@ -81,6 +88,10 @@ String __fastcall TOracleVan::ToString() {
 	S += "DepartStation='" + DepartStation + "'";
 	S += ",";
 	S += "PurposeStation='" + PurposeStation + "'";
+	S += ",";
+	S += "Carrying='" + IntToStr(Carrying) + "'";
+	S += ",";
+	S += "TareT='" + IntToStr(TareT) + "'";
 	S += "}";
 
 	return S;

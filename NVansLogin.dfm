@@ -13,8 +13,7 @@ object frmLogin: TfrmLogin
   Font.Name = 'Segoe UI'
   Font.Style = []
   OldCreateOrder = False
-  OnCreate = FormCreate
-  OnDestroy = FormDestroy
+  Position = poMainFormCenter
   PixelsPerInch = 96
   TextHeight = 17
   object btnOK: TButton

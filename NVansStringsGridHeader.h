@@ -14,6 +14,8 @@
 #define IDS_GRID_HEADER_PURPOSE_STATION     5008
 #define IDS_GRID_HEADER_RWNUM               5009
 #define IDS_GRID_HEADER_VAN_COUNT           5010
+#define IDS_GRID_HEADER_CARRYING            5011
+#define IDS_GRID_HEADER_TARE_T              5012
 
 // ---------------------------------------------------------------------------
 #endif

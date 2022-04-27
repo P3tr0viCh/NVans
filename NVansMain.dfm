@@ -44,6 +44,7 @@ object Main: TMain
         Width = 50
       end>
     ParentFont = True
+    SimplePanel = True
     UseSystemFont = False
   end
   object sgServer: TStringGrid

@@ -3,7 +3,7 @@ object frmServerList: TfrmServerList
   Top = 0
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSizeToolWin
-  Caption = #1057#1087#1080#1089#1086#1082' '#1085#1072#1090#1091#1088#1085#1099#1093' '#1083#1080#1089#1090#1086#1074
+  Caption = #1057#1087#1080#1089#1086#1082' '#1087#1086#1077#1079#1076#1086#1074
   ClientHeight = 208
   ClientWidth = 352
   Color = clBtnFace

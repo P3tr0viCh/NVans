@@ -60,7 +60,7 @@ void __fastcall TMain::FormCreate(TObject *Sender) {
 	DefaultRowHeight = Canvas->TextHeight("ComboBox") + 8;
 
 	Caption = Application->Title + " " + GetFileVer(Application->ExeName);
-	StatusBar->Panels->Items[0]->Text = LoadStr(IDS_COPYRIGHT_STATUS);
+	StatusBar->SimpleText = LoadStr(IDS_COPYRIGHT_STATUS);
 
 	CreateServerColumns();
 	CreateLocalColumns();
@@ -161,6 +161,10 @@ void TMain::CreateServerColumns() {
 		IDS_GRID_HEADER_DEPART_STATION, 180);
 	StringGridSetHeader(sgServer, ServerColumns.PURPOSE_STATION,
 		IDS_GRID_HEADER_PURPOSE_STATION, 180);
+	StringGridSetHeader(sgServer, ServerColumns.CARRYING,
+		IDS_GRID_HEADER_CARRYING, 80);
+	StringGridSetHeader(sgServer, ServerColumns.TARE_T,
+		IDS_GRID_HEADER_TARE_T, 80);
 }
 
 // ---------------------------------------------------------------------------
@@ -242,6 +246,7 @@ void TMain::SetControlsEnabled(const bool Enabled) {
 
 // ---------------------------------------------------------------------------
 void TMain::StartLoad() {
+	StatusBar->SimpleText = LoadStr(IDS_STATUS_TRAIN_LOAD);
 	SetControlsEnabled(false);
 	frmServerList->StartLoad();
 }
@@ -250,6 +255,7 @@ void TMain::StartLoad() {
 void TMain::EndLoad() {
 	frmServerList->EndLoad();
 	SetControlsEnabled(true);
+	StatusBar->SimpleText = "";
 }
 
 // ---------------------------------------------------------------------------
@@ -273,8 +279,12 @@ int TMain::SetServerVan(int Index, TOracleVan * Van) {
 		Van->InvoiceSupplier;
 	sgServer->Cells[ServerColumns.INVOICE_RECIPIENT][Index] =
 		Van->InvoiceRecipient;
+
 	sgServer->Cells[ServerColumns.DEPART_STATION][Index] = Van->DepartStation;
 	sgServer->Cells[ServerColumns.PURPOSE_STATION][Index] = Van->PurposeStation;
+
+	sgServer->Cells[ServerColumns.CARRYING][Index] = IntToStr(Van->Carrying);
+	sgServer->Cells[ServerColumns.TARE_T][Index] = IntToStr(Van->TareT);
 
 	return Index;
 }

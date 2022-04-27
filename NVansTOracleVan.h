@@ -23,6 +23,9 @@ private:
 	String FDepartStation;
 	String FPurposeStation;
 
+	int FCarrying;
+	int FTareT;
+
 	// -----------------------------------------------------------------------
 	void Init();
 
@@ -43,11 +46,18 @@ public:
 
 	__property String InvoiceNum = {read = FInvoiceNum, write = FInvoiceNum};
 
-	__property String InvoiceSupplier = {read = FInvoiceSupplier, write = FInvoiceSupplier};
-	__property String InvoiceRecipient = {read = FInvoiceRecipient, write = FInvoiceRecipient};
+	__property String InvoiceSupplier = {
+		read = FInvoiceSupplier, write = FInvoiceSupplier};
+	__property String InvoiceRecipient = {
+		read = FInvoiceRecipient, write = FInvoiceRecipient};
 
-	__property String DepartStation = {read = FDepartStation, write = FDepartStation};
-	__property String PurposeStation = {read = FPurposeStation, write = FPurposeStation};
+	__property String DepartStation = {
+		read = FDepartStation, write = FDepartStation};
+	__property String PurposeStation = {
+		read = FPurposeStation, write = FPurposeStation};
+
+	__property int Carrying = {read = FCarrying, write = FCarrying};
+	__property int TareT = {read = FTareT, write = FTareT};
 };
 
 // ---------------------------------------------------------------------------

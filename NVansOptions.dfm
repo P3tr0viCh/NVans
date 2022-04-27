@@ -13,6 +13,7 @@ object frmOptions: TfrmOptions
   Font.Name = 'Segoe UI'
   Font.Style = []
   OldCreateOrder = False
+  Position = poMainFormCenter
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   PixelsPerInch = 96
@@ -85,10 +86,6 @@ object frmOptions: TfrmOptions
       object tsServerOracleDatabase: TTabSheet
         Caption = #1057#1077#1088#1074#1077#1088' Oracle'
         ImageIndex = 1
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblOracleLDriver: TLabel
           Left = 8
           Top = 136
