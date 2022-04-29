@@ -68,7 +68,7 @@ private:
 	void SetTrainNum(String Value);
 	void SetServerVanList(TOracleVanList * Value);
 
-	bool LoadTrain(String TrainNum);
+	bool LoadTrain(String TrainNum, bool WithJoin);
 
 public:
 	__fastcall TMain(TComponent* Owner);

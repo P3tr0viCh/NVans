@@ -17,11 +17,13 @@
 
 // ---------------------------------------------------------------------------
 __fastcall TDBOracleLoadTrain::TDBOracleLoadTrain
-	(TConnectionInfo * ConnectionInfo, String TrainNum)
+	(TConnectionInfo * ConnectionInfo, String TrainNum, bool WithJoin)
 	: TDatabaseOperation(ConnectionInfo) {
 	FVanList = new TOracleVanList();
 
 	FTrainNum = TrainNum;
+
+	FWithJoin = WithJoin;
 }
 
 // ---------------------------------------------------------------------------
@@ -54,13 +56,37 @@ void TDBOracleLoadTrain::Operation() {
 
 		String QueryText;
 
-		QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TRAIN_SELECT);
-		QueryText = SQLMake(QueryText, IDS_SQL_FROM);
-		QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TABLE);
-		QueryText = SQLMake(QueryText, IDS_SQL_WHERE);
-		QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TRAIN_WHERE);
-		QueryText = SQLMake(QueryText, IDS_SQL_ORDER);
-		QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TRAIN_ORDER);
+		if (WithJoin) {
+			QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TRAIN_JOIN_SELECT);
+			QueryText = SQLMake(QueryText, IDS_SQL_FROM);
+			QueryText = SQLMake(QueryText, "(");
+			QueryText = SQLMake(QueryText, "(");
+			QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TRAIN_SELECT);
+			QueryText = SQLMake(QueryText, IDS_SQL_FROM);
+			QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TABLE);
+			QueryText = SQLMake(QueryText, IDS_SQL_WHERE);
+			QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TRAIN_WHERE);
+			QueryText = SQLMake(QueryText, ") A");
+			QueryText = SQLMake(QueryText, "LEFT JOIN");
+			QueryText = SQLMake(QueryText, "(");
+			QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TRAIN_SELECT);
+			QueryText = SQLMake(QueryText, IDS_SQL_FROM);
+			QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TABLE);
+			QueryText = SQLMake(QueryText, ") B");
+			QueryText = SQLMake(QueryText,  "ON A.INVNUM = B.INVNUM AND CONCAT(TRIM(A.INVOICE_NUM), '-0') = TRIM(B.RWNUM)");
+			QueryText = SQLMake(QueryText, ")");
+			QueryText = SQLMake(QueryText, IDS_SQL_ORDER);
+			QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TRAIN_ORDER);
+		}
+		else {
+			QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TRAIN_SELECT);
+			QueryText = SQLMake(QueryText, IDS_SQL_FROM);
+			QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TABLE);
+			QueryText = SQLMake(QueryText, IDS_SQL_WHERE);
+			QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TRAIN_WHERE);
+			QueryText = SQLMake(QueryText, IDS_SQL_ORDER);
+			QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TRAIN_ORDER);
+		}
 
 		Query->SQL->Text = QueryText;
 

@@ -290,12 +290,26 @@ int TMain::SetServerVan(int Index, TOracleVan * Van) {
 }
 
 // ---------------------------------------------------------------------------
+bool IsRightTrainNum(String Value) {
+	// check int num
+	for (int i = 1; i < Value.Length(); i++) {
+		if (Value[i] < '0' || Value[i] > '9') {
+            return false;
+		}
+	}
+
+	return true;
+}
+
+// ---------------------------------------------------------------------------
 void TMain::SetTrainNum(String Value) {
 	FTrainNum = Value;
 
 	eRWNum->Text = TrainNum;
 
-	LoadTrain(TrainNum);
+	bool WithJoin = IsRightTrainNum(TrainNum) && !IsShift();
+
+	LoadTrain(TrainNum, WithJoin);
 }
 
 // ---------------------------------------------------------------------------
@@ -315,7 +329,7 @@ void TMain::SetServerVanList(TOracleVanList * Value) {
 }
 
 // ---------------------------------------------------------------------------
-bool TMain::LoadTrain(String TrainNum) {
+bool TMain::LoadTrain(String TrainNum, bool WithJoin) {
 	bool Result;
 
 	String ResultMessage;
@@ -330,7 +344,7 @@ bool TMain::LoadTrain(String TrainNum) {
 
 	TDBOracleLoadTrain * DBOracleLoadTrain =
 		new TDBOracleLoadTrain(Main->Settings->ServerOracleConnection,
-		TrainNum);
+		TrainNum, WithJoin);
 	try {
 		Result = DBOracleLoadTrain->Execute();
 
