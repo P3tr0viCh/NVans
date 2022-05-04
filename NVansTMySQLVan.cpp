@@ -4,18 +4,18 @@
 
 #include "NVansStrings.h"
 
-#include "NVansTOracleVan.h"
+#include "NVansTMySQLVan.h"
 
 // ---------------------------------------------------------------------------
 #pragma package(smart_init)
 
 // ---------------------------------------------------------------------------
-__fastcall TOracleVan::TOracleVan() {
+__fastcall TMySQLVan::TMySQLVan() {
 	Init();
 }
 
 // ---------------------------------------------------------------------------
-void TOracleVan::Init() {
+void TMySQLVan::Init() {
 	FNum = 0;
 
 	FCarrying = 0;
@@ -25,17 +25,17 @@ void TOracleVan::Init() {
 }
 
 // ---------------------------------------------------------------------------
-__fastcall TOracleVan::~TOracleVan() {
+__fastcall TMySQLVan::~TMySQLVan() {
 }
 
 // ---------------------------------------------------------------------------
-bool __fastcall TOracleVan::Equals(TObject * Obj) {
+bool __fastcall TMySQLVan::Equals(TObject * Obj) {
 	if (this == Obj)
 		return true;
 	if (Obj == NULL || ClassType() != Obj->ClassType())
 		return false;
 
-	TOracleVan * Van = (TOracleVan*) Obj;
+	TMySQLVan * Van = (TMySQLVan*) Obj;
 
 	if (Num != Van->Num || VanNum != Van->VanNum ||
 		CargoType != Van->CargoType || InvoiceNum != Van->InvoiceNum ||
@@ -52,7 +52,7 @@ bool __fastcall TOracleVan::Equals(TObject * Obj) {
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TOracleVan::Assign(TOracleVan * Source) {
+void __fastcall TMySQLVan::Assign(TMySQLVan * Source) {
 	Num = Source->Num;
 
 	VanNum = Source->VanNum;
@@ -74,10 +74,10 @@ void __fastcall TOracleVan::Assign(TOracleVan * Source) {
 }
 
 // ---------------------------------------------------------------------------
-String __fastcall TOracleVan::ToString() {
+String __fastcall TMySQLVan::ToString() {
 	String S;
 
-	S = "TOracleVan{";
+	S = "TMySQLVan{";
 	S += "Num=" + IntToStr(Num);
 	S += ",";
 	S += "VanNum=" + VanNum;

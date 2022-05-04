@@ -14,7 +14,6 @@ object frmServerList: TfrmServerList
   Font.Height = -13
   Font.Name = 'Segoe UI'
   Font.Style = []
-  FormStyle = fsStayOnTop
   OldCreateOrder = False
   OnCreate = FormCreate
   OnDestroy = FormDestroy

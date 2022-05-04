@@ -15,6 +15,7 @@
 
 #include "NVansTSettings.h"
 #include "NVansTOracleVan.h"
+#include "NVansTMySQLVan.h"
 
 // ---------------------------------------------------------------------------
 class TMain : public TForm {
@@ -47,8 +48,8 @@ __published:
 	void __fastcall btnOptionsClick(TObject *Sender);
 	void __fastcall FormResize(TObject *Sender);
 	void __fastcall btnServerListClick(TObject *Sender);
-	void __fastcall sgServerKeyDown(TObject *Sender, WORD &Key, TShiftState Shift);
-
+	void __fastcall sgServerKeyDown(TObject *Sender, WORD &Key,
+		TShiftState Shift);
 
 private:
 	TSettings * FSettings;
@@ -56,6 +57,7 @@ private:
 	String FTrainNum;
 
 	TOracleVanList * FServerVanList;
+	TMySQLVanList * FLocalVanList;
 
 	// -----------------------------------------------------------------------
 	void CreateServerColumns();
@@ -64,11 +66,15 @@ private:
 	void SetControlsEnabled(const bool Enabled);
 
 	int SetServerVan(int Index, TOracleVan * Van);
+	int SetLocalVan(int Index, TMySQLVan * Van);
 
 	void SetTrainNum(String Value);
-	void SetServerVanList(TOracleVanList * Value);
 
-	bool LoadTrain(String TrainNum, bool WithJoin);
+	void SetServerVanList(TOracleVanList * Value);
+	void SetLocalVanList(TMySQLVanList * Value);
+
+	bool LoadServerTrain(String TrainNum, bool WithJoin);
+	bool LoadLocalVans();
 
 public:
 	__fastcall TMain(TComponent* Owner);
@@ -83,8 +89,11 @@ public:
 	__property TSettings * Settings = {read = FSettings};
 
 	__property String TrainNum = {read = FTrainNum, write = SetTrainNum};
+
 	__property TOracleVanList * ServerVanList = {
 		read = FServerVanList, write = SetServerVanList};
+	__property TMySQLVanList * LocalVanList = {
+		read = FLocalVanList, write = SetLocalVanList};
 };
 
 // ---------------------------------------------------------------------------

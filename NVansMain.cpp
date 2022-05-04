@@ -19,6 +19,7 @@
 #include "NVansColumns.h"
 #include "NVansStrings.h"
 #include "NVansStringsGridHeader.h"
+
 #include "NVansTDBOracleLoadTrain.h"
 
 #include "NVansLogin.h"
@@ -48,6 +49,7 @@ void __fastcall TMain::FormCreate(TObject *Sender) {
 	FTrainNum = "";
 
 	FServerVanList = new TOracleVanList();
+	FLocalVanList = new TMySQLVanList();
 
 	if (!Settings->Load()) {
 		MsgBoxErr(IDS_ERROR_LOAD_SETTINGS);
@@ -113,6 +115,7 @@ void __fastcall TMain::FormDestroy(TObject *Sender) {
 		delete FileIni;
 	}
 
+	FLocalVanList->Free();
 	FServerVanList->Free();
 
 	FSettings->Free();
@@ -128,11 +131,12 @@ void __fastcall TMain::btnCloseClick(TObject *Sender) {
 // ---------------------------------------------------------------------------
 void __fastcall TMain::FormCloseQuery(TObject *Sender, bool &CanClose) {
 #ifndef FORCECLOSE
-	CanClose = MsgBoxYesNo(IDS_QUESTION_CLOSE_PROGRAM);
+	CanClose = MsgBoxYesNo(IDS_QUESTION_CLOSE_PROGRAM, true,
+		Application->Handle);
 #endif
 }
-// ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
 void __fastcall TMain::ApplicationEventsException(TObject *Sender, Exception *E)
 {
 	WriteToLog(Format(IDS_LOG_ERROR_EXCEPTION, E->Message));
@@ -143,7 +147,7 @@ void __fastcall TMain::ApplicationEventsException(TObject *Sender, Exception *E)
 void TMain::CreateServerColumns() {
 	sgServer->ColCount = ServerColumns.VISIBLE_COUNT;
 
-	StringGridSetHeader(sgServer, ServerColumns.NUM, IDS_GRID_HEADER_NUM, 50);
+	StringGridSetHeader(sgServer, ServerColumns.NUM, IDS_GRID_HEADER_NUM, 32);
 
 	StringGridSetHeader(sgServer, ServerColumns.VANNUM,
 		IDS_GRID_HEADER_VANNUM, 80);
@@ -162,16 +166,20 @@ void TMain::CreateServerColumns() {
 	StringGridSetHeader(sgServer, ServerColumns.PURPOSE_STATION,
 		IDS_GRID_HEADER_PURPOSE_STATION, 180);
 	StringGridSetHeader(sgServer, ServerColumns.CARRYING,
-		IDS_GRID_HEADER_CARRYING, 80);
+		IDS_GRID_HEADER_CARRYING, 64);
 	StringGridSetHeader(sgServer, ServerColumns.TARE_T,
-		IDS_GRID_HEADER_TARE_T, 80);
+		IDS_GRID_HEADER_TARE_T, 64);
+	StringGridSetHeader(sgServer, ServerColumns.INVOICE_NETTO,
+		IDS_GRID_HEADER_INVOICE_NETTO, 64);
+	StringGridSetHeader(sgServer, ServerColumns.INVOICE_TARE,
+		IDS_GRID_HEADER_INVOICE_TARE, 64);
 }
 
 // ---------------------------------------------------------------------------
 void TMain::CreateLocalColumns() {
 	sgLocal->ColCount = LocalColumns.VISIBLE_COUNT;
 
-	StringGridSetHeader(sgLocal, LocalColumns.NUM, IDS_GRID_HEADER_NUM, 50);
+	StringGridSetHeader(sgLocal, LocalColumns.NUM, IDS_GRID_HEADER_NUM, 32);
 	StringGridSetHeader(sgLocal, LocalColumns.DATETIME,
 		IDS_GRID_HEADER_DATETIME, 160);
 
@@ -191,6 +199,15 @@ void TMain::CreateLocalColumns() {
 		IDS_GRID_HEADER_DEPART_STATION, 180);
 	StringGridSetHeader(sgLocal, LocalColumns.PURPOSE_STATION,
 		IDS_GRID_HEADER_PURPOSE_STATION, 180);
+
+	StringGridSetHeader(sgLocal, LocalColumns.CARRYING,
+		IDS_GRID_HEADER_CARRYING, 64);
+	StringGridSetHeader(sgLocal, LocalColumns.TARE_T,
+		IDS_GRID_HEADER_TARE_T, 64);
+	StringGridSetHeader(sgLocal, LocalColumns.INVOICE_NETTO,
+		IDS_GRID_HEADER_INVOICE_NETTO, 64);
+	StringGridSetHeader(sgLocal, LocalColumns.INVOICE_TARE,
+		IDS_GRID_HEADER_INVOICE_TARE, 64);
 }
 
 // ---------------------------------------------------------------------------
@@ -285,6 +302,45 @@ int TMain::SetServerVan(int Index, TOracleVan * Van) {
 
 	sgServer->Cells[ServerColumns.CARRYING][Index] = IntToStr(Van->Carrying);
 	sgServer->Cells[ServerColumns.TARE_T][Index] = IntToStr(Van->TareT);
+	sgServer->Cells[ServerColumns.INVOICE_NETTO][Index] =
+		IntToStr(Van->InvoiceNetto);
+	sgServer->Cells[ServerColumns.INVOICE_TARE][Index] =
+		IntToStr(Van->InvoiceTare);
+
+	return Index;
+}
+
+// ---------------------------------------------------------------------------
+int TMain::SetLocalVan(int Index, TMySQLVan * Van) {
+	if (Index < 0) {
+		if (!StringGridIsEmpty(sgLocal)) {
+			sgLocal->RowCount++;
+		}
+		Index = sgLocal->RowCount - 1;
+	}
+
+	sgLocal->Cells[ServerColumns.NUM][Index] = IntToStr(Index);
+
+	sgLocal->Cells[ServerColumns.VANNUM][Index] = Van->VanNum;
+
+	sgLocal->Cells[ServerColumns.CARGOTYPE][Index] = Van->CargoType;
+
+	sgLocal->Cells[ServerColumns.INVOICE_NUM][Index] = Van->InvoiceNum;
+
+	sgLocal->Cells[ServerColumns.INVOICE_SUPPLIER][Index] =
+		Van->InvoiceSupplier;
+	sgLocal->Cells[ServerColumns.INVOICE_RECIPIENT][Index] =
+		Van->InvoiceRecipient;
+
+	sgLocal->Cells[ServerColumns.DEPART_STATION][Index] = Van->DepartStation;
+	sgLocal->Cells[ServerColumns.PURPOSE_STATION][Index] = Van->PurposeStation;
+
+	sgLocal->Cells[ServerColumns.CARRYING][Index] = IntToStr(Van->Carrying);
+	sgLocal->Cells[ServerColumns.TARE_T][Index] = IntToStr(Van->TareT);
+	sgLocal->Cells[ServerColumns.INVOICE_NETTO][Index] =
+		IntToStr(Van->InvoiceNetto);
+	sgLocal->Cells[ServerColumns.INVOICE_TARE][Index] =
+		IntToStr(Van->InvoiceTare);
 
 	return Index;
 }
@@ -294,7 +350,7 @@ bool IsRightTrainNum(String Value) {
 	// check int num
 	for (int i = 1; i < Value.Length(); i++) {
 		if (Value[i] < '0' || Value[i] > '9') {
-            return false;
+			return false;
 		}
 	}
 
@@ -309,7 +365,7 @@ void TMain::SetTrainNum(String Value) {
 
 	bool WithJoin = IsRightTrainNum(TrainNum) && !IsShift();
 
-	LoadTrain(TrainNum, WithJoin);
+	LoadServerTrain(TrainNum, WithJoin);
 }
 
 // ---------------------------------------------------------------------------
@@ -329,7 +385,23 @@ void TMain::SetServerVanList(TOracleVanList * Value) {
 }
 
 // ---------------------------------------------------------------------------
-bool TMain::LoadTrain(String TrainNum, bool WithJoin) {
+void TMain::SetLocalVanList(TMySQLVanList * Value) {
+	if (Value == NULL) {
+		LocalVanList->Clear();
+	}
+	else {
+		LocalVanList->Assign(Value);
+	}
+
+	StringGridClear(sgLocal);
+
+	for (int i = 0; i < LocalVanList->Count; i++) {
+		SetLocalVan(-1, LocalVanList->Items[i]);
+	}
+}
+
+// ---------------------------------------------------------------------------
+bool TMain::LoadServerTrain(String TrainNum, bool WithJoin) {
 	bool Result;
 
 	String ResultMessage;
@@ -343,8 +415,8 @@ bool TMain::LoadTrain(String TrainNum, bool WithJoin) {
 	ProcMess();
 
 	TDBOracleLoadTrain * DBOracleLoadTrain =
-		new TDBOracleLoadTrain(Main->Settings->ServerOracleConnection,
-		TrainNum, WithJoin);
+		new TDBOracleLoadTrain(Main->Settings->ServerOracleConnection, TrainNum,
+		WithJoin);
 	try {
 		Result = DBOracleLoadTrain->Execute();
 
@@ -364,6 +436,50 @@ bool TMain::LoadTrain(String TrainNum, bool WithJoin) {
 		if (ServerVanList->Count == 0) {
 			MsgBox(Format(IDS_ERROR_RWNUM_NOT_EXISTS, TrainNum));
 		}
+	}
+	else {
+		MsgBoxErr(Format(IDS_ERROR_TRAIN_LOAD, ResultMessage));
+	}
+
+	return Result;
+}
+
+// ---------------------------------------------------------------------------
+bool TMain::LoadLocalVans() {
+	bool Result;
+
+	String ResultMessage;
+
+	ShowWaitCursor();
+
+	StartLoad();
+
+	LocalVanList = NULL;
+
+	ProcMess();
+
+//	TDBOracleLoadTrain * DBOracleLoadTrain =
+//		new TDBOracleLoadTrain(Main->Settings->ServerOracleConnection, TrainNum,
+//		WithJoin);
+	try {
+//		Result = DBOracleLoadTrain->Execute();
+//
+//		ResultMessage = DBOracleLoadTrain->ErrorMessage;
+//
+//		ServerVanList = DBOracleLoadTrain->VanList;
+	}
+	__finally {
+//		DBOracleLoadTrain->Free();
+
+		EndLoad();
+
+		RestoreCursor();
+	}
+
+	if (Result) {
+//		if (ServerVanList->Count == 0) {
+//			MsgBox(Format(IDS_ERROR_RWNUM_NOT_EXISTS, TrainNum));
+//		}
 	}
 	else {
 		MsgBoxErr(Format(IDS_ERROR_TRAIN_LOAD, ResultMessage));

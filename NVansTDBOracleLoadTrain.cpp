@@ -130,6 +130,8 @@ void TDBOracleLoadTrain::Operation() {
 
 			Van->Carrying = Query->FieldByName("CARRYING")->AsInteger * 1000;
 			Van->TareT = Query->FieldByName("TARE_T")->AsInteger * 100;
+			Van->InvoiceNetto = Query->FieldByName("INVOICE_NETTO")->AsInteger;
+			Van->InvoiceTare = Query->FieldByName("INVOICE_TARE")->AsInteger * 100;
 
 			FVanList->Add(Van);
 

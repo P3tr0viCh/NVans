@@ -31,16 +31,12 @@ object frmOptions: TfrmOptions
       Top = 1
       Width = 574
       Height = 310
-      ActivePage = tsServerOracleDatabase
+      ActivePage = tsLocalDatabase
       Align = alClient
       TabOrder = 0
       object tsProgram: TTabSheet
         Caption = #1055#1088#1086#1075#1088#1072#1084#1084#1072
         ImageIndex = 3
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object eOptionsPass: TLabeledEdit
           Left = 8
           Top = 40
@@ -68,19 +64,63 @@ object frmOptions: TfrmOptions
       end
       object tsLocalDatabase: TTabSheet
         Caption = #1051#1086#1082#1072#1083#1100#1085#1072#1103' '#1073#1072#1079#1072' '#1076#1072#1085#1085#1099#1093
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
-        object Label2: TLabel
-          Left = 0
-          Top = 0
-          Width = 35
+        object lblLocalDriver: TLabel
+          Left = 8
+          Top = 136
+          Width = 53
           Height = 17
-          Align = alClient
-          Alignment = taCenter
-          Caption = 'TODO'
-          Layout = tlCenter
+          Caption = #1044#1088#1072#1081#1074#1077#1088
+          FocusControl = cboxOracleDriver
+        end
+        object eLocalHost: TLabeledEdit
+          Left = 8
+          Top = 40
+          Width = 240
+          Height = 25
+          EditLabel.Width = 142
+          EditLabel.Height = 17
+          EditLabel.Caption = #1040#1076#1088#1077#1089' '#1080#1083#1080' '#1080#1084#1103' '#1089#1077#1088#1074#1077#1088#1072
+          LabelSpacing = 4
+          TabOrder = 0
+        end
+        object eLocalUser: TLabeledEdit
+          Left = 8
+          Top = 96
+          Width = 160
+          Height = 25
+          EditLabel.Width = 36
+          EditLabel.Height = 17
+          EditLabel.Caption = #1051#1086#1075#1080#1085
+          LabelSpacing = 4
+          TabOrder = 1
+        end
+        object eLocalPass: TLabeledEdit
+          Left = 176
+          Top = 96
+          Width = 160
+          Height = 25
+          EditLabel.Width = 46
+          EditLabel.Height = 17
+          EditLabel.Caption = #1055#1072#1088#1086#1083#1100
+          LabelSpacing = 4
+          PasswordChar = '#'
+          TabOrder = 2
+        end
+        object cboxLocalDriver: TComboBox
+          Left = 8
+          Top = 160
+          Width = 240
+          Height = 25
+          TabOrder = 3
+        end
+        object btnLocalCheck: TButton
+          Left = 8
+          Top = 200
+          Width = 80
+          Height = 32
+          Caption = #1055#1088#1086#1074#1077#1088#1082#1072
+          TabOrder = 4
+          OnClick = btnOracleCheckClick
         end
       end
       object tsServerOracleDatabase: TTabSheet
@@ -159,19 +199,17 @@ object frmOptions: TfrmOptions
       object tsServerMySQLDatabase: TTabSheet
         Caption = #1057#1077#1088#1074#1077#1088' MySQL'
         ImageIndex = 2
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object Label1: TLabel
           Left = 0
           Top = 0
-          Width = 35
-          Height = 17
+          Width = 566
+          Height = 278
           Align = alClient
           Alignment = taCenter
           Caption = 'TODO'
           Layout = tlCenter
+          ExplicitWidth = 35
+          ExplicitHeight = 17
         end
       end
     end

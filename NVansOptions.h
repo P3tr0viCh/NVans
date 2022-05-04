@@ -25,7 +25,6 @@ __published:
 	TTabSheet *tsServerOracleDatabase;
 	TTabSheet *tsServerMySQLDatabase;
 	TLabel *Label1;
-	TLabel *Label2;
 	TTabSheet *tsProgram;
 	TLabeledEdit *eOptionsPass;
 	TLabeledEdit *eOptionsPass2;
@@ -36,6 +35,12 @@ __published:
 	TComboBox *cboxOracleDriver;
 	TLabel *lblOracleLDriver;
 	TButton *btnOracleCheck;
+	TLabeledEdit *eLocalHost;
+	TLabeledEdit *eLocalUser;
+	TLabeledEdit *eLocalPass;
+	TComboBox *cboxLocalDriver;
+	TButton *btnLocalCheck;
+	TLabel *lblLocalDriver;
 
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);

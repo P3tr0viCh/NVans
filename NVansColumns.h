@@ -31,10 +31,12 @@ public:
 	static const PURPOSE_STATION = 7;
 	static const CARRYING = 8;
 	static const TARE_T = 9;
+	static const INVOICE_NETTO = 10;
+	static const INVOICE_TARE = 11;
 
-	static const VISIBLE_COUNT = 10;
+	static const VISIBLE_COUNT = 12;
 
-	static const COUNT = 10;
+	static const COUNT = 12;
 
 	TNVansServerColumns() {
 		LeftAlign =
@@ -56,10 +58,14 @@ public:
 	static const INVOICE_RECIPIENT = 6;
 	static const DEPART_STATION = 7;
 	static const PURPOSE_STATION = 8;
+	static const CARRYING = 9;
+	static const TARE_T = 10;
+	static const INVOICE_NETTO = 11;
+	static const INVOICE_TARE = 12;
 
-	static const VISIBLE_COUNT = 9;
+	static const VISIBLE_COUNT = 13;
 
-	static const COUNT = 9;
+	static const COUNT = 13;
 
 	TNVansLocalColumns() {
 		LeftAlign =

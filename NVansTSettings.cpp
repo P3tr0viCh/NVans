@@ -181,6 +181,19 @@ void TSettings::LoadSettings() {
 		ColorReadOnly = TColor(IniFile->ReadInteger(Section, "ColorReadOnly",
 			ColorReadOnly));
 
+		Section = "LocalConnection";
+		LocalConnection->Host = IniFile->ReadString(Section, "Host",
+			LocalConnection->Host);
+		LocalConnection->Port = IniFile->ReadString(Section, "Port",
+			LocalConnection->Port);
+		LocalConnection->User = IniFile->ReadString(Section, "User",
+			LocalConnection->User);
+		LocalConnection->Password =
+			Decrypt(IniFile->ReadString(Section, "Pass",
+			LocalConnection->Password));
+		LocalConnection->Driver = IniFile->ReadString(Section, "Driver",
+			LocalConnection->Driver);
+
 		Section = "ServerOracleConnection";
 		ServerOracleConnection->Host =
 			IniFile->ReadString(Section, "Host", ServerOracleConnection->Host);
@@ -218,6 +231,14 @@ void TSettings::SaveSettings() {
 		IniFile->WriteString(Section, "Version", GetFileVer());
 		IniFile->WriteString(Section, "OptionsPass", Encrypt(OptionsPass));
 		IniFile->WriteInteger(Section, "ColorReadOnly", ColorReadOnly);
+
+		Section = "LocalConnection";
+		IniFile->WriteString(Section, "Host", LocalConnection->Host);
+		IniFile->WriteString(Section, "Port", LocalConnection->Port);
+		IniFile->WriteString(Section, "User", LocalConnection->User);
+		IniFile->WriteString(Section, "Pass",
+			Encrypt(LocalConnection->Password));
+		IniFile->WriteString(Section, "Driver", LocalConnection->Driver);
 
 		Section = "ServerOracleConnection";
 		IniFile->WriteString(Section, "Host", ServerOracleConnection->Host);

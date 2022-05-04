@@ -55,6 +55,8 @@ void __fastcall TfrmOptions::FormCreate(TObject *Sender) {
 	PageControl->ActivePageIndex = 0;
 #endif
 
+	cboxLocalDriver->Items->Add(LoadStr(IDS_CONNECTION_MYSQL_DRIVER_0));
+
 	cboxOracleDriver->Items->Add(LoadStr(IDS_CONNECTION_ORACLE_DRIVER_0));
 	cboxOracleDriver->Items->Add(LoadStr(IDS_CONNECTION_ORACLE_DRIVER_1));
 }
@@ -84,22 +86,42 @@ void TfrmOptions::UpdateForm() {
 	eOptionsPass->Text = Settings->OptionsPass;
 	eOptionsPass2->Text = Settings->OptionsPass;
 
+	eLocalHost->Text = Settings->LocalConnection->Host;
+	eLocalUser->Text = Settings->LocalConnection->User;
+	eLocalPass->Text = Settings->LocalConnection->Password;
+	if (!IsEmpty(Settings->LocalConnection->Driver)) {
+		cboxLocalDriver->ItemIndex =
+			cboxLocalDriver->Items->IndexOf(Settings->LocalConnection->Driver);
+		if (cboxLocalDriver->ItemIndex == -1) {
+			cboxLocalDriver->ItemIndex =
+				cboxLocalDriver->Items->Add(Settings->LocalConnection->Driver);
+		}
+	}
+
 	eOracleHost->Text = Settings->ServerOracleConnection->Host;
 	eOracleService->Text = Settings->ServerOracleConnection->Service;
 	eOracleUser->Text = Settings->ServerOracleConnection->User;
 	eOraclePass->Text = Settings->ServerOracleConnection->Password;
-	cboxOracleDriver->ItemIndex = cboxOracleDriver->Items->IndexOf
-		(Settings->ServerOracleConnection->Driver);
-	if (cboxOracleDriver->ItemIndex == -1) {
+	if (!IsEmpty(Settings->ServerOracleConnection->Driver)) {
 		cboxOracleDriver->ItemIndex =
-			cboxOracleDriver->Items->Add
+			cboxOracleDriver->Items->IndexOf
 			(Settings->ServerOracleConnection->Driver);
+		if (cboxOracleDriver->ItemIndex == -1) {
+			cboxOracleDriver->ItemIndex =
+				cboxOracleDriver->Items->Add
+				(Settings->ServerOracleConnection->Driver);
+		}
 	}
 }
 
 // ---------------------------------------------------------------------------
 void TfrmOptions::UpdateSettings() {
 	Settings->OptionsPass = eOptionsPass->Text;
+
+	Settings->LocalConnection->Host = eLocalHost->Text;
+	Settings->LocalConnection->User = eLocalUser->Text;
+	Settings->LocalConnection->Password = eLocalPass->Text;
+	Settings->LocalConnection->Driver = cboxLocalDriver->Text;
 
 	Settings->ServerOracleConnection->Host = eOracleHost->Text;
 	Settings->ServerOracleConnection->Service = eOracleService->Text;

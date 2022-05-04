@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------
 
-#ifndef NVansTOracleVanH
-#define NVansTOracleVanH
+#ifndef NVansTMySQLVanH
+#define NVansTMySQLVanH
 
 #include <System.Classes.hpp>
 #include <System.SysUtils.hpp>
@@ -9,7 +9,7 @@
 #include <ObjList.h>
 
 // ---------------------------------------------------------------------------
-class TOracleVan : public TObject {
+class TMySQLVan : public TObject {
 private:
 	int FNum;
 
@@ -32,11 +32,11 @@ private:
 	void Init();
 
 public:
-	__fastcall TOracleVan();
-	__fastcall ~TOracleVan();
+	__fastcall TMySQLVan();
+	__fastcall ~TMySQLVan();
 
 	bool __fastcall Equals(TObject * Obj);
-	void __fastcall Assign(TOracleVan * Source);
+	void __fastcall Assign(TMySQLVan * Source);
 	String __fastcall ToString();
 
 	// -----------------------------------------------------------------------
@@ -65,7 +65,7 @@ public:
 };
 
 // ---------------------------------------------------------------------------
-typedef TObjList<TOracleVan>TOracleVanList;
+typedef TObjList<TMySQLVan>TMySQLVanList;
 
 // ---------------------------------------------------------------------------
 #endif

@@ -16,6 +16,8 @@
 #define IDS_GRID_HEADER_VAN_COUNT           5010
 #define IDS_GRID_HEADER_CARRYING            5011
 #define IDS_GRID_HEADER_TARE_T              5012
+#define IDS_GRID_HEADER_INVOICE_NETTO       5013
+#define IDS_GRID_HEADER_INVOICE_TARE        5014
 
 // ---------------------------------------------------------------------------
 #endif
