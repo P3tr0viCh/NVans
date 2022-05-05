@@ -211,7 +211,7 @@ bool TfrmServerList::LoadTrains() {
 	}
 
 	if (!Result) {
-		MsgBoxErr(Format(IDS_ERROR_TRAINS_LOAD, ResultMessage));
+		MsgBoxErr(Format(IDS_ERROR_ORACLE_TRAINS_LOAD, ResultMessage));
 	}
 
 	return Result;

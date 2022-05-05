@@ -31,39 +31,63 @@ object frmOptions: TfrmOptions
       Top = 1
       Width = 574
       Height = 310
-      ActivePage = tsLocalDatabase
+      ActivePage = tsProgram
       Align = alClient
       TabOrder = 0
       object tsProgram: TTabSheet
         Caption = #1055#1088#1086#1075#1088#1072#1084#1084#1072
         ImageIndex = 3
-        object eOptionsPass: TLabeledEdit
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
+        object gbOptionsPass: TGroupBox
           Left = 8
-          Top = 40
-          Width = 160
-          Height = 25
-          EditLabel.Width = 46
-          EditLabel.Height = 17
-          EditLabel.Caption = #1055#1072#1088#1086#1083#1100
-          LabelSpacing = 4
-          PasswordChar = '#'
+          Top = 16
+          Width = 344
+          Height = 84
+          Caption = #1042#1093#1086#1076' '#1074' '#1085#1072#1089#1090#1088#1086#1081#1082#1080
           TabOrder = 0
+          object eOptionsPass: TLabeledEdit
+            Left = 8
+            Top = 48
+            Width = 160
+            Height = 25
+            EditLabel.Width = 46
+            EditLabel.Height = 17
+            EditLabel.Caption = #1055#1072#1088#1086#1083#1100
+            LabelSpacing = 4
+            PasswordChar = '#'
+            TabOrder = 0
+          end
+          object eOptionsPass2: TLabeledEdit
+            Left = 176
+            Top = 48
+            Width = 160
+            Height = 25
+            EditLabel.Width = 95
+            EditLabel.Height = 17
+            EditLabel.Caption = #1055#1086#1076#1090#1074#1077#1088#1078#1076#1077#1085#1080#1077
+            LabelSpacing = 4
+            PasswordChar = '#'
+            TabOrder = 1
+          end
         end
-        object eOptionsPass2: TLabeledEdit
-          Left = 176
-          Top = 40
-          Width = 160
-          Height = 25
-          EditLabel.Width = 95
-          EditLabel.Height = 17
-          EditLabel.Caption = #1055#1086#1076#1090#1074#1077#1088#1078#1076#1077#1085#1080#1077
-          LabelSpacing = 4
-          PasswordChar = '#'
+        object cboxUseLocal: TCheckBox
+          Left = 8
+          Top = 112
+          Width = 288
+          Height = 17
+          Caption = #1048#1089#1087#1086#1083#1100#1079#1086#1074#1072#1090#1100' '#1083#1086#1082#1072#1083#1100#1085#1091#1102' '#1073#1072#1079#1091' '#1076#1072#1085#1085#1099#1093
           TabOrder = 1
         end
       end
       object tsLocalDatabase: TTabSheet
         Caption = #1051#1086#1082#1072#1083#1100#1085#1072#1103' '#1073#1072#1079#1072' '#1076#1072#1085#1085#1099#1093
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblLocalDriver: TLabel
           Left = 8
           Top = 136
@@ -126,6 +150,10 @@ object frmOptions: TfrmOptions
       object tsServerOracleDatabase: TTabSheet
         Caption = #1057#1077#1088#1074#1077#1088' Oracle'
         ImageIndex = 1
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblOracleLDriver: TLabel
           Left = 8
           Top = 136
@@ -199,17 +227,19 @@ object frmOptions: TfrmOptions
       object tsServerMySQLDatabase: TTabSheet
         Caption = #1057#1077#1088#1074#1077#1088' MySQL'
         ImageIndex = 2
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object Label1: TLabel
           Left = 0
           Top = 0
-          Width = 566
-          Height = 278
+          Width = 35
+          Height = 17
           Align = alClient
           Alignment = taCenter
           Caption = 'TODO'
           Layout = tlCenter
-          ExplicitWidth = 35
-          ExplicitHeight = 17
         end
       end
     end

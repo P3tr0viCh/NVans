@@ -2,5 +2,5 @@
 #define FORCELOGON
 #define FORCECLOSE
 #define SQL_TO_LOG
-// #define DISABLE_CHECK_CRC
+#define DISABLE_CHECK_CRC
 #endif

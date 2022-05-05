@@ -28,6 +28,8 @@ __fastcall TSettings::TSettings() {
 
 	FColorReadOnly = TColor(0x00E8E8E8);
 
+	FUseLocal = false;
+
 	FLocalConnection = new TConnectionMySQL();
 	FServerMySQLConnection = new TConnectionMySQL();
 	FServerOracleConnection = new TConnectionOracle();
@@ -55,6 +57,9 @@ bool __fastcall TSettings::Equals(TObject * Obj) {
 	if (Settings->ColorReadOnly != ColorReadOnly)
 		return false;
 
+	if (Settings->UseLocal != UseLocal)
+		return false;
+
 	if (!Settings->LocalConnection->Equals(LocalConnection))
 		return false;
 	if (!Settings->ServerMySQLConnection->Equals(ServerMySQLConnection))
@@ -71,6 +76,8 @@ void __fastcall TSettings::Assign(TSettings * Source) {
 
 	FColorReadOnly = Source->ColorReadOnly;
 
+	FUseLocal = Source->UseLocal;
+
 	FLocalConnection->Assign(Source->LocalConnection);
 	FServerMySQLConnection->Assign(Source->ServerMySQLConnection);
 	FServerOracleConnection->Assign(Source->ServerOracleConnection);
@@ -84,6 +91,8 @@ String __fastcall TSettings::ToString() {
 	S += "OptionsPass='" + OptionsPass + "'";
 	S += ",";
 	S += "ColorReadOnly='" + ColorToString(ColorReadOnly) + "'";
+	S += ",";
+	S += "UseLocal='" + BoolToStr(UseLocal) + "'";
 	S += ",";
 	S += "LocalConnection=" + LocalConnection->ToString();
 	S += ",";
@@ -180,12 +189,15 @@ void TSettings::LoadSettings() {
 			OptionsPass));
 		ColorReadOnly = TColor(IniFile->ReadInteger(Section, "ColorReadOnly",
 			ColorReadOnly));
+		UseLocal = IniFile->ReadBool(Section, "UseLocal", UseLocal);
 
 		Section = "LocalConnection";
 		LocalConnection->Host = IniFile->ReadString(Section, "Host",
 			LocalConnection->Host);
 		LocalConnection->Port = IniFile->ReadString(Section, "Port",
 			LocalConnection->Port);
+		LocalConnection->Database = IniFile->ReadString(Section, "Database",
+			LOCAL_DB_NAME);
 		LocalConnection->User = IniFile->ReadString(Section, "User",
 			LocalConnection->User);
 		LocalConnection->Password =
@@ -231,10 +243,12 @@ void TSettings::SaveSettings() {
 		IniFile->WriteString(Section, "Version", GetFileVer());
 		IniFile->WriteString(Section, "OptionsPass", Encrypt(OptionsPass));
 		IniFile->WriteInteger(Section, "ColorReadOnly", ColorReadOnly);
+		IniFile->WriteBool(Section, "UseLocal", UseLocal);
 
 		Section = "LocalConnection";
 		IniFile->WriteString(Section, "Host", LocalConnection->Host);
 		IniFile->WriteString(Section, "Port", LocalConnection->Port);
+		IniFile->WriteString(Section, "Database", LOCAL_DB_NAME);
 		IniFile->WriteString(Section, "User", LocalConnection->User);
 		IniFile->WriteString(Section, "Pass",
 			Encrypt(LocalConnection->Password));

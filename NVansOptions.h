@@ -26,8 +26,6 @@ __published:
 	TTabSheet *tsServerMySQLDatabase;
 	TLabel *Label1;
 	TTabSheet *tsProgram;
-	TLabeledEdit *eOptionsPass;
-	TLabeledEdit *eOptionsPass2;
 	TLabeledEdit *eOracleHost;
 	TLabeledEdit *eOracleService;
 	TLabeledEdit *eOracleUser;
@@ -41,6 +39,10 @@ __published:
 	TComboBox *cboxLocalDriver;
 	TButton *btnLocalCheck;
 	TLabel *lblLocalDriver;
+	TGroupBox *gbOptionsPass;
+	TLabeledEdit *eOptionsPass;
+	TLabeledEdit *eOptionsPass2;
+	TCheckBox *cboxUseLocal;
 
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
@@ -56,7 +58,7 @@ private:
 	void UpdateSettings();
 
 	enum TConnectionType {
-		ctServerOracle
+		ctLocal, ctServerOracle
 	};
 
 	TConnectionInfo * GetConnectionInfo(TConnectionType Type);

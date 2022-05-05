@@ -57,7 +57,8 @@ void TDBOracleLoadTrain::Operation() {
 		String QueryText;
 
 		if (WithJoin) {
-			QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TRAIN_JOIN_SELECT);
+			QueryText =
+				SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TRAIN_JOIN_SELECT);
 			QueryText = SQLMake(QueryText, IDS_SQL_FROM);
 			QueryText = SQLMake(QueryText, "(");
 			QueryText = SQLMake(QueryText, "(");
@@ -73,7 +74,9 @@ void TDBOracleLoadTrain::Operation() {
 			QueryText = SQLMake(QueryText, IDS_SQL_FROM);
 			QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TABLE);
 			QueryText = SQLMake(QueryText, ") B");
-			QueryText = SQLMake(QueryText,  "ON A.INVNUM = B.INVNUM AND CONCAT(TRIM(A.INVOICE_NUM), '-0') = TRIM(B.RWNUM)");
+			QueryText =
+				SQLMake(QueryText,
+				"ON A.INVNUM = B.INVNUM AND CONCAT(TRIM(A.INVOICE_NUM), '-0') = TRIM(B.RWNUM)");
 			QueryText = SQLMake(QueryText, ")");
 			QueryText = SQLMake(QueryText, IDS_SQL_ORDER);
 			QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TRAIN_ORDER);
@@ -97,6 +100,10 @@ void TDBOracleLoadTrain::Operation() {
 		TParameter * Param = Query->Parameters->ParamByName("RWNUM");
 		Param->DataType = ftFixedWideChar;
 		Param->Value = TrainNum;
+
+#ifdef SQL_TO_LOG
+		WriteToLog("PARAMS: RWNUM = " + VarToStr(Param->Value));
+#endif
 
 		Query->Open();
 
@@ -131,7 +138,8 @@ void TDBOracleLoadTrain::Operation() {
 			Van->Carrying = Query->FieldByName("CARRYING")->AsInteger * 1000;
 			Van->TareT = Query->FieldByName("TARE_T")->AsInteger * 100;
 			Van->InvoiceNetto = Query->FieldByName("INVOICE_NETTO")->AsInteger;
-			Van->InvoiceTare = Query->FieldByName("INVOICE_TARE")->AsInteger * 100;
+			Van->InvoiceTare = Query->FieldByName("INVOICE_TARE")
+				->AsInteger * 100;
 
 			FVanList->Add(Van);
 

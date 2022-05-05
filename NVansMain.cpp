@@ -21,6 +21,7 @@
 #include "NVansStringsGridHeader.h"
 
 #include "NVansTDBOracleLoadTrain.h"
+#include "NVansTDBLocalLoadVans.h"
 
 #include "NVansLogin.h"
 #include "NVansOptions.h"
@@ -49,15 +50,7 @@ void __fastcall TMain::FormCreate(TObject *Sender) {
 	FTrainNum = "";
 
 	FServerVanList = new TOracleVanList();
-	FLocalVanList = new TMySQLVanList();
-
-	if (!Settings->Load()) {
-		MsgBoxErr(IDS_ERROR_LOAD_SETTINGS);
-
-		Application->Terminate();
-
-		return;
-	}
+	FLocalVanList = new TLocalVanList();
 
 	DefaultRowHeight = Canvas->TextHeight("ComboBox") + 8;
 
@@ -93,10 +86,19 @@ void __fastcall TMain::FormCreate(TObject *Sender) {
 #ifdef _DEBUG
 	eRWNum->Text = "42";
 #else
-	sgLocal->Visible = false;
-	Splitter->Visible = false;
-	sgServer->Align = alClient;
 #endif
+
+	if (!Settings->Load()) {
+		MsgBoxErr(IDS_ERROR_LOAD_SETTINGS);
+
+		Application->Terminate();
+
+		return;
+	}
+
+	if (!Settings->UseLocal) {
+		SetUseLocal();
+	}
 }
 
 // ---------------------------------------------------------------------------
@@ -250,15 +252,24 @@ void __fastcall TMain::sgServerKeyDown(TObject *Sender, WORD &Key,
 
 // ---------------------------------------------------------------------------
 void TMain::SetControlsEnabled(const bool Enabled) {
-	eRWNum->Enabled = Enabled;
-	btnServerLoad->Enabled = Enabled;
-	btnServerList->Enabled = Enabled;
-
-	btnOptions->Enabled = Enabled;
-
+	PanelLocal->Enabled = Enabled;
 	sgServer->Enabled = Enabled;
 	Splitter->Enabled = Enabled;
 	sgLocal->Enabled = Enabled;
+	PanelServer->Enabled = Enabled;
+}
+
+// ---------------------------------------------------------------------------
+void TMain::SetUseLocal() {
+	sgServer->Align = Settings->UseLocal ? alTop : alClient;
+	if (Settings->UseLocal) {
+		sgServer->Height = ClientHeight / 2 - PanelServer->Height -
+			PanelLocal->Height + StatusBar->Height;
+		Splitter->Top = sgServer->Top + sgServer->Height;
+	}
+	Splitter->Visible = Settings->UseLocal;
+	sgLocal->Visible = Settings->UseLocal;
+	PanelLocal->Visible = Settings->UseLocal;
 }
 
 // ---------------------------------------------------------------------------
@@ -311,7 +322,7 @@ int TMain::SetServerVan(int Index, TOracleVan * Van) {
 }
 
 // ---------------------------------------------------------------------------
-int TMain::SetLocalVan(int Index, TMySQLVan * Van) {
+int TMain::SetLocalVan(int Index, TLocalVan * Van) {
 	if (Index < 0) {
 		if (!StringGridIsEmpty(sgLocal)) {
 			sgLocal->RowCount++;
@@ -319,27 +330,28 @@ int TMain::SetLocalVan(int Index, TMySQLVan * Van) {
 		Index = sgLocal->RowCount - 1;
 	}
 
-	sgLocal->Cells[ServerColumns.NUM][Index] = IntToStr(Index);
+	sgLocal->Cells[LocalColumns.NUM][Index] = IntToStr(Index);
 
-	sgLocal->Cells[ServerColumns.VANNUM][Index] = Van->VanNum;
+	sgLocal->Cells[LocalColumns.DATETIME][Index] = DateTimeToStr(Van->DateTime);
 
-	sgLocal->Cells[ServerColumns.CARGOTYPE][Index] = Van->CargoType;
+	sgLocal->Cells[LocalColumns.VANNUM][Index] = Van->VanNum;
 
-	sgLocal->Cells[ServerColumns.INVOICE_NUM][Index] = Van->InvoiceNum;
+	sgLocal->Cells[LocalColumns.CARGOTYPE][Index] = Van->CargoType;
 
-	sgLocal->Cells[ServerColumns.INVOICE_SUPPLIER][Index] =
-		Van->InvoiceSupplier;
-	sgLocal->Cells[ServerColumns.INVOICE_RECIPIENT][Index] =
+	sgLocal->Cells[LocalColumns.INVOICE_NUM][Index] = Van->InvoiceNum;
+
+	sgLocal->Cells[LocalColumns.INVOICE_SUPPLIER][Index] = Van->InvoiceSupplier;
+	sgLocal->Cells[LocalColumns.INVOICE_RECIPIENT][Index] =
 		Van->InvoiceRecipient;
 
-	sgLocal->Cells[ServerColumns.DEPART_STATION][Index] = Van->DepartStation;
-	sgLocal->Cells[ServerColumns.PURPOSE_STATION][Index] = Van->PurposeStation;
+	sgLocal->Cells[LocalColumns.DEPART_STATION][Index] = Van->DepartStation;
+	sgLocal->Cells[LocalColumns.PURPOSE_STATION][Index] = Van->PurposeStation;
 
-	sgLocal->Cells[ServerColumns.CARRYING][Index] = IntToStr(Van->Carrying);
-	sgLocal->Cells[ServerColumns.TARE_T][Index] = IntToStr(Van->TareT);
-	sgLocal->Cells[ServerColumns.INVOICE_NETTO][Index] =
+	sgLocal->Cells[LocalColumns.CARRYING][Index] = IntToStr(Van->Carrying);
+	sgLocal->Cells[LocalColumns.TARE_T][Index] = IntToStr(Van->TareT);
+	sgLocal->Cells[LocalColumns.INVOICE_NETTO][Index] =
 		IntToStr(Van->InvoiceNetto);
-	sgLocal->Cells[ServerColumns.INVOICE_TARE][Index] =
+	sgLocal->Cells[LocalColumns.INVOICE_TARE][Index] =
 		IntToStr(Van->InvoiceTare);
 
 	return Index;
@@ -369,6 +381,13 @@ void TMain::SetTrainNum(String Value) {
 }
 
 // ---------------------------------------------------------------------------
+void TMain::SetDateLocal(TDate Value) {
+	FDateLocal = Value;
+
+	LoadLocalVans();
+}
+
+// ---------------------------------------------------------------------------
 void TMain::SetServerVanList(TOracleVanList * Value) {
 	if (Value == NULL) {
 		ServerVanList->Clear();
@@ -385,7 +404,7 @@ void TMain::SetServerVanList(TOracleVanList * Value) {
 }
 
 // ---------------------------------------------------------------------------
-void TMain::SetLocalVanList(TMySQLVanList * Value) {
+void TMain::SetLocalVanList(TLocalVanList * Value) {
 	if (Value == NULL) {
 		LocalVanList->Clear();
 	}
@@ -438,7 +457,7 @@ bool TMain::LoadServerTrain(String TrainNum, bool WithJoin) {
 		}
 	}
 	else {
-		MsgBoxErr(Format(IDS_ERROR_TRAIN_LOAD, ResultMessage));
+		MsgBoxErr(Format(IDS_ERROR_ORACLE_TRAIN_LOAD, ResultMessage));
 	}
 
 	return Result;
@@ -458,18 +477,17 @@ bool TMain::LoadLocalVans() {
 
 	ProcMess();
 
-//	TDBOracleLoadTrain * DBOracleLoadTrain =
-//		new TDBOracleLoadTrain(Main->Settings->ServerOracleConnection, TrainNum,
-//		WithJoin);
+	TDBLocalLoadVans * DBLocalLoadVans =
+		new TDBLocalLoadVans(Main->Settings->LocalConnection, DateLocal);
 	try {
-//		Result = DBOracleLoadTrain->Execute();
-//
-//		ResultMessage = DBOracleLoadTrain->ErrorMessage;
-//
-//		ServerVanList = DBOracleLoadTrain->VanList;
+		Result = DBLocalLoadVans->Execute();
+
+		ResultMessage = DBLocalLoadVans->ErrorMessage;
+
+		LocalVanList = DBLocalLoadVans->VanList;
 	}
 	__finally {
-//		DBOracleLoadTrain->Free();
+		DBLocalLoadVans->Free();
 
 		EndLoad();
 
@@ -477,12 +495,9 @@ bool TMain::LoadLocalVans() {
 	}
 
 	if (Result) {
-//		if (ServerVanList->Count == 0) {
-//			MsgBox(Format(IDS_ERROR_RWNUM_NOT_EXISTS, TrainNum));
-//		}
 	}
 	else {
-		MsgBoxErr(Format(IDS_ERROR_TRAIN_LOAD, ResultMessage));
+		MsgBoxErr(Format(IDS_ERROR_LOCAL_LOAD_VANS, ResultMessage));
 	}
 
 	return Result;
@@ -497,6 +512,16 @@ void __fastcall TMain::btnServerLoadClick(TObject *Sender) {
 	}
 
 	TrainNum = eRWNum->Text;
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TMain::btnLocalLoadClick(TObject *Sender) {
+	// TODO
+#ifdef _DEBUG
+	DateLocal = StrToDate("02.02.2021");
+#else
+	DateLocal = Now();
+#endif
 }
 
 // ---------------------------------------------------------------------------
@@ -516,6 +541,9 @@ void __fastcall TMain::btnOptionsClick(TObject *Sender) {
 				MsgBoxErr(IDS_ERROR_LOAD_SETTINGS);
 
 				Application->Terminate();
+			}
+			else {
+				SetUseLocal();
 			}
 		}
 	}

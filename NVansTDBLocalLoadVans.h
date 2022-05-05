@@ -1,27 +1,22 @@
 // ---------------------------------------------------------------------------
 
-#ifndef NVansTDBCheckH
-#define NVansTDBCheckH
+#ifndef NVansTDBLocalLoadVansH
+#define NVansTDBLocalLoadVansH
+
+#include "NVansTLocalVan.h"
 
 #include "NVansTDatabaseOperation.h"
 
 // ---------------------------------------------------------------------------
-class TDBCheck : public TDatabaseOperation {
+class TDBLocalLoadVans : public TDatabaseOperation {
 private:
-	String FDBVersion;
+	TDate FDate;
 
-protected:
-	TADODataSet * DataSet;
-
-	String FQuery;
-
- 	// -----------------------------------------------------------------------
-	virtual TField * GetFieldVersion() = 0;
-
-	virtual String ConnectionToLogString() = 0;
+	TLocalVanList * FVanList;
 
 public:
-	__fastcall TDBCheck(TConnectionInfo * ConnectionInfo);
+	__fastcall TDBLocalLoadVans(TConnectionInfo * ConnectionInfo, TDate Date);
+	__fastcall ~TDBLocalLoadVans();
 
 	void OperationStart();
 	void OperationEndOK();
@@ -30,7 +25,9 @@ public:
 	void Operation();
 
 	// -----------------------------------------------------------------------
-	__property String DBVersion = {read = FDBVersion};
+	__property TDate Date = {read = FDate};
+
+	__property TLocalVanList * VanList = {read = FVanList};
 };
 
 // ---------------------------------------------------------------------------

@@ -8,34 +8,29 @@
 #include "NVansStrings.h"
 #include "NVansStringsSQL.h"
 
-#include "NVansTDBCheckOracle.h"
+#include "NVansTDBCheckMySQL.h"
 
 // ---------------------------------------------------------------------------
 #pragma package(smart_init)
 
 // ---------------------------------------------------------------------------
-__fastcall TDBCheckOracle::TDBCheckOracle(TConnectionOracle * Connection)
+__fastcall TDBCheckMySQL::TDBCheckMySQL(TConnectionMySQL * Connection)
 	: TDBCheck(Connection) {
-	FQuery = LoadStr(IDS_SQL_ORACLE_VERSION);
+	FQuery = LoadStr(IDS_SQL_MYSQL_VERSION);
 }
 
 // ---------------------------------------------------------------------------
-TField * TDBCheckOracle::GetFieldVersion() {
-	TField * F = DataSet->Fields->FindField("BANNER_FULL");
-	if (F == NULL) {
-		F = DataSet->Fields->Fields[0];
-	}
-
-	return F;
+TField * TDBCheckMySQL::GetFieldVersion() {
+	return DataSet->Fields->Fields[0];
 }
 
 // ---------------------------------------------------------------------------
-String TDBCheckOracle::ConnectionToLogString() {
+String TDBCheckMySQL::ConnectionToLogString() {
 	return Format(IDS_LOG_DATABASE_CONNECT,
 		ARRAYOFCONST((ConnectionInfo->User,
-		((TConnectionOracle*)ConnectionInfo)->Host,
-		((TConnectionOracle*)ConnectionInfo)->Port,
-		((TConnectionOracle*)ConnectionInfo)->Service)));
+		((TConnectionMySQL*)ConnectionInfo)->Host,
+		((TConnectionMySQL*)ConnectionInfo)->Port,
+		((TConnectionMySQL*)ConnectionInfo)->Database)));
 }
 
 // ---------------------------------------------------------------------------

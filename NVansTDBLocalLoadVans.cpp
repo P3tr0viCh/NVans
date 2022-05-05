@@ -10,42 +10,41 @@
 #include "NVansStrings.h"
 #include "NVansStringsSQL.h"
 
-#include "NVansTDBOracleLoadTrains.h"
+#include "NVansTDBLocalLoadVans.h"
 
 // ---------------------------------------------------------------------------
 #pragma package(smart_init)
 
 // ---------------------------------------------------------------------------
-__fastcall TDBOracleLoadTrains::TDBOracleLoadTrains
-	(TConnectionInfo * ConnectionInfo, TDate Date)
-	: TDatabaseOperation(ConnectionInfo) {
-	FTrainList = new TOracleTrainList();
+__fastcall TDBLocalLoadVans::TDBLocalLoadVans(TConnectionInfo * ConnectionInfo,
+	TDate Date) : TDatabaseOperation(ConnectionInfo) {
+	FVanList = new TLocalVanList();
 
 	FDate = Date;
 }
 
 // ---------------------------------------------------------------------------
-__fastcall TDBOracleLoadTrains::~TDBOracleLoadTrains() {
-	FTrainList->Free();
+__fastcall TDBLocalLoadVans::~TDBLocalLoadVans() {
+	FVanList->Free();
 }
 
 // ---------------------------------------------------------------------------
-void TDBOracleLoadTrains::OperationStart() {
+void TDBLocalLoadVans::OperationStart() {
 }
 
 // ---------------------------------------------------------------------------
-void TDBOracleLoadTrains::OperationEndOK() {
-	WriteToLog(Format(IDS_LOG_ORACLE_LOAD_TRAINS_OK,
-		ARRAYOFCONST((TrainList->Count))));
+void TDBLocalLoadVans::OperationEndOK() {
+	WriteToLog(Format(IDS_LOG_LOCAL_LOAD_VANS_OK,
+		ARRAYOFCONST((VanList->Count))));
 }
 
 // ---------------------------------------------------------------------------
-void TDBOracleLoadTrains::OperationEndFail() {
-	WriteToLog(Format(IDS_LOG_ORACLE_LOAD_TRAINS_FAIL, ErrorMessage));
+void TDBLocalLoadVans::OperationEndFail() {
+	WriteToLog(Format(IDS_LOG_LOCAL_LOAD_VANS_FAIL, ErrorMessage));
 }
 
 // ---------------------------------------------------------------------------
-void TDBOracleLoadTrains::Operation() {
+void TDBLocalLoadVans::Operation() {
 	Connection->Open();
 
 	TADOQuery * Query = new TADOQuery(NULL);
@@ -54,15 +53,13 @@ void TDBOracleLoadTrains::Operation() {
 
 		String QueryText;
 
-		QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TRAINS_SELECT);
+		QueryText = SQLMake(QueryText, IDS_SQL_LOCAL_MVANS_SELECT);
 		QueryText = SQLMake(QueryText, IDS_SQL_FROM);
-		QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TABLE);
+		QueryText = SQLMake(QueryText, IDS_SQL_LOCAL_MVANS_TABLE);
 		QueryText = SQLMake(QueryText, IDS_SQL_WHERE);
-		QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TRAINS_WHERE);
-		QueryText = SQLMake(QueryText, IDS_SQL_GROUP);
-		QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TRAINS_GROUP);
+		QueryText = SQLMake(QueryText, IDS_SQL_LOCAL_MVANS_WHERE);
 		QueryText = SQLMake(QueryText, IDS_SQL_ORDER);
-		QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TRAINS_ORDER);
+		QueryText = SQLMake(QueryText, IDS_SQL_LOCAL_MVANS_ORDER);
 
 		Query->SQL->Text = QueryText;
 
@@ -84,7 +81,7 @@ void TDBOracleLoadTrains::Operation() {
 
 		Query->Open();
 
-		TOracleTrain * Train;
+		TLocalVan * Van;
 
 		while (!Query->Eof) {
 			ProcMess();
@@ -92,13 +89,34 @@ void TDBOracleLoadTrains::Operation() {
 				throw EAbort(IDS_LOG_ERROR_TERMINATED_IN_WORK_PROGRESS);
 			}
 
-			Train = new TOracleTrain();
+			Van = new TLocalVan();
 
-			Train->TrainNum = Trim(Query->FieldByName("RWNUM")->AsString);
-			Train->DateTime = Query->FieldByName("DATETIME")->AsDateTime;
-			Train->VanCount = Query->FieldByName("VAN_COUNT")->AsInteger;
+			Van->ID = Query->FieldByName("id")->AsInteger;
 
-			FTrainList->Add(Train);
+			Van->DateTime = Query->FieldByName("bdatetime")->AsDateTime;
+
+			Van->VanNum = Query->FieldByName("invnum")->AsString;
+
+			Van->CargoType = Trim(Query->FieldByName("cargotype")->AsString);
+
+			Van->InvoiceNum = Trim(Query->FieldByName("invoice_num")->AsString);
+
+			Van->InvoiceSupplier =
+				Trim(Query->FieldByName("invoice_supplier")->AsString);
+			Van->InvoiceRecipient =
+				Trim(Query->FieldByName("invoice_consign")->AsString);
+
+			Van->DepartStation =
+				Trim(Query->FieldByName("depart_station")->AsString);
+			Van->PurposeStation =
+				Trim(Query->FieldByName("purpose_station")->AsString);
+
+			Van->Carrying = Query->FieldByName("carrying")->AsInteger;
+			Van->TareT = Query->FieldByName("tare_t")->AsInteger;
+			Van->InvoiceNetto = Query->FieldByName("invoice_netto")->AsInteger;
+			Van->InvoiceTare = Query->FieldByName("invoice_tare")->AsInteger;
+
+			FVanList->Add(Van);
 
 			Query->Next();
 		}

@@ -21,7 +21,7 @@ object Main: TMain
   TextHeight = 17
   object Splitter: TSplitter
     Left = 0
-    Top = 192
+    Top = 168
     Width = 704
     Height = 8
     Cursor = crSizeNS
@@ -51,7 +51,7 @@ object Main: TMain
     Left = 0
     Top = 48
     Width = 704
-    Height = 144
+    Height = 120
     Align = alTop
     ColCount = 2
     DefaultDrawing = False
@@ -64,16 +64,18 @@ object Main: TMain
   end
   object sgLocal: TStringGrid
     Left = 0
-    Top = 200
+    Top = 176
     Width = 704
-    Height = 144
+    Height = 120
     Align = alClient
     ColCount = 2
     DefaultDrawing = False
     RowCount = 2
-    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goTabs, goFixedColClick]
+    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goTabs, goFixedColClick]
     TabOrder = 2
     OnDrawCell = sgLocalDrawCell
+    ExplicitTop = 200
+    ExplicitHeight = 144
   end
   object PanelServer: TPanel
     Left = 0
@@ -93,7 +95,7 @@ object Main: TMain
       Height = 32
       Anchors = [akTop, akRight]
       Caption = #1047#1072#1082#1088#1099#1090#1100
-      TabOrder = 3
+      TabOrder = 4
       OnClick = btnCloseClick
     end
     object eRWNum: TLabeledEdit
@@ -126,7 +128,7 @@ object Main: TMain
       Height = 32
       Anchors = [akTop, akRight]
       Caption = #1053#1072#1089#1090#1088#1086#1081#1082#1080
-      TabOrder = 2
+      TabOrder = 3
       OnClick = btnOptionsClick
     end
     object btnServerList: TButton
@@ -135,8 +137,27 @@ object Main: TMain
       Width = 80
       Height = 32
       Caption = #1057#1087#1080#1089#1086#1082
-      TabOrder = 4
+      TabOrder = 2
       OnClick = btnServerListClick
+    end
+  end
+  object PanelLocal: TPanel
+    Left = 0
+    Top = 296
+    Width = 704
+    Height = 48
+    Align = alBottom
+    BevelOuter = bvNone
+    TabOrder = 3
+    ExplicitTop = 303
+    object btnLocalLoad: TButton
+      Left = 8
+      Top = 8
+      Width = 80
+      Height = 32
+      Caption = #1047#1072#1075#1088#1091#1079#1080#1090#1100
+      TabOrder = 0
+      OnClick = btnLocalLoadClick
     end
   end
   object ApplicationEvents: TApplicationEvents

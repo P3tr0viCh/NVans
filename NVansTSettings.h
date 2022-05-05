@@ -10,6 +10,8 @@
 
 #define CFG_EXT ".cfg"
 
+#define LOCAL_DB_NAME "wdb_disk"
+
 // ---------------------------------------------------------------------------
 class TSettings : public TObject {
 private:
@@ -20,6 +22,8 @@ private:
 	String FConfigFileName;
 
 	TColor FColorReadOnly;
+
+	bool FUseLocal;
 
 	TConnectionMySQL * FLocalConnection;
 	TConnectionMySQL * FServerMySQLConnection;
@@ -57,6 +61,8 @@ public:
 
 	__property TColor ColorReadOnly = {
 		read = FColorReadOnly, write = FColorReadOnly};
+
+	__property bool UseLocal = {read = FUseLocal, write = FUseLocal};
 
 	__property TConnectionMySQL * LocalConnection = {read = FLocalConnection};
 	__property TConnectionMySQL * ServerMySQLConnection = {

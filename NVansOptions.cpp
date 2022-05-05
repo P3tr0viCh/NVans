@@ -15,6 +15,7 @@
 #include "NVansMain.h"
 
 #include "NVansTDBCheckOracle.h"
+#include "NVansTDBCheckMySQL.h"
 
 #include "NVansOptions.h"
 
@@ -55,7 +56,11 @@ void __fastcall TfrmOptions::FormCreate(TObject *Sender) {
 	PageControl->ActivePageIndex = 0;
 #endif
 
+	btnLocalCheck->Tag = ctLocal;
+	btnOracleCheck->Tag = ctServerOracle;
+
 	cboxLocalDriver->Items->Add(LoadStr(IDS_CONNECTION_MYSQL_DRIVER_0));
+	cboxLocalDriver->Items->Add(LoadStr(IDS_CONNECTION_MYSQL_DRIVER_1));
 
 	cboxOracleDriver->Items->Add(LoadStr(IDS_CONNECTION_ORACLE_DRIVER_0));
 	cboxOracleDriver->Items->Add(LoadStr(IDS_CONNECTION_ORACLE_DRIVER_1));
@@ -85,6 +90,8 @@ void TfrmOptions::ControlSetFocus(TWinControl * Control) {
 void TfrmOptions::UpdateForm() {
 	eOptionsPass->Text = Settings->OptionsPass;
 	eOptionsPass2->Text = Settings->OptionsPass;
+
+	cboxUseLocal->Checked = Settings->UseLocal;
 
 	eLocalHost->Text = Settings->LocalConnection->Host;
 	eLocalUser->Text = Settings->LocalConnection->User;
@@ -117,6 +124,8 @@ void TfrmOptions::UpdateForm() {
 // ---------------------------------------------------------------------------
 void TfrmOptions::UpdateSettings() {
 	Settings->OptionsPass = eOptionsPass->Text;
+
+	Settings->UseLocal = cboxUseLocal->Checked;
 
 	Settings->LocalConnection->Host = eLocalHost->Text;
 	Settings->LocalConnection->User = eLocalUser->Text;
@@ -155,14 +164,26 @@ TConnectionInfo * TfrmOptions::GetConnectionInfo(TConnectionType Type) {
 	TConnectionInfo * Connection;
 
 	switch (Type) {
+	case ctLocal:
+		Connection = new TConnectionMySQL();
+
+		Connection->User = eLocalUser->Text;
+		Connection->Password = eLocalPass->Text;
+
+		((TConnectionMySQL*) Connection)->Host = eLocalHost->Text;
+		((TConnectionMySQL*) Connection)->Driver = cboxLocalDriver->Text;
+		((TConnectionMySQL*) Connection)->Database =
+			Settings->LocalConnection->Database;
+
+		break;
 	case ctServerOracle:
 		Connection = new TConnectionOracle();
 
 		Connection->User = eOracleUser->Text;
 		Connection->Password = eOraclePass->Text;
 
-		((TConnectionOracle*) Connection)->Driver = cboxOracleDriver->Text;
 		((TConnectionOracle*) Connection)->Host = eOracleHost->Text;
+		((TConnectionOracle*) Connection)->Driver = cboxOracleDriver->Text;
 		((TConnectionOracle*) Connection)->Service = eOracleService->Text;
 
 		break;
@@ -174,31 +195,39 @@ TConnectionInfo * TfrmOptions::GetConnectionInfo(TConnectionType Type) {
 // ---------------------------------------------------------------------------
 void __fastcall TfrmOptions::btnOracleCheckClick(TObject *Sender) {
 	TConnectionInfo * ConnectionInfo;
-	TDatabaseOperation * DatabaseOperation;
+	TDBCheck * DBCheck;
 
 	bool Result = false;
 	String ResultMessage;
 
 	ShowWaitCursor();
 	try {
-		ConnectionInfo = GetConnectionInfo(ctServerOracle);
+		TConnectionType ConnectionType = ((TButton*)Sender)->Tag;
 
-		DatabaseOperation =
-			new TDBCheckOracle((TConnectionOracle*) ConnectionInfo);
+		ConnectionInfo = GetConnectionInfo(ConnectionType);
 
-		Result = DatabaseOperation->Execute();
+		switch (ConnectionType) {
+		case ctLocal:
+			DBCheck = new TDBCheckMySQL((TConnectionMySQL*) ConnectionInfo);
+			break;
+		case ctServerOracle:
+			DBCheck = new TDBCheckOracle((TConnectionOracle*) ConnectionInfo);
+			break;
+		}
+
+		Result = DBCheck->Execute();
 
 		if (Result) {
 			ResultMessage = Format(IDS_MSG_DATABASE_CONNECT_OK,
-				((TDBCheckOracle*) DatabaseOperation)->DBVersion);
+				DBCheck->DBVersion);
 		}
 		else {
 			ResultMessage = Format(IDS_MSG_DATABASE_CONNECT_FAIL,
-				DatabaseOperation->ErrorMessage);
+				DBCheck->ErrorMessage);
 		}
 	}
 	__finally {
-		DatabaseOperation->Free();
+		DBCheck->Free();
 		ConnectionInfo->Free();
 
 		RestoreCursor();

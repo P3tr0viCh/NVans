@@ -4,19 +4,19 @@
 
 #include "NVansStrings.h"
 
-#include "NVansTMySQLVan.h"
+#include "NVansTLocalVan.h"
 
 // ---------------------------------------------------------------------------
 #pragma package(smart_init)
 
 // ---------------------------------------------------------------------------
-__fastcall TMySQLVan::TMySQLVan() {
+__fastcall TLocalVan::TLocalVan() {
 	Init();
 }
 
 // ---------------------------------------------------------------------------
-void TMySQLVan::Init() {
-	FNum = 0;
+void TLocalVan::Init() {
+	FID = -1;
 
 	FCarrying = 0;
 	FTareT = 0;
@@ -25,19 +25,19 @@ void TMySQLVan::Init() {
 }
 
 // ---------------------------------------------------------------------------
-__fastcall TMySQLVan::~TMySQLVan() {
+__fastcall TLocalVan::~TLocalVan() {
 }
 
 // ---------------------------------------------------------------------------
-bool __fastcall TMySQLVan::Equals(TObject * Obj) {
+bool __fastcall TLocalVan::Equals(TObject * Obj) {
 	if (this == Obj)
 		return true;
 	if (Obj == NULL || ClassType() != Obj->ClassType())
 		return false;
 
-	TMySQLVan * Van = (TMySQLVan*) Obj;
+	TLocalVan * Van = (TLocalVan*) Obj;
 
-	if (Num != Van->Num || VanNum != Van->VanNum ||
+	if (ID != Van->ID || DateTime != Van->DateTime || VanNum != Van->VanNum ||
 		CargoType != Van->CargoType || InvoiceNum != Van->InvoiceNum ||
 		InvoiceSupplier != Van->InvoiceSupplier ||
 		InvoiceRecipient != Van->InvoiceRecipient ||
@@ -52,8 +52,10 @@ bool __fastcall TMySQLVan::Equals(TObject * Obj) {
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TMySQLVan::Assign(TMySQLVan * Source) {
-	Num = Source->Num;
+void __fastcall TLocalVan::Assign(TLocalVan * Source) {
+	ID = Source->ID;
+
+	DateTime = Source->DateTime;
 
 	VanNum = Source->VanNum;
 
@@ -74,11 +76,13 @@ void __fastcall TMySQLVan::Assign(TMySQLVan * Source) {
 }
 
 // ---------------------------------------------------------------------------
-String __fastcall TMySQLVan::ToString() {
+String __fastcall TLocalVan::ToString() {
 	String S;
 
-	S = "TMySQLVan{";
-	S += "Num=" + IntToStr(Num);
+	S = "TLocalVan{";
+	S += "ID=" + IntToStr(ID);
+	S += ",";
+	S += "DateTime=" + DateTimeToStr(DateTime);
 	S += ",";
 	S += "VanNum=" + VanNum;
 	S += ",";

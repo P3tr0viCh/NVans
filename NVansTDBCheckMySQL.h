@@ -1,15 +1,15 @@
 // ---------------------------------------------------------------------------
 
-#ifndef NVansTDBCheckOracleH
-#define NVansTDBCheckOracleH
+#ifndef NVansTDBCheckMySQLH
+#define NVansTDBCheckMySQLH
 
 #include "NVansTDBCheck.h"
-#include "NVansTConnectionOracle.h"
+#include "NVansTConnectionMySQL.h"
 
 // ---------------------------------------------------------------------------
-class TDBCheckOracle : public TDBCheck {
+class TDBCheckMySQL : public TDBCheck {
 public:
-	__fastcall TDBCheckOracle(TConnectionOracle * Connection);
+	__fastcall TDBCheckMySQL(TConnectionMySQL * Connection);
 
 	TField * GetFieldVersion();
 

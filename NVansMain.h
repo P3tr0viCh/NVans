@@ -14,8 +14,9 @@
 #include <Vcl.ExtCtrls.hpp>
 
 #include "NVansTSettings.h"
+
 #include "NVansTOracleVan.h"
-#include "NVansTMySQLVan.h"
+#include "NVansTLocalVan.h"
 
 // ---------------------------------------------------------------------------
 class TMain : public TForm {
@@ -31,6 +32,8 @@ __published:
 	TButton *btnServerLoad;
 	TButton *btnOptions;
 	TButton *btnServerList;
+	TPanel *PanelLocal;
+	TButton *btnLocalLoad;
 
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
@@ -50,14 +53,17 @@ __published:
 	void __fastcall btnServerListClick(TObject *Sender);
 	void __fastcall sgServerKeyDown(TObject *Sender, WORD &Key,
 		TShiftState Shift);
+	void __fastcall btnLocalLoadClick(TObject *Sender);
 
 private:
 	TSettings * FSettings;
 
 	String FTrainNum;
 
+	TDate FDateLocal;
+
 	TOracleVanList * FServerVanList;
-	TMySQLVanList * FLocalVanList;
+	TLocalVanList * FLocalVanList;
 
 	// -----------------------------------------------------------------------
 	void CreateServerColumns();
@@ -65,13 +71,17 @@ private:
 
 	void SetControlsEnabled(const bool Enabled);
 
+	void SetUseLocal();
+
 	int SetServerVan(int Index, TOracleVan * Van);
-	int SetLocalVan(int Index, TMySQLVan * Van);
+	int SetLocalVan(int Index, TLocalVan * Van);
 
 	void SetTrainNum(String Value);
 
+	void SetDateLocal(TDate Value);
+
 	void SetServerVanList(TOracleVanList * Value);
-	void SetLocalVanList(TMySQLVanList * Value);
+	void SetLocalVanList(TLocalVanList * Value);
 
 	bool LoadServerTrain(String TrainNum, bool WithJoin);
 	bool LoadLocalVans();
@@ -90,9 +100,11 @@ public:
 
 	__property String TrainNum = {read = FTrainNum, write = SetTrainNum};
 
+	__property TDate DateLocal = {read = FDateLocal, write = SetDateLocal};
+
 	__property TOracleVanList * ServerVanList = {
 		read = FServerVanList, write = SetServerVanList};
-	__property TMySQLVanList * LocalVanList = {
+	__property TLocalVanList * LocalVanList = {
 		read = FLocalVanList, write = SetLocalVanList};
 };
 

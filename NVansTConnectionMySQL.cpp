@@ -70,7 +70,7 @@ String __fastcall TConnectionMySQL::ToString() {
 // ---------------------------------------------------------------------------
 String TConnectionMySQL::GetConnectionString() {
 	return Format(IDS_CONNECTION_MYSQL,
-		ARRAYOFCONST((Driver, Host, Database, User, Password)));
+		ARRAYOFCONST((Driver, Host, Port, Database, User, Password)));
 }
 
 // ---------------------------------------------------------------------------

@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------
 
-#ifndef NVansTMySQLVanH
-#define NVansTMySQLVanH
+#ifndef NVansTLocalVanH
+#define NVansTLocalVanH
 
 #include <System.Classes.hpp>
 #include <System.SysUtils.hpp>
@@ -9,9 +9,11 @@
 #include <ObjList.h>
 
 // ---------------------------------------------------------------------------
-class TMySQLVan : public TObject {
+class TLocalVan : public TObject {
 private:
-	int FNum;
+	int FID;
+
+	TDateTime FDateTime;
 
 	String FVanNum;
 
@@ -32,15 +34,17 @@ private:
 	void Init();
 
 public:
-	__fastcall TMySQLVan();
-	__fastcall ~TMySQLVan();
+	__fastcall TLocalVan();
+	__fastcall ~TLocalVan();
 
 	bool __fastcall Equals(TObject * Obj);
-	void __fastcall Assign(TMySQLVan * Source);
+	void __fastcall Assign(TLocalVan * Source);
 	String __fastcall ToString();
 
 	// -----------------------------------------------------------------------
-	__property int Num = {read = FNum, write = FNum};
+	__property int ID = {read = FID, write = FID};
+
+	__property TDateTime DateTime = {read = FDateTime, write = FDateTime};
 
 	__property String VanNum = {read = FVanNum, write = FVanNum};
 
@@ -65,7 +69,7 @@ public:
 };
 
 // ---------------------------------------------------------------------------
-typedef TObjList<TMySQLVan>TMySQLVanList;
+typedef TObjList<TLocalVan>TLocalVanList;
 
 // ---------------------------------------------------------------------------
 #endif

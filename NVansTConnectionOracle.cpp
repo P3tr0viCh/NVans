@@ -70,7 +70,7 @@ String __fastcall TConnectionOracle::ToString() {
 // ---------------------------------------------------------------------------
 String TConnectionOracle::GetConnectionString() {
 	return Format(IDS_CONNECTION_ORACLE,
-		ARRAYOFCONST((Driver, Host, Service, User, Password)));
+		ARRAYOFCONST((Driver, Host, Port, Service, User, Password)));
 }
 
 // ---------------------------------------------------------------------------

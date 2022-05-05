@@ -37,18 +37,11 @@ void TDBCheck::Operation() {
 	Connection->Open();
 
 	try {
-		TADODataSet * DataSet = new TADODataSet(NULL);
+		DataSet = new TADODataSet(NULL);
 		try {
 			DataSet->Recordset = Connection->Execute(FQuery);
 
-			TField * F = DataSet->Fields->FindField("BANNER_FULL");
-
-			if (F == NULL) {
-				FDBVersion = DataSet->Fields->Fields[0]->AsString;
-			}
-			else {
-				FDBVersion = F->AsString;
-			}
+            FDBVersion = GetFieldVersion()->AsString;
 		}
 		__finally {
 			DataSet->Free();
