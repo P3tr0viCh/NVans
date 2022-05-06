@@ -74,8 +74,6 @@ object Main: TMain
     Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goTabs, goFixedColClick]
     TabOrder = 2
     OnDrawCell = sgLocalDrawCell
-    ExplicitTop = 200
-    ExplicitHeight = 144
   end
   object PanelServer: TPanel
     Left = 0
@@ -149,13 +147,12 @@ object Main: TMain
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 3
-    ExplicitTop = 303
     object btnLocalLoad: TButton
       Left = 8
       Top = 8
       Width = 80
       Height = 32
-      Caption = #1047#1072#1075#1088#1091#1079#1080#1090#1100
+      Caption = #1054#1073#1085#1086#1074#1080#1090#1100
       TabOrder = 0
       OnClick = btnLocalLoadClick
     end

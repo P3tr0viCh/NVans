@@ -15,6 +15,8 @@
 // ---------------------------------------------------------------------------
 #pragma package(smart_init)
 
+#define BRUTTO_BIT 0x08
+
 // ---------------------------------------------------------------------------
 __fastcall TDBLocalLoadVans::TDBLocalLoadVans(TConnectionInfo * ConnectionInfo,
 	TDate Date) : TDatabaseOperation(ConnectionInfo) {
@@ -72,7 +74,7 @@ void TDBLocalLoadVans::Operation() {
 		Param1->Value = Date;
 		TParameter * Param2 = Query->Parameters->ParamByName("DATE_TO");
 		Param2->DataType = ftDate;
-		Param2->Value = Date + 1;
+		Param2->Value = Date + 2;
 
 #ifdef SQL_TO_LOG
 		WriteToLog("PARAMS: DATE_FROM = " + VarToStr(Param1->Value) + ", " +
@@ -115,6 +117,8 @@ void TDBLocalLoadVans::Operation() {
 			Van->TareT = Query->FieldByName("tare_t")->AsInteger;
 			Van->InvoiceNetto = Query->FieldByName("invoice_netto")->AsInteger;
 			Van->InvoiceTare = Query->FieldByName("invoice_tare")->AsInteger;
+
+			Van->IsBrutto = Query->FieldByName("status")->AsInteger & BRUTTO_BIT;
 
 			FVanList->Add(Van);
 

@@ -8,6 +8,7 @@
 #define IDS_SQL_WHERE               			6002
 #define IDS_SQL_GROUP               			6003
 #define IDS_SQL_ORDER               			6004
+#define IDS_SQL_JOIN                            6005
 
 #define IDS_SQL_MYSQL_VERSION                   6010
 #define IDS_SQL_ORACLE_VERSION					6011
@@ -20,6 +21,7 @@
 #define IDS_SQL_ORACLE_NVANS_TRAIN_ORDER		6202
 
 #define IDS_SQL_ORACLE_NVANS_TRAIN_JOIN_SELECT  6210
+#define IDS_SQL_ORACLE_NVANS_TRAIN_JOIN_JOIN  	6211
 
 #define IDS_SQL_ORACLE_NVANS_TRAINS_SELECT		6220
 #define IDS_SQL_ORACLE_NVANS_TRAINS_WHERE		6221

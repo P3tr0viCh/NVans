@@ -68,15 +68,14 @@ void TDBOracleLoadTrain::Operation() {
 			QueryText = SQLMake(QueryText, IDS_SQL_WHERE);
 			QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TRAIN_WHERE);
 			QueryText = SQLMake(QueryText, ") A");
-			QueryText = SQLMake(QueryText, "LEFT JOIN");
+			QueryText = SQLMake(QueryText, IDS_SQL_JOIN);
 			QueryText = SQLMake(QueryText, "(");
 			QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TRAIN_SELECT);
 			QueryText = SQLMake(QueryText, IDS_SQL_FROM);
 			QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TABLE);
 			QueryText = SQLMake(QueryText, ") B");
 			QueryText =
-				SQLMake(QueryText,
-				"ON A.INVNUM = B.INVNUM AND CONCAT(TRIM(A.INVOICE_NUM), '-0') = TRIM(B.RWNUM)");
+				SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TRAIN_JOIN_JOIN);
 			QueryText = SQLMake(QueryText, ")");
 			QueryText = SQLMake(QueryText, IDS_SQL_ORDER);
 			QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TRAIN_ORDER);

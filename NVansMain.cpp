@@ -415,7 +415,9 @@ void TMain::SetLocalVanList(TLocalVanList * Value) {
 	StringGridClear(sgLocal);
 
 	for (int i = 0; i < LocalVanList->Count; i++) {
-		SetLocalVan(-1, LocalVanList->Items[i]);
+		if (LocalVanList->Items[i]->IsBrutto) {
+			SetLocalVan(-1, LocalVanList->Items[i]);
+		}
 	}
 }
 

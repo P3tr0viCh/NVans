@@ -22,6 +22,8 @@ void TLocalVan::Init() {
 	FTareT = 0;
 	FInvoiceNetto = 0;
 	FInvoiceTare = 0;
+
+    FBrutto = false;
 }
 
 // ---------------------------------------------------------------------------
@@ -44,7 +46,8 @@ bool __fastcall TLocalVan::Equals(TObject * Obj) {
 		DepartStation != Van->DepartStation ||
 		PurposeStation != Van->PurposeStation || Carrying != Van->Carrying ||
 		TareT != Van->TareT || InvoiceNetto != Van->InvoiceNetto ||
-		InvoiceTare != Van->InvoiceTare) {
+		InvoiceTare != Van->InvoiceTare||
+		IsBrutto != Van->IsBrutto) {
 		return false;
 	}
 
@@ -73,6 +76,8 @@ void __fastcall TLocalVan::Assign(TLocalVan * Source) {
 	TareT = Source->TareT;
 	InvoiceNetto = Source->InvoiceNetto;
 	InvoiceTare = Source->InvoiceTare;
+
+	IsBrutto = Source->IsBrutto;
 }
 
 // ---------------------------------------------------------------------------
@@ -105,6 +110,8 @@ String __fastcall TLocalVan::ToString() {
 	S += "InvoiceNetto='" + IntToStr(InvoiceNetto) + "'";
 	S += ",";
 	S += "InvoiceTare='" + IntToStr(InvoiceTare) + "'";
+	S += ",";
+	S += "IsBrutto='" + BoolToStr(IsBrutto, true) + "'";
 	S += "}";
 
 	return S;
