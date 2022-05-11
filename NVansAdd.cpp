@@ -14,7 +14,6 @@
 // ---------------------------------------------------------------------------
 #pragma package(smart_init)
 
-
 // ---------------------------------------------------------------------------
 String LoadSQL(NativeUInt Ident) {
 	String Result;
@@ -39,12 +38,27 @@ String LoadSQL(NativeUInt Ident) {
 
 // ---------------------------------------------------------------------------
 String SQLMake(String S1, String S2) {
-	return ConcatStrings(S1, S2, SPACE);
+	return S1 + SPACE + S2;
 }
 
 // ---------------------------------------------------------------------------
 String SQLMake(String S1, NativeUInt Ident) {
-	return ConcatStrings(S1, LoadStr(Ident), SPACE);
+	return S1 + SPACE + LoadStr(Ident);
+}
+
+// ---------------------------------------------------------------------------
+TParameter * GetParam(TADOQuery * Query, String Name, TFieldType DataType) {
+	TParameter * Parameter = Query->Parameters->ParamByName(Name);
+	Parameter->DataType = DataType;
+	return Parameter;
+}
+
+// ---------------------------------------------------------------------------
+TParameter * GetParam(TADOQuery * Query, String Name, TFieldType DataType,
+	Variant Value) {
+	TParameter * Parameter = GetParam(Query, Name, DataType);
+	Parameter->Value = Value;
+	return Parameter;
 }
 
 // ---------------------------------------------------------------------------

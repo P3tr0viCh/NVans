@@ -55,6 +55,7 @@ void TDBLocalLoadVans::Operation() {
 
 		String QueryText;
 
+		QueryText = SQLMake(QueryText, IDS_SQL_SELECT);
 		QueryText = SQLMake(QueryText, IDS_SQL_LOCAL_MVANS_SELECT);
 		QueryText = SQLMake(QueryText, IDS_SQL_FROM);
 		QueryText = SQLMake(QueryText, IDS_SQL_LOCAL_MVANS_TABLE);
@@ -118,7 +119,8 @@ void TDBLocalLoadVans::Operation() {
 			Van->InvoiceNetto = Query->FieldByName("invoice_netto")->AsInteger;
 			Van->InvoiceTare = Query->FieldByName("invoice_tare")->AsInteger;
 
-			Van->IsBrutto = Query->FieldByName("status")->AsInteger & BRUTTO_BIT;
+			Van->IsBrutto = Query->FieldByName("status")
+				->AsInteger & BRUTTO_BIT;
 
 			FVanList->Add(Van);
 

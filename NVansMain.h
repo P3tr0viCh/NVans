@@ -34,6 +34,8 @@ __published:
 	TButton *btnServerList;
 	TPanel *PanelLocal;
 	TButton *btnLocalLoad;
+	TPanel *PanelCommon;
+	TButton *btnSaveVanProps;
 
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
@@ -54,6 +56,7 @@ __published:
 	void __fastcall sgServerKeyDown(TObject *Sender, WORD &Key,
 		TShiftState Shift);
 	void __fastcall btnLocalLoadClick(TObject *Sender);
+	void __fastcall btnSaveVanPropsClick(TObject *Sender);
 
 private:
 	TSettings * FSettings;
@@ -83,8 +86,9 @@ private:
 	void SetServerVanList(TOracleVanList * Value);
 	void SetLocalVanList(TLocalVanList * Value);
 
-	bool LoadServerTrain(String TrainNum, bool WithJoin);
-	bool LoadLocalVans();
+	bool ServerLoadTrain(String TrainNum, bool WithJoin);
+	bool LocalLoadVans();
+	bool LocalSaveVanProps();
 
 public:
 	__fastcall TMain(TComponent* Owner);

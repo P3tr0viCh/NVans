@@ -4,17 +4,22 @@
 // ---------------------------------------------------------------------------
 
 #define IDS_SQL_SELECT              			6000
-#define IDS_SQL_FROM                			6001
-#define IDS_SQL_WHERE               			6002
-#define IDS_SQL_GROUP               			6003
-#define IDS_SQL_ORDER               			6004
-#define IDS_SQL_JOIN                            6005
+#define IDS_SQL_INSERT              			6001
+#define IDS_SQL_UPDATE              			6002
+#define IDS_SQL_SET                             6003
+#define IDS_SQL_FROM                			6004
+#define IDS_SQL_WHERE               			6005
+#define IDS_SQL_GROUP               			6006
+#define IDS_SQL_ORDER               			6007
+#define IDS_SQL_JOIN                            6008
+#define IDS_SQL_VALUES                          6009
 
-#define IDS_SQL_MYSQL_VERSION                   6010
-#define IDS_SQL_ORACLE_VERSION					6011
+#define IDS_SQL_MYSQL_VERSION                   6060
+#define IDS_SQL_ORACLE_VERSION					6061
 
 #define IDS_SQL_ORACLE_NVANS_TABLE  			6100
-#define IDS_SQL_LOCAL_MVANS_TABLE  				6101
+#define IDS_SQL_LOCAL_MVANS_TABLE  				6110
+#define IDS_SQL_LOCAL_PVANS_TABLE  				6111
 
 #define IDS_SQL_ORACLE_NVANS_TRAIN_SELECT		6200
 #define IDS_SQL_ORACLE_NVANS_TRAIN_WHERE		6201
@@ -31,5 +36,10 @@
 #define IDS_SQL_LOCAL_MVANS_SELECT         		6300
 #define IDS_SQL_LOCAL_MVANS_WHERE          		6301
 #define IDS_SQL_LOCAL_MVANS_ORDER               6302
+#define IDS_SQL_LOCAL_PVANS_SELECT         		6303
+#define IDS_SQL_LOCAL_PVANS_WHERE          		6304
+#define IDS_SQL_LOCAL_PVANS_UPDATE       		6305
+#define IDS_SQL_LOCAL_PVANS_INSERT_FIELDS       6306
+#define IDS_SQL_LOCAL_PVANS_INSERT_VALUES       6307
 // ---------------------------------------------------------------------------
 #endif

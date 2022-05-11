@@ -57,11 +57,13 @@ void TDBOracleLoadTrain::Operation() {
 		String QueryText;
 
 		if (WithJoin) {
+			QueryText = SQLMake(QueryText, IDS_SQL_SELECT);
 			QueryText =
 				SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TRAIN_JOIN_SELECT);
 			QueryText = SQLMake(QueryText, IDS_SQL_FROM);
 			QueryText = SQLMake(QueryText, "(");
 			QueryText = SQLMake(QueryText, "(");
+			QueryText = SQLMake(QueryText, IDS_SQL_SELECT);
 			QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TRAIN_SELECT);
 			QueryText = SQLMake(QueryText, IDS_SQL_FROM);
 			QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TABLE);
@@ -70,6 +72,7 @@ void TDBOracleLoadTrain::Operation() {
 			QueryText = SQLMake(QueryText, ") A");
 			QueryText = SQLMake(QueryText, IDS_SQL_JOIN);
 			QueryText = SQLMake(QueryText, "(");
+			QueryText = SQLMake(QueryText, IDS_SQL_SELECT);
 			QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TRAIN_SELECT);
 			QueryText = SQLMake(QueryText, IDS_SQL_FROM);
 			QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TABLE);
@@ -81,6 +84,7 @@ void TDBOracleLoadTrain::Operation() {
 			QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TRAIN_ORDER);
 		}
 		else {
+			QueryText = SQLMake(QueryText, IDS_SQL_SELECT);
 			QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TRAIN_SELECT);
 			QueryText = SQLMake(QueryText, IDS_SQL_FROM);
 			QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TABLE);

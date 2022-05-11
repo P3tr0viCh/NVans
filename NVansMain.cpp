@@ -22,6 +22,7 @@
 
 #include "NVansTDBOracleLoadTrain.h"
 #include "NVansTDBLocalLoadVans.h"
+#include "NVansTDBLocalSaveVanProps.h"
 
 #include "NVansLogin.h"
 #include "NVansOptions.h"
@@ -252,11 +253,12 @@ void __fastcall TMain::sgServerKeyDown(TObject *Sender, WORD &Key,
 
 // ---------------------------------------------------------------------------
 void TMain::SetControlsEnabled(const bool Enabled) {
-	PanelLocal->Enabled = Enabled;
+	PanelServer->Enabled = Enabled;
 	sgServer->Enabled = Enabled;
 	Splitter->Enabled = Enabled;
+	PanelCommon->Enabled = Enabled;
 	sgLocal->Enabled = Enabled;
-	PanelServer->Enabled = Enabled;
+	PanelLocal->Enabled = Enabled;
 }
 
 // ---------------------------------------------------------------------------
@@ -266,17 +268,21 @@ void TMain::SetUseLocal() {
 		sgServer->Height = ClientHeight / 2 - PanelServer->Height -
 			PanelLocal->Height + StatusBar->Height;
 		Splitter->Top = sgServer->Top + sgServer->Height;
+		PanelCommon->Top = Splitter->Top + Splitter->Height;
 	}
 	Splitter->Visible = Settings->UseLocal;
+	PanelCommon->Visible = Settings->UseLocal;
 	sgLocal->Visible = Settings->UseLocal;
 	PanelLocal->Visible = Settings->UseLocal;
 }
 
 // ---------------------------------------------------------------------------
 void TMain::StartLoad() {
+	ShowWaitCursor();
 	StatusBar->SimpleText = LoadStr(IDS_STATUS_TRAIN_LOAD);
 	SetControlsEnabled(false);
 	frmServerList->StartLoad();
+	ProcMess();
 }
 
 // ---------------------------------------------------------------------------
@@ -284,6 +290,8 @@ void TMain::EndLoad() {
 	frmServerList->EndLoad();
 	SetControlsEnabled(true);
 	StatusBar->SimpleText = "";
+	btnSaveVanProps->Enabled = !StringGridIsEmpty(sgServer);
+	RestoreCursor();
 }
 
 // ---------------------------------------------------------------------------
@@ -377,14 +385,14 @@ void TMain::SetTrainNum(String Value) {
 
 	bool WithJoin = IsRightTrainNum(TrainNum) && !IsShift();
 
-	LoadServerTrain(TrainNum, WithJoin);
+	ServerLoadTrain(TrainNum, WithJoin);
 }
 
 // ---------------------------------------------------------------------------
 void TMain::SetDateLocal(TDate Value) {
 	FDateLocal = Value;
 
-	LoadLocalVans();
+	LocalLoadVans();
 }
 
 // ---------------------------------------------------------------------------
@@ -397,6 +405,8 @@ void TMain::SetServerVanList(TOracleVanList * Value) {
 	}
 
 	StringGridClear(sgServer);
+
+	ProcMess();
 
 	for (int i = 0; i < ServerVanList->Count; i++) {
 		SetServerVan(-1, ServerVanList->Items[i]);
@@ -414,6 +424,8 @@ void TMain::SetLocalVanList(TLocalVanList * Value) {
 
 	StringGridClear(sgLocal);
 
+	ProcMess();
+
 	for (int i = 0; i < LocalVanList->Count; i++) {
 		if (LocalVanList->Items[i]->IsBrutto) {
 			SetLocalVan(-1, LocalVanList->Items[i]);
@@ -422,18 +434,14 @@ void TMain::SetLocalVanList(TLocalVanList * Value) {
 }
 
 // ---------------------------------------------------------------------------
-bool TMain::LoadServerTrain(String TrainNum, bool WithJoin) {
+bool TMain::ServerLoadTrain(String TrainNum, bool WithJoin) {
 	bool Result;
 
 	String ResultMessage;
 
-	ShowWaitCursor();
-
 	StartLoad();
 
 	ServerVanList = NULL;
-
-	ProcMess();
 
 	TDBOracleLoadTrain * DBOracleLoadTrain =
 		new TDBOracleLoadTrain(Main->Settings->ServerOracleConnection, TrainNum,
@@ -449,8 +457,6 @@ bool TMain::LoadServerTrain(String TrainNum, bool WithJoin) {
 		DBOracleLoadTrain->Free();
 
 		EndLoad();
-
-		RestoreCursor();
 	}
 
 	if (Result) {
@@ -466,18 +472,14 @@ bool TMain::LoadServerTrain(String TrainNum, bool WithJoin) {
 }
 
 // ---------------------------------------------------------------------------
-bool TMain::LoadLocalVans() {
+bool TMain::LocalLoadVans() {
 	bool Result;
 
 	String ResultMessage;
 
-	ShowWaitCursor();
-
 	StartLoad();
 
 	LocalVanList = NULL;
-
-	ProcMess();
 
 	TDBLocalLoadVans * DBLocalLoadVans =
 		new TDBLocalLoadVans(Main->Settings->LocalConnection, DateLocal);
@@ -492,14 +494,38 @@ bool TMain::LoadLocalVans() {
 		DBLocalLoadVans->Free();
 
 		EndLoad();
-
-		RestoreCursor();
 	}
 
-	if (Result) {
-	}
-	else {
+	if (!Result) {
 		MsgBoxErr(Format(IDS_ERROR_LOCAL_LOAD_VANS, ResultMessage));
+	}
+
+	return Result;
+}
+
+// ---------------------------------------------------------------------------
+bool TMain::LocalSaveVanProps() {
+	bool Result;
+
+	String ResultMessage;
+
+	StartLoad();
+
+	 TDBLocalSaveVanProps * DBLocalSaveVanProps =
+	 new TDBLocalSaveVanProps(Main->Settings->LocalConnection, ServerVanList);
+	try {
+		 Result = DBLocalSaveVanProps->Execute();
+
+		 ResultMessage = DBLocalSaveVanProps->ErrorMessage;
+	}
+	__finally {
+		DBLocalSaveVanProps->Free();
+
+		EndLoad();
+	}
+
+	if (!Result) {
+		MsgBoxErr(Format(IDS_ERROR_LOCAL_SAVE_VANPROPS, ResultMessage));
 	}
 
 	return Result;
@@ -563,4 +589,10 @@ void __fastcall TMain::btnServerListClick(TObject *Sender) {
 	frmServerList->Visible = !frmServerList->Visible;
 }
 
+// ---------------------------------------------------------------------------
+void __fastcall TMain::btnSaveVanPropsClick(TObject *Sender) {
+	if (MsgBoxYesNo(IDS_QUESTION_SAVE_VANPROPS)) {
+		LocalSaveVanProps();
+	}
+}
 // ---------------------------------------------------------------------------

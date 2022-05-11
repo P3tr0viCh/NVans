@@ -6,6 +6,7 @@ IDS_COPYRIGHT,          "© Константин Дураев (Уральская Сталь)|@P3tr0viCh@yandex
 IDS_COPYRIGHT_STATUS,   "© Константин Дураев"
 
 IDS_QUESTION_CLOSE_PROGRAM,     "Закрыть программу?"
+IDS_QUESTION_SAVE_VANPROPS,     "Сохранить значения грузоподъёмности и тары по трафарету в таблицу характеристик вагонов?"
 
 IDS_ERROR_UNKNOWN,              "Неизвестная ошибка"
 IDS_ERROR_UNKNOWN_EXCEPTION,    "Возникла непредвиденная ошибка:\n\n%s"
@@ -18,6 +19,7 @@ IDS_ERROR_CHECK_PASS,           "Введённые пароли не совпадают. Повторите ввод н
 IDS_ERROR_ORACLE_TRAIN_LOAD,    "Во время загрузки состава произошла ошибка:\n\n%s"
 IDS_ERROR_ORACLE_TRAINS_LOAD,   "Во время загрузки списка составов произошла ошибка:\n\n%s"
 IDS_ERROR_LOCAL_LOAD_VANS,      "Во время загрузки вагонов произошла ошибка:\n\n%s"
+IDS_ERROR_LOCAL_SAVE_VANPROPS,  "Во время сохранения характеристик вагонов произошла ошибка:\n\n%s"
 
 IDS_MSG_DATABASE_CONNECT_OK,    "Соединение с базой данных выполнено.\n\nВерсия сервера:\n%s"
 IDS_MSG_DATABASE_CONNECT_FAIL,  "Не удалось подключиться к базе данных.\n\nОшибка:\n%s"
@@ -52,11 +54,13 @@ IDS_LOG_DATABASE_CONNECT,               "try database connect: %s@%s:%s/%s"
 IDS_LOG_DATABASE_CONNECT_OK,            "database connected, version: %s"
 IDS_LOG_DATABASE_CONNECT_FAIL,          "database connect fail: %s"
 
-IDS_LOG_ORACLE_LOAD_TRAIN_OK,           "server load train, vancount: %d"
+IDS_LOG_ORACLE_LOAD_TRAIN_OK,           "server load train, vancount=%d"
 IDS_LOG_ORACLE_LOAD_TRAIN_FAIL,         "server load train fail: %s"
-IDS_LOG_ORACLE_LOAD_TRAINS_OK,          "server load trains, count: %d"
+IDS_LOG_ORACLE_LOAD_TRAINS_OK,          "server load trains, count=%d"
 IDS_LOG_ORACLE_LOAD_TRAINS_FAIL,        "server load trains fail: %s"
 
-IDS_LOG_LOCAL_LOAD_VANS_OK,             "local load vans, count: %d"
+IDS_LOG_LOCAL_LOAD_VANS_OK,             "local load vans, count=%d"
 IDS_LOG_LOCAL_LOAD_VANS_FAIL,           "local load vans fail: %s"
+IDS_LOG_LOCAL_SAVE_VANPROPS_OK,         "local save vanprops, count=i:%d|u:%d"
+IDS_LOG_LOCAL_SAVE_VANPROPS_FAIL,       "local save vanprops fail: %s"
 END

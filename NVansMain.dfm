@@ -21,7 +21,7 @@ object Main: TMain
   TextHeight = 17
   object Splitter: TSplitter
     Left = 0
-    Top = 168
+    Top = 148
     Width = 704
     Height = 8
     Cursor = crSizeNS
@@ -51,7 +51,7 @@ object Main: TMain
     Left = 0
     Top = 48
     Width = 704
-    Height = 120
+    Height = 100
     Align = alTop
     ColCount = 2
     DefaultDrawing = False
@@ -64,16 +64,18 @@ object Main: TMain
   end
   object sgLocal: TStringGrid
     Left = 0
-    Top = 176
+    Top = 196
     Width = 704
-    Height = 120
+    Height = 100
     Align = alClient
     ColCount = 2
     DefaultDrawing = False
     RowCount = 2
     Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goTabs, goFixedColClick]
-    TabOrder = 2
+    TabOrder = 3
     OnDrawCell = sgLocalDrawCell
+    ExplicitTop = 176
+    ExplicitHeight = 120
   end
   object PanelServer: TPanel
     Left = 0
@@ -146,7 +148,7 @@ object Main: TMain
     Height = 48
     Align = alBottom
     BevelOuter = bvNone
-    TabOrder = 3
+    TabOrder = 4
     object btnLocalLoad: TButton
       Left = 8
       Top = 8
@@ -155,6 +157,26 @@ object Main: TMain
       Caption = #1054#1073#1085#1086#1074#1080#1090#1100
       TabOrder = 0
       OnClick = btnLocalLoadClick
+    end
+  end
+  object PanelCommon: TPanel
+    Left = 0
+    Top = 156
+    Width = 704
+    Height = 40
+    Align = alTop
+    BevelOuter = bvNone
+    TabOrder = 2
+    ExplicitTop = 176
+    object btnSaveVanProps: TButton
+      Left = 8
+      Top = 0
+      Width = 112
+      Height = 32
+      Caption = #1061#1072#1088#1072#1082#1090#1077#1088#1080#1089#1090#1080#1082#1080
+      Enabled = False
+      TabOrder = 0
+      OnClick = btnSaveVanPropsClick
     end
   end
   object ApplicationEvents: TApplicationEvents

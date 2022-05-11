@@ -54,6 +54,7 @@ void TDBOracleLoadTrains::Operation() {
 
 		String QueryText;
 
+		QueryText = SQLMake(QueryText, IDS_SQL_SELECT);
 		QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TRAINS_SELECT);
 		QueryText = SQLMake(QueryText, IDS_SQL_FROM);
 		QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TABLE);

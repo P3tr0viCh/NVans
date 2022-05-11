@@ -7,6 +7,7 @@
 #define IDS_COPYRIGHT_STATUS						2
 
 #define IDS_QUESTION_CLOSE_PROGRAM					100
+#define IDS_QUESTION_SAVE_VANPROPS                  101
 
 #define IDS_ERROR_UNKNOWN							200
 #define IDS_ERROR_UNKNOWN_EXCEPTION					201
@@ -19,6 +20,7 @@
 #define IDS_ERROR_ORACLE_TRAIN_LOAD            		208
 #define IDS_ERROR_ORACLE_TRAINS_LOAD            	209
 #define IDS_ERROR_LOCAL_LOAD_VANS                   210
+#define IDS_ERROR_LOCAL_SAVE_VANPROPS               211
 
 #define IDS_MSG_DATABASE_CONNECT_OK     			300
 #define IDS_MSG_DATABASE_CONNECT_FAIL   			301
@@ -59,6 +61,8 @@
 
 #define IDS_LOG_LOCAL_LOAD_VANS_OK    				2400
 #define IDS_LOG_LOCAL_LOAD_VANS_FAIL  				2401
+#define IDS_LOG_LOCAL_SAVE_VANPROPS_OK    	  		2402
+#define IDS_LOG_LOCAL_SAVE_VANPROPS_FAIL  			2403
 
 // ---------------------------------------------------------------------------
 #endif
