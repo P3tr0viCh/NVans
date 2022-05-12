@@ -33,6 +33,8 @@ __fastcall TSettings::TSettings() {
 	FLocalConnection = new TConnectionMySQL();
 	FServerMySQLConnection = new TConnectionMySQL();
 	FServerOracleConnection = new TConnectionOracle();
+
+    FLocalConnection->Database = LOCAL_DB_NAME;
 }
 
 // ---------------------------------------------------------------------------
@@ -169,7 +171,6 @@ void TSettings::CheckCRC(String S) {
 	S = Decrypt(S);
 
 	String RightCRC = ToString();
-	// WriteToLog(RightCRC);
 	RightCRC = CRC(RightCRC);
 
 	if (!SameStr(S, RightCRC)) {
@@ -197,7 +198,7 @@ void TSettings::LoadSettings() {
 		LocalConnection->Port = IniFile->ReadString(Section, "Port",
 			LocalConnection->Port);
 		LocalConnection->Database = IniFile->ReadString(Section, "Database",
-			LOCAL_DB_NAME);
+			LocalConnection->Database);
 		LocalConnection->User = IniFile->ReadString(Section, "User",
 			LocalConnection->User);
 		LocalConnection->Password =
@@ -248,7 +249,7 @@ void TSettings::SaveSettings() {
 		Section = "LocalConnection";
 		IniFile->WriteString(Section, "Host", LocalConnection->Host);
 		IniFile->WriteString(Section, "Port", LocalConnection->Port);
-		IniFile->WriteString(Section, "Database", LOCAL_DB_NAME);
+		IniFile->WriteString(Section, "Database", LocalConnection->Database);
 		IniFile->WriteString(Section, "User", LocalConnection->User);
 		IniFile->WriteString(Section, "Pass",
 			Encrypt(LocalConnection->Password));

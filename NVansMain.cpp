@@ -83,7 +83,6 @@ void __fastcall TMain::FormCreate(TObject *Sender) {
 		delete FileIni;
 	}
 
-	// TODO
 #ifdef _DEBUG
 	eRWNum->Text = "42";
 #else
@@ -136,6 +135,14 @@ void __fastcall TMain::FormCloseQuery(TObject *Sender, bool &CanClose) {
 #ifndef FORCECLOSE
 	CanClose = MsgBoxYesNo(IDS_QUESTION_CLOSE_PROGRAM, true,
 		Application->Handle);
+#endif
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TMain::FormShow(TObject *Sender) {
+#ifdef _DEBUG
+	btnServerLoad->Click();
+	btnLocalLoad->Click();
 #endif
 }
 
@@ -290,7 +297,11 @@ void TMain::EndLoad() {
 	frmServerList->EndLoad();
 	SetControlsEnabled(true);
 	StatusBar->SimpleText = "";
+
 	btnSaveVanProps->Enabled = !StringGridIsEmpty(sgServer);
+	btnCopyData->Enabled = !StringGridIsEmpty(sgServer) && !StringGridIsEmpty
+		(sgLocal);
+
 	RestoreCursor();
 }
 
@@ -461,7 +472,7 @@ bool TMain::ServerLoadTrain(String TrainNum, bool WithJoin) {
 
 	if (Result) {
 		if (ServerVanList->Count == 0) {
-			MsgBox(Format(IDS_ERROR_RWNUM_NOT_EXISTS, TrainNum));
+			MsgBox(Format(IDS_MSG_RWNUM_NOT_EXISTS, TrainNum));
 		}
 	}
 	else {
@@ -511,12 +522,13 @@ bool TMain::LocalSaveVanProps() {
 
 	StartLoad();
 
-	 TDBLocalSaveVanProps * DBLocalSaveVanProps =
-	 new TDBLocalSaveVanProps(Main->Settings->LocalConnection, ServerVanList);
+	TDBLocalSaveVanProps * DBLocalSaveVanProps =
+		new TDBLocalSaveVanProps(Main->Settings->LocalConnection,
+		ServerVanList);
 	try {
-		 Result = DBLocalSaveVanProps->Execute();
+		Result = DBLocalSaveVanProps->Execute();
 
-		 ResultMessage = DBLocalSaveVanProps->ErrorMessage;
+		ResultMessage = DBLocalSaveVanProps->ErrorMessage;
 	}
 	__finally {
 		DBLocalSaveVanProps->Free();
@@ -544,7 +556,10 @@ void __fastcall TMain::btnServerLoadClick(TObject *Sender) {
 
 // ---------------------------------------------------------------------------
 void __fastcall TMain::btnLocalLoadClick(TObject *Sender) {
-	// TODO
+	if (!Settings->UseLocal) {
+		return;
+	}
+
 #ifdef _DEBUG
 	DateLocal = StrToDate("02.02.2021");
 #else
@@ -593,6 +608,52 @@ void __fastcall TMain::btnServerListClick(TObject *Sender) {
 void __fastcall TMain::btnSaveVanPropsClick(TObject *Sender) {
 	if (MsgBoxYesNo(IDS_QUESTION_SAVE_VANPROPS)) {
 		LocalSaveVanProps();
+	}
+}
+
+// ---------------------------------------------------------------------------
+int TMain::FindMatch() {
+	if (StringGridIsEmpty(sgServer)) {
+		return 0;
+	}
+	if (StringGridIsEmpty(sgLocal)) {
+		return 0;
+	}
+	if (sgServer->RowCount > sgLocal->RowCount) {
+		return 0;
+	}
+
+	int VanCount = sgServer->RowCount - 1;
+	String VanNum = sgServer->Cells[ServerColumns.VANNUM][1];
+
+	WriteToLog("VanNum = " + VanNum + ", VanCount = " + IntToStr(VanCount));
+
+	for (int i = 1; i < sgLocal->RowCount; i++) {
+		WriteToLog("i = " + IntToStr(i));
+		if (SameStr(sgLocal->Cells[LocalColumns.VANNUM][i], VanNum)) {
+			WriteToLog("VanNum found, i = " + IntToStr(i));
+			for (int j = i - 1, j2 = 2; j2 <= VanCount; j--, j2++) {
+				WriteToLog("j = " + IntToStr(j) + ", j2 = " + IntToStr(j2));
+				if (!SameStr(sgLocal->Cells[LocalColumns.VANNUM][j], sgServer->Cells[ServerColumns.VANNUM][j2])) {
+                    return 0;
+				}
+			}
+			return i;
+		}
+	}
+
+	return 0;
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TMain::btnCopyDataClick(TObject *Sender) {
+	int FindMatchResult = FindMatch();
+
+	if (FindMatchResult > 0) {
+		sgLocal->Row = FindMatchResult;
+	}
+	else {
+		MsgBox(IDS_MSG_MATCH_NOT_FOUND);
 	}
 }
 // ---------------------------------------------------------------------------

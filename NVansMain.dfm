@@ -17,6 +17,7 @@ object Main: TMain
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnResize = FormResize
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 17
   object Splitter: TSplitter
@@ -74,8 +75,6 @@ object Main: TMain
     Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goTabs, goFixedColClick]
     TabOrder = 3
     OnDrawCell = sgLocalDrawCell
-    ExplicitTop = 176
-    ExplicitHeight = 120
   end
   object PanelServer: TPanel
     Left = 0
@@ -167,16 +166,25 @@ object Main: TMain
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 2
-    ExplicitTop = 176
     object btnSaveVanProps: TButton
-      Left = 8
+      Left = 104
       Top = 0
       Width = 112
       Height = 32
       Caption = #1061#1072#1088#1072#1082#1090#1077#1088#1080#1089#1090#1080#1082#1080
       Enabled = False
-      TabOrder = 0
+      TabOrder = 1
       OnClick = btnSaveVanPropsClick
+    end
+    object btnCopyData: TButton
+      Left = 8
+      Top = 0
+      Width = 88
+      Height = 32
+      Caption = #1050#1086#1087#1080#1088#1086#1074#1072#1090#1100
+      Enabled = False
+      TabOrder = 0
+      OnClick = btnCopyDataClick
     end
   end
   object ApplicationEvents: TApplicationEvents

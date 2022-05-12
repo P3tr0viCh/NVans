@@ -103,39 +103,27 @@ void TDBLocalSaveVanProps::Operation() {
 
 		TParameter * pUpdateCarrying =
 			GetParam(QueryUpdate, "CARRYING", ftInteger);
-		TParameter * pUpdateIScalesCarrying =
-			GetParam(QueryUpdate, "ISCALES_CARRYING", ftInteger, 0);
-		TParameter * pUpdateIDateTimeCarrying =
-			GetParam(QueryUpdate, "IDATETIME_CARRYING", ftString, DateTime);
+		GetParam(QueryUpdate, "ISCALES_CARRYING", ftInteger)->Value = 0;
+		GetParam(QueryUpdate, "IDATETIME_CARRYING", ftString)->Value = DateTime;
 		TParameter * pUpdateLoadNorm =
 			GetParam(QueryUpdate, "LOADNORM", ftInteger);
-		TParameter * pUpdateIScalesLoadNorm =
-			GetParam(QueryUpdate, "ISCALES_LOADNORM", ftInteger, 0);
-		TParameter * pUpdateIDateTimeLoadNorm =
-			GetParam(QueryUpdate, "IDATETIME_LOADNORM", ftString, DateTime);
+		GetParam(QueryUpdate, "ISCALES_LOADNORM", ftInteger)->Value = 0;
+		GetParam(QueryUpdate, "IDATETIME_LOADNORM", ftString)->Value = DateTime;
 		TParameter * pUpdateTareT = GetParam(QueryUpdate, "TARE_T", ftInteger);
-		TParameter * pUpdateIScalesTareT =
-			GetParam(QueryUpdate, "ISCALES_TARE_T", ftInteger, 0);
-		TParameter * pUpdateIDateTimeTareT =
-			GetParam(QueryUpdate, "IDATETIME_TARE_T", ftString, DateTime);
+		GetParam(QueryUpdate, "ISCALES_TARE_T", ftInteger)->Value = 0;
+		GetParam(QueryUpdate, "IDATETIME_TARE_T", ftString)->Value = DateTime;
 
 		TParameter * pInsertCarrying =
 			GetParam(QueryInsert, "CARRYING", ftInteger);
-		TParameter * pInsertIScalesCarrying =
-			GetParam(QueryInsert, "ISCALES_CARRYING", ftInteger, 0);
-		TParameter * pInsertIDateTimeCarrying =
-			GetParam(QueryInsert, "IDATETIME_CARRYING", ftString, DateTime);
+		GetParam(QueryInsert, "ISCALES_CARRYING", ftInteger)->Value = 0;
+		GetParam(QueryInsert, "IDATETIME_CARRYING", ftString)->Value = DateTime;
 		TParameter * pInsertLoadNorm =
 			GetParam(QueryInsert, "LOADNORM", ftInteger);
-		TParameter * pInsertIScalesLoadNorm =
-			GetParam(QueryInsert, "ISCALES_LOADNORM", ftInteger, 0);
-		TParameter * pInsertIDateTimeLoadNorm =
-			GetParam(QueryInsert, "IDATETIME_LOADNORM", ftString, DateTime);
+		GetParam(QueryInsert, "ISCALES_LOADNORM", ftInteger)->Value = 0;
+		GetParam(QueryInsert, "IDATETIME_LOADNORM", ftString)->Value = DateTime;
 		TParameter * pInsertTareT = GetParam(QueryInsert, "TARE_T", ftInteger);
-		TParameter * pInsertIScalesTareT =
-			GetParam(QueryInsert, "ISCALES_TARE_T", ftInteger, 0);
-		TParameter * pInsertIDateTimeTareT =
-			GetParam(QueryInsert, "IDATETIME_TARE_T", ftString, DateTime);
+		GetParam(QueryInsert, "ISCALES_TARE_T", ftInteger)->Value = 0;
+		GetParam(QueryInsert, "IDATETIME_TARE_T", ftString)->Value = DateTime;
 
 		for (int i = 0; i < VanList->Count; i++) {
 			ProcMess();
@@ -164,7 +152,7 @@ void TDBLocalSaveVanProps::Operation() {
 				WriteToLog("UPDATE PARAMS: CARRYING = " +
 					VarToStr(pUpdateCarrying->Value) + ", " + "TARE_T = " +
 					VarToStr(pUpdateTareT->Value) + ", " + "IDATETIME* = " +
-					VarToStr(pUpdateIDateTimeCarrying->Value));
+					VarToStr(DateTime));
 #endif
 			}
 			else {
@@ -178,7 +166,7 @@ void TDBLocalSaveVanProps::Operation() {
 				WriteToLog("INSERT PARAMS: CARRYING = " +
 					VarToStr(pInsertCarrying->Value) + ", " + "TARE_T = " +
 					VarToStr(pInsertTareT->Value) + ", " + "IDATETIME* = " +
-					VarToStr(pInsertIDateTimeCarrying->Value));
+					VarToStr(DateTime));
 #endif
 			}
 
@@ -198,9 +186,9 @@ void TDBLocalSaveVanProps::Operation() {
 		QueryInsert->Free();
 		QueryUpdate->Free();
 		QueryFind->Free();
-	}
 
-	Connection->Close();
+		Connection->Close();
+	}
 }
 
 // ---------------------------------------------------------------------------

@@ -54,14 +54,6 @@ TParameter * GetParam(TADOQuery * Query, String Name, TFieldType DataType) {
 }
 
 // ---------------------------------------------------------------------------
-TParameter * GetParam(TADOQuery * Query, String Name, TFieldType DataType,
-	Variant Value) {
-	TParameter * Parameter = GetParam(Query, Name, DataType);
-	Parameter->Value = Value;
-	return Parameter;
-}
-
-// ---------------------------------------------------------------------------
 String DateTimeToSQLStr(TDateTime ADateTime) {
 	return FormatDateTime("yyyyMMddhhnnss", ADateTime);
 }

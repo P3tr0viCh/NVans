@@ -65,12 +65,10 @@
         <UWP_CppLogo150>$(BDS)\bin\Artwork\Windows\UWP\cppreg_UwpDefault_150.png</UWP_CppLogo150>
         <VerInfo_MajorVer>0</VerInfo_MajorVer>
         <SanitizedProjectName>NVans</SanitizedProjectName>
-        <VerInfo_MinorVer>1</VerInfo_MinorVer>
         <VerInfo_Locale>1049</VerInfo_Locale>
-        <VerInfo_Keys>CompanyName=П3тр0виЧъ;FileDescription=Натурный лист;FileVersion=0.1.5.0;InternalName=NVans;LegalCopyright=© П3тр0виЧъ;LegalTrademarks=П3тр0виЧъ™;OriginalFilename=NVans.exe;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=Натурный лист;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=П3тр0виЧъ;FileDescription=Натурный лист;FileVersion=0.0.0.0;InternalName=NVans;LegalCopyright=© П3тр0виЧъ;LegalTrademarks=П3тр0виЧъ™;OriginalFilename=NVans.exe;ProgramID=ru.p3tr0vich.$(MSBuildProjectName);ProductName=Натурный лист;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <IncludePath>..\!UtilsAndComps\;..\CryptoPP\cryptopp700;$(IncludePath)</IncludePath>
         <ILINK_LibraryPath>..\!UtilsAndComps\;..\CryptoPP;$(ILINK_LibraryPath)</ILINK_LibraryPath>
-        <VerInfo_Release>5</VerInfo_Release>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <PackageImports>adortl;appanalytics;bcbie;bcbsmp;bindcomp;bindcompdbx;bindcompfmx;bindcompvcl;bindengine;CustomIPTransport;DataSnapClient;DataSnapCommon;DataSnapConnectors;DatasnapConnectorsFreePascal;DataSnapIndy10ServerTransport;DataSnapNativeClient;DataSnapProviderClient;DataSnapServer;DataSnapServerMidas;dbexpress;dbrtl;dbxcds;DbxClientDriver;DbxCommonDriver;DBXDb2Driver;DBXFirebirdDriver;DBXInformixDriver;DBXInterBaseDriver;DBXMSSQLDriver;DBXMySQLDriver;DBXOdbcDriver;DBXOracleDriver;DBXSqliteDriver;DBXSybaseASADriver;DBXSybaseASEDriver;dsnap;dsnapcon;dsnapxml;emsedge;emshosting;FireDACADSDriver;FireDACASADriver;FireDACCommonODBC;FireDACDb2Driver;FireDACDBXDriver;FireDACDSDriver;FireDACInfxDriver;FireDACMongoDBDriver;FireDACMSAccDriver;FireDACMSSQLDriver;FireDACMySQLDriver;FireDACODBCDriver;FireDACOracleDriver;FireDACPgDriver;FireDACTDataDriver;fmx;fmxase;fmxdae;fmxFireDAC;fmxobj;FMXTee;FmxTeeUI;ibmonitor;ibxbindings;ibxpress;IndyCore;IndyIPClient;IndyIPCommon;IndyIPServer;IndyProtocols;IndySystem;inetdb;inetdbxpress;Intraweb;rtl;svn;Tee;TeeDB;TeeUI;tethering;vcl;vclactnband;vcldb;vcldsnap;vclFireDAC;vclib;vclie;vclimg;VCLRESTComponents;VclSmp;vcltouch;vclwinx;vclx;xmlrtl;$(PackageImports)</PackageImports>
@@ -80,9 +78,8 @@
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
         <Icon_MainIcon>NVans_Icon.ico</Icon_MainIcon>
-        <VerInfo_MinorVer>3</VerInfo_MinorVer>
-        <VerInfo_Release>0</VerInfo_Release>
-        <VerInfo_Keys>CompanyName=П3тр0виЧъ;FileDescription=Натурный лист;FileVersion=0.3.0.0;InternalName=NVans;LegalCopyright=© П3тр0виЧъ;LegalTrademarks=П3тр0виЧъ™;OriginalFilename=NVans.exe;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=Натурный лист;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_MinorVer>4</VerInfo_MinorVer>
+        <VerInfo_Keys>CompanyName=П3тр0виЧъ;FileDescription=Натурный лист;FileVersion=0.4.0.0;InternalName=NVans;LegalCopyright=© П3тр0виЧъ;LegalTrademarks=П3тр0виЧъ™;OriginalFilename=NVans.exe;ProgramID=ru.p3tr0vich.$(MSBuildProjectName);ProductName=Натурный лист;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win64)'!=''">
         <PackageImports>adortl;appanalytics;bindcomp;bindcompdbx;bindcompfmx;bindcompvcl;bindengine;CustomIPTransport;DataSnapClient;DataSnapCommon;DataSnapConnectors;DatasnapConnectorsFreePascal;DataSnapIndy10ServerTransport;DataSnapNativeClient;DataSnapProviderClient;DataSnapServer;DataSnapServerMidas;dbexpress;dbrtl;dbxcds;DbxClientDriver;DbxCommonDriver;DBXDb2Driver;DBXFirebirdDriver;DBXInformixDriver;DBXInterBaseDriver;DBXMSSQLDriver;DBXMySQLDriver;DBXOdbcDriver;DBXOracleDriver;DBXSqliteDriver;DBXSybaseASADriver;DBXSybaseASEDriver;dsnap;dsnapcon;dsnapxml;emsedge;emshosting;FireDACADSDriver;FireDACASADriver;FireDACCommonODBC;FireDACDb2Driver;FireDACDBXDriver;FireDACDSDriver;FireDACInfxDriver;FireDACMongoDBDriver;FireDACMSAccDriver;FireDACMSSQLDriver;FireDACMySQLDriver;FireDACODBCDriver;FireDACOracleDriver;FireDACPgDriver;FireDACTDataDriver;fmx;fmxase;fmxdae;fmxFireDAC;fmxobj;FMXTee;FmxTeeUI;ibmonitor;ibxbindings;ibxpress;IndyCore;IndyIPClient;IndyIPCommon;IndyIPServer;IndyProtocols;IndySystem;inetdb;inetdbxpress;Intraweb;rtl;Tee;TeeDB;TeeUI;tethering;vcl;vclactnband;vcldb;vcldsnap;vclFireDAC;vclib;vclie;vclimg;VCLRESTComponents;VclSmp;vcltouch;vclwinx;vclx;xmlrtl;$(PackageImports)</PackageImports>
@@ -116,9 +113,8 @@
         <LinkPackageStatics>rtl.lib;vcl.lib;dbrtl.lib;adortl.lib</LinkPackageStatics>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Icon_MainIcon>NVans_Icon.ico</Icon_MainIcon>
-        <VerInfo_MinorVer>3</VerInfo_MinorVer>
-        <VerInfo_Release>0</VerInfo_Release>
-        <VerInfo_Keys>CompanyName=П3тр0виЧъ;FileDescription=Натурный лист;FileVersion=0.3.0.0;InternalName=NVans;LegalCopyright=© П3тр0виЧъ;LegalTrademarks=П3тр0виЧъ™;OriginalFilename=NVans.exe;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=Натурный лист;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_MinorVer>4</VerInfo_MinorVer>
+        <VerInfo_Keys>CompanyName=П3тр0виЧъ;FileDescription=Натурный лист;FileVersion=0.4.0.0;InternalName=NVans;LegalCopyright=© П3тр0виЧъ;LegalTrademarks=П3тр0виЧъ™;OriginalFilename=NVans.exe;ProgramID=ru.p3tr0vich.$(MSBuildProjectName);ProductName=Натурный лист;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <Defines>NDEBUG;$(Defines)</Defines>
@@ -130,9 +126,8 @@
         <LinkPackageStatics>rtl.lib;vcl.lib;dbrtl.lib;adortl.lib</LinkPackageStatics>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Icon_MainIcon>NVans_Icon.ico</Icon_MainIcon>
-        <VerInfo_MinorVer>3</VerInfo_MinorVer>
-        <VerInfo_Release>0</VerInfo_Release>
-        <VerInfo_Keys>CompanyName=П3тр0виЧъ;FileDescription=Натурный лист;FileVersion=0.3.0.0;InternalName=NVans;LegalCopyright=© П3тр0виЧъ;LegalTrademarks=П3тр0виЧъ™;OriginalFilename=NVans.exe;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=Натурный лист;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_MinorVer>4</VerInfo_MinorVer>
+        <VerInfo_Keys>CompanyName=П3тр0виЧъ;FileDescription=Натурный лист;FileVersion=0.4.0.0;InternalName=NVans;LegalCopyright=© П3тр0виЧъ;LegalTrademarks=П3тр0виЧъ™;OriginalFilename=NVans.exe;ProgramID=ru.p3tr0vich.$(MSBuildProjectName);ProductName=Натурный лист;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
     </PropertyGroup>
     <ItemGroup>
         <CppCompile Include="..\!UtilsAndComps\UtilsCryptoPP.cpp">
@@ -310,10 +305,10 @@
             <DependentOn>NVansTSettings.h</DependentOn>
             <BuildOrder>17</BuildOrder>
         </CppCompile>
-        <FormResources Include="NVansServerList.dfm"/>
         <FormResources Include="NVansLogin.dfm"/>
         <FormResources Include="NVansMain.dfm"/>
         <FormResources Include="NVansOptions.dfm"/>
+        <FormResources Include="NVansServerList.dfm"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

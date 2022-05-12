@@ -151,9 +151,9 @@ void TDBOracleLoadTrain::Operation() {
 	}
 	__finally {
 		Query->Free();
-	}
 
-	Connection->Close();
+		Connection->Close();
+	}
 }
 
 // ---------------------------------------------------------------------------

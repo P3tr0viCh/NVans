@@ -10,10 +10,9 @@ IDS_QUESTION_SAVE_VANPROPS,     "Сохранить значения грузоподъёмности и тары по т
 
 IDS_ERROR_UNKNOWN,              "Неизвестная ошибка"
 IDS_ERROR_UNKNOWN_EXCEPTION,    "Возникла непредвиденная ошибка:\n\n%s"
-IDS_ERROR_NEED_RWNUM,           "Не указан номер поезда"
-IDS_ERROR_RWNUM_NOT_EXISTS,     "Поезд с номером «%s» в базе данных отсутствует"
 IDS_ERROR_LOAD_SETTINGS,        "Во время чтения настроек произошла критическая ошибка.\n\nДальнейшая работа невозможна"
 IDS_ERROR_SAVE_SETTINGS,        "Не удалось сохранить настройки"
+IDS_ERROR_NEED_RWNUM,           "Не указан номер поезда"
 IDS_ERROR_PASS_WRONG,           "Неправильный пароль.\n\nПопробуйте ещё раз"
 IDS_ERROR_CHECK_PASS,           "Введённые пароли не совпадают. Повторите ввод нового пароля и его подверждения";
 IDS_ERROR_ORACLE_TRAIN_LOAD,    "Во время загрузки состава произошла ошибка:\n\n%s"
@@ -23,6 +22,8 @@ IDS_ERROR_LOCAL_SAVE_VANPROPS,  "Во время сохранения характеристик вагонов произ
 
 IDS_MSG_DATABASE_CONNECT_OK,    "Соединение с базой данных выполнено.\n\nВерсия сервера:\n%s"
 IDS_MSG_DATABASE_CONNECT_FAIL,  "Не удалось подключиться к базе данных.\n\nОшибка:\n%s"
+IDS_MSG_RWNUM_NOT_EXISTS,       "Поезд с номером «%s» в базе данных отсутствует"
+IDS_MSG_MATCH_NOT_FOUND,        "Не удалось найти соответствие между натурным листом и вагонами в базе данных весов"
 
 IDS_STATUS_TRAIN_LIST_DATE,             "Дата: %s"
 IDS_STATUS_TRAIN_LIST_VAN_COUNT,        "Количество: %s"

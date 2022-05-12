@@ -202,7 +202,7 @@ void __fastcall TfrmOptions::btnOracleCheckClick(TObject *Sender) {
 
 	ShowWaitCursor();
 	try {
-		TConnectionType ConnectionType = ((TButton*)Sender)->Tag;
+		TConnectionType ConnectionType = (TConnectionType)((TButton*)Sender)->Tag;
 
 		ConnectionInfo = GetConnectionInfo(ConnectionType);
 

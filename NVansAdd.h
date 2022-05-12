@@ -18,7 +18,6 @@ String LoadSQL(NativeUInt Ident);
 String SQLMake(String S1, String S2);
 String SQLMake(String S1, NativeUInt Ident);
 TParameter * GetParam(TADOQuery * Query, String Name, TFieldType DataType);
-TParameter * GetParam(TADOQuery * Query, String Name, TFieldType DataType, Variant Value);
 
 // ---------------------------------------------------------------------------
 String DateTimeToSQLStr(TDateTime ADateTime);

@@ -36,6 +36,7 @@ __published:
 	TButton *btnLocalLoad;
 	TPanel *PanelCommon;
 	TButton *btnSaveVanProps;
+	TButton *btnCopyData;
 
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
@@ -57,6 +58,8 @@ __published:
 		TShiftState Shift);
 	void __fastcall btnLocalLoadClick(TObject *Sender);
 	void __fastcall btnSaveVanPropsClick(TObject *Sender);
+	void __fastcall btnCopyDataClick(TObject *Sender);
+	void __fastcall FormShow(TObject *Sender);
 
 private:
 	TSettings * FSettings;
@@ -89,6 +92,8 @@ private:
 	bool ServerLoadTrain(String TrainNum, bool WithJoin);
 	bool LocalLoadVans();
 	bool LocalSaveVanProps();
+
+	int FindMatch();
 
 public:
 	__fastcall TMain(TComponent* Owner);

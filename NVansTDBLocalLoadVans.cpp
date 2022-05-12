@@ -72,10 +72,10 @@ void TDBLocalLoadVans::Operation() {
 
 		TParameter * Param1 = Query->Parameters->ParamByName("DATE_FROM");
 		Param1->DataType = ftDate;
-		Param1->Value = Date;
+		Param1->Value = Date - 1;
 		TParameter * Param2 = Query->Parameters->ParamByName("DATE_TO");
 		Param2->DataType = ftDate;
-		Param2->Value = Date + 2;
+		Param2->Value = Date + 1;
 
 #ifdef SQL_TO_LOG
 		WriteToLog("PARAMS: DATE_FROM = " + VarToStr(Param1->Value) + ", " +
@@ -129,9 +129,9 @@ void TDBLocalLoadVans::Operation() {
 	}
 	__finally {
 		Query->Free();
-	}
 
-	Connection->Close();
+		Connection->Close();
+	}
 }
 
 // ---------------------------------------------------------------------------
