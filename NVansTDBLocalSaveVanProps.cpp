@@ -19,9 +19,9 @@
 
 // ---------------------------------------------------------------------------
 __fastcall TDBLocalSaveVanProps::TDBLocalSaveVanProps
-	(TConnectionInfo * ConnectionInfo, TOracleVanList * VanList)
+	(TConnectionInfo * ConnectionInfo, TVanList * VanList)
 	: TDatabaseOperation(ConnectionInfo) {
-	FVanList = new TOracleVanList();
+	FVanList = new TVanList();
 
 	InsertCount = 0;
 	UpdateCount = 0;

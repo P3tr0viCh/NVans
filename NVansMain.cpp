@@ -50,8 +50,8 @@ void __fastcall TMain::FormCreate(TObject *Sender) {
 
 	FTrainNum = "";
 
-	FServerVanList = new TOracleVanList();
-	FLocalVanList = new TLocalVanList();
+	FServerVanList = new TVanList();
+	FLocalVanList = new TVanList();
 
 	DefaultRowHeight = Canvas->TextHeight("ComboBox") + 8;
 
@@ -99,6 +99,18 @@ void __fastcall TMain::FormCreate(TObject *Sender) {
 	if (!Settings->UseLocal) {
 		SetUseLocal();
 	}
+
+#ifdef FIND_MATCH_TEST
+	int FindMatchTestResult = FindMatchTest();
+	if (FindMatchTestResult) {
+		MsgBoxErr("TEST " + IToS_0(FindMatchTestResult) + ": FAIL");
+	}
+	else {
+		MsgBox("ALL TESTS OK");
+	}
+	Application->Terminate();
+	return;
+#endif
 }
 
 // ---------------------------------------------------------------------------
@@ -140,6 +152,10 @@ void __fastcall TMain::FormCloseQuery(TObject *Sender, bool &CanClose) {
 
 // ---------------------------------------------------------------------------
 void __fastcall TMain::FormShow(TObject *Sender) {
+#ifdef FIND_MATCH_TEST
+	return;
+#endif
+
 #ifdef _DEBUG
 	btnServerLoad->Click();
 	btnLocalLoad->Click();
@@ -306,7 +322,7 @@ void TMain::EndLoad() {
 }
 
 // ---------------------------------------------------------------------------
-int TMain::SetServerVan(int Index, TOracleVan * Van) {
+int TMain::SetServerVan(int Index, TVan * Van) {
 	if (Index < 0) {
 		if (!StringGridIsEmpty(sgServer)) {
 			sgServer->RowCount++;
@@ -341,7 +357,7 @@ int TMain::SetServerVan(int Index, TOracleVan * Van) {
 }
 
 // ---------------------------------------------------------------------------
-int TMain::SetLocalVan(int Index, TLocalVan * Van) {
+int TMain::SetLocalVan(int Index, TVan * Van) {
 	if (Index < 0) {
 		if (!StringGridIsEmpty(sgLocal)) {
 			sgLocal->RowCount++;
@@ -407,7 +423,7 @@ void TMain::SetDateLocal(TDate Value) {
 }
 
 // ---------------------------------------------------------------------------
-void TMain::SetServerVanList(TOracleVanList * Value) {
+void TMain::SetServerVanList(TVanList * Value) {
 	if (Value == NULL) {
 		ServerVanList->Clear();
 	}
@@ -425,7 +441,7 @@ void TMain::SetServerVanList(TOracleVanList * Value) {
 }
 
 // ---------------------------------------------------------------------------
-void TMain::SetLocalVanList(TLocalVanList * Value) {
+void TMain::SetLocalVanList(TVanList * Value) {
 	if (Value == NULL) {
 		LocalVanList->Clear();
 	}
@@ -612,45 +628,83 @@ void __fastcall TMain::btnSaveVanPropsClick(TObject *Sender) {
 }
 
 // ---------------------------------------------------------------------------
-int TMain::FindMatch() {
-	if (StringGridIsEmpty(sgServer)) {
-		return 0;
-	}
-	if (StringGridIsEmpty(sgLocal)) {
-		return 0;
-	}
-	if (sgServer->RowCount > sgLocal->RowCount) {
-		return 0;
-	}
-
-	int VanCount = sgServer->RowCount - 1;
-	String VanNum = sgServer->Cells[ServerColumns.VANNUM][1];
-
-	WriteToLog("VanNum = " + VanNum + ", VanCount = " + IntToStr(VanCount));
-
-	for (int i = 1; i < sgLocal->RowCount; i++) {
-		WriteToLog("i = " + IntToStr(i));
-		if (SameStr(sgLocal->Cells[LocalColumns.VANNUM][i], VanNum)) {
-			WriteToLog("VanNum found, i = " + IntToStr(i));
-			for (int j = i - 1, j2 = 2; j2 <= VanCount; j--, j2++) {
-				WriteToLog("j = " + IntToStr(j) + ", j2 = " + IntToStr(j2));
-				if (!SameStr(sgLocal->Cells[LocalColumns.VANNUM][j], sgServer->Cells[ServerColumns.VANNUM][j2])) {
-                    return 0;
-				}
-			}
-			return i;
-		}
-	}
-
-	return 0;
-}
-
-// ---------------------------------------------------------------------------
 void __fastcall TMain::btnCopyDataClick(TObject *Sender) {
-	int FindMatchResult = FindMatch();
+	TStringList * Source = new TStringList();
+	TStringList * Dest = new TStringList();
 
-	if (FindMatchResult > 0) {
-		sgLocal->Row = FindMatchResult;
+	for (int i = 1; i < sgServer->RowCount; i++) {
+		Source->Add(sgServer->Cells[ServerColumns.VANNUM][i]);
+	}
+	for (int i = 1; i < sgLocal->RowCount; i++) {
+		Dest->Add(sgLocal->Cells[LocalColumns.VANNUM][i]);
+	}
+
+	bool Reverse;
+
+	int FindMatchResult = FIND_MATCH_RESULT_NOT_FOUND;
+
+	try {
+		FindMatchResult = FindMatch(Source, Dest, Reverse);
+	}
+	__finally {
+		Dest->Free();
+		Source->Free();
+	}
+
+	if (FindMatchResult > FIND_MATCH_RESULT_NOT_FOUND) {
+		int FindRow = FindMatchResult + 1;
+
+		TGridRect Selection;
+
+		Selection.Left = LocalColumns.VANNUM;
+		Selection.Right = LocalColumns.VANNUM;
+		if (Reverse) {
+			Selection.Bottom = FindRow;
+			Selection.Top = Selection.Bottom - sgServer->RowCount + 2;
+		}
+		else {
+			Selection.Top = FindRow;
+			Selection.Bottom = Selection.Top + sgServer->RowCount - 2;
+		}
+
+		sgLocal->Selection = Selection;
+
+		for (int i = 1; i < sgServer->RowCount; i++) {
+			sgLocal->Cells[LocalColumns.VANNUM][FindRow] =
+				sgServer->Cells[ServerColumns.VANNUM][i];
+
+			sgLocal->Cells[LocalColumns.CARGOTYPE][FindRow] =
+				sgServer->Cells[ServerColumns.CARGOTYPE][i];
+
+			sgLocal->Cells[LocalColumns.INVOICE_NUM][FindRow] =
+				sgServer->Cells[ServerColumns.INVOICE_NUM][i];
+
+			sgLocal->Cells[LocalColumns.INVOICE_SUPPLIER][FindRow] =
+				sgServer->Cells[ServerColumns.INVOICE_SUPPLIER][i];
+			sgLocal->Cells[LocalColumns.INVOICE_RECIPIENT][FindRow] =
+				sgServer->Cells[ServerColumns.INVOICE_RECIPIENT][i];
+
+			sgLocal->Cells[LocalColumns.DEPART_STATION][FindRow] =
+				sgServer->Cells[ServerColumns.DEPART_STATION][i];
+			sgLocal->Cells[LocalColumns.PURPOSE_STATION][FindRow] =
+				sgServer->Cells[ServerColumns.PURPOSE_STATION][i];
+
+			sgLocal->Cells[LocalColumns.CARRYING][FindRow] =
+				sgServer->Cells[ServerColumns.CARRYING][i];
+			sgLocal->Cells[LocalColumns.TARE_T][FindRow] =
+				sgServer->Cells[ServerColumns.TARE_T][i];
+			sgLocal->Cells[LocalColumns.INVOICE_NETTO][FindRow] =
+				sgServer->Cells[ServerColumns.INVOICE_NETTO][i];
+			sgLocal->Cells[LocalColumns.INVOICE_TARE][FindRow] =
+				sgServer->Cells[ServerColumns.INVOICE_TARE][i];
+
+			if (Reverse) {
+				FindRow--;
+			}
+			else {
+				FindRow++;
+			}
+		}
 	}
 	else {
 		MsgBox(IDS_MSG_MATCH_NOT_FOUND);

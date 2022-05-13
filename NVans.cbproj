@@ -289,21 +289,17 @@
             <DependentOn>NVansTDBOracleLoadTrains.h</DependentOn>
             <BuildOrder>39</BuildOrder>
         </CppCompile>
-        <CppCompile Include="NVansTLocalVan.cpp">
-            <DependentOn>NVansTLocalVan.h</DependentOn>
-            <BuildOrder>40</BuildOrder>
-        </CppCompile>
         <CppCompile Include="NVansTOracleTrain.cpp">
             <DependentOn>NVansTOracleTrain.h</DependentOn>
             <BuildOrder>38</BuildOrder>
         </CppCompile>
-        <CppCompile Include="NVansTOracleVan.cpp">
-            <DependentOn>NVansTOracleVan.h</DependentOn>
-            <BuildOrder>36</BuildOrder>
-        </CppCompile>
         <CppCompile Include="NVansTSettings.cpp">
             <DependentOn>NVansTSettings.h</DependentOn>
             <BuildOrder>17</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="NVansTVan.cpp">
+            <DependentOn>NVansTVan.h</DependentOn>
+            <BuildOrder>40</BuildOrder>
         </CppCompile>
         <FormResources Include="NVansLogin.dfm"/>
         <FormResources Include="NVansMain.dfm"/>

@@ -3,7 +3,7 @@
 #ifndef NVansTDBLocalSaveVanPropsH
 #define NVansTDBLocalSaveVanPropsH
 
-#include "NVansTOracleVan.h"
+#include "NVansTVan.h"
 
 #include "NVansTDatabaseOperation.h"
 
@@ -13,11 +13,11 @@ private:
 	int InsertCount;
 	int UpdateCount;
 
-	TOracleVanList * FVanList;
+	TVanList * FVanList;
 
 public:
 	__fastcall TDBLocalSaveVanProps(TConnectionInfo * ConnectionInfo,
-		TOracleVanList * VanList);
+		TVanList * VanList);
 	__fastcall ~TDBLocalSaveVanProps();
 
 	void OperationStart();
@@ -27,7 +27,7 @@ public:
 	void Operation();
 
 	// -----------------------------------------------------------------------
-	__property TOracleVanList * VanList = {read = FVanList};
+	__property TVanList * VanList = {read = FVanList};
 };
 
 // ---------------------------------------------------------------------------

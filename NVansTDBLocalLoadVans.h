@@ -3,7 +3,7 @@
 #ifndef NVansTDBLocalLoadVansH
 #define NVansTDBLocalLoadVansH
 
-#include "NVansTLocalVan.h"
+#include "NVansTVan.h"
 
 #include "NVansTDatabaseOperation.h"
 
@@ -12,7 +12,7 @@ class TDBLocalLoadVans : public TDatabaseOperation {
 private:
 	TDate FDate;
 
-	TLocalVanList * FVanList;
+	TVanList * FVanList;
 
 public:
 	__fastcall TDBLocalLoadVans(TConnectionInfo * ConnectionInfo, TDate Date);
@@ -27,7 +27,7 @@ public:
 	// -----------------------------------------------------------------------
 	__property TDate Date = {read = FDate};
 
-	__property TLocalVanList * VanList = {read = FVanList};
+	__property TVanList * VanList = {read = FVanList};
 };
 
 // ---------------------------------------------------------------------------

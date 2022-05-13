@@ -3,7 +3,7 @@
 #ifndef NVansTDBOracleLoadTrainH
 #define NVansTDBOracleLoadTrainH
 
-#include "NVansTOracleVan.h"
+#include "NVansTVan.h"
 
 #include "NVansTDatabaseOperation.h"
 
@@ -14,7 +14,7 @@ private:
 
 	bool FWithJoin;
 
-	TOracleVanList * FVanList;
+	TVanList * FVanList;
 
 public:
 	__fastcall TDBOracleLoadTrain(TConnectionInfo * ConnectionInfo, String TrainNum, bool WithJoin);
@@ -31,7 +31,7 @@ public:
 
 	__property bool WithJoin = {read = FWithJoin};
 
-	__property TOracleVanList * VanList = {read = FVanList};
+	__property TVanList * VanList = {read = FVanList};
 };
 
 // ---------------------------------------------------------------------------

@@ -4,47 +4,52 @@
 
 #include "NVansStrings.h"
 
-#include "NVansTOracleVan.h"
+#include "NVansTVan.h"
 
 // ---------------------------------------------------------------------------
 #pragma package(smart_init)
 
 // ---------------------------------------------------------------------------
-__fastcall TOracleVan::TOracleVan() {
+__fastcall TVan::TVan() {
 	Init();
 }
 
 // ---------------------------------------------------------------------------
-void TOracleVan::Init() {
+void TVan::Init() {
+	FID = -1;
+
 	FNum = 0;
 
 	FCarrying = 0;
 	FTareT = 0;
 	FInvoiceNetto = 0;
 	FInvoiceTare = 0;
+
+    FBrutto = false;
 }
 
 // ---------------------------------------------------------------------------
-__fastcall TOracleVan::~TOracleVan() {
+__fastcall TVan::~TVan() {
 }
 
 // ---------------------------------------------------------------------------
-bool __fastcall TOracleVan::Equals(TObject * Obj) {
+bool __fastcall TVan::Equals(TObject * Obj) {
 	if (this == Obj)
 		return true;
 	if (Obj == NULL || ClassType() != Obj->ClassType())
 		return false;
 
-	TOracleVan * Van = (TOracleVan*) Obj;
+	TVan * Van = (TVan*) Obj;
 
-	if (Num != Van->Num || VanNum != Van->VanNum ||
+	if (ID != Van->ID || Num != Van->Num || DateTime != Van->DateTime || VanNum != Van->VanNum ||
 		CargoType != Van->CargoType || InvoiceNum != Van->InvoiceNum ||
 		InvoiceSupplier != Van->InvoiceSupplier ||
 		InvoiceRecipient != Van->InvoiceRecipient ||
 		DepartStation != Van->DepartStation ||
 		PurposeStation != Van->PurposeStation || Carrying != Van->Carrying ||
 		TareT != Van->TareT || InvoiceNetto != Van->InvoiceNetto ||
-		InvoiceTare != Van->InvoiceTare) {
+		InvoiceTare != Van->InvoiceTare||
+		IsBrutto != Van->IsBrutto) {
 		return false;
 	}
 
@@ -52,8 +57,12 @@ bool __fastcall TOracleVan::Equals(TObject * Obj) {
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TOracleVan::Assign(TOracleVan * Source) {
+void __fastcall TVan::Assign(TVan * Source) {
+	ID = Source->ID;
+
 	Num = Source->Num;
+
+	DateTime = Source->DateTime;
 
 	VanNum = Source->VanNum;
 
@@ -71,14 +80,20 @@ void __fastcall TOracleVan::Assign(TOracleVan * Source) {
 	TareT = Source->TareT;
 	InvoiceNetto = Source->InvoiceNetto;
 	InvoiceTare = Source->InvoiceTare;
+
+	IsBrutto = Source->IsBrutto;
 }
 
 // ---------------------------------------------------------------------------
-String __fastcall TOracleVan::ToString() {
+String __fastcall TVan::ToString() {
 	String S;
 
-	S = "TOracleVan{";
+	S = "TVan{";
+	S += "ID=" + IntToStr(ID);
+	S += ",";
 	S += "Num=" + IntToStr(Num);
+	S += ",";
+	S += "DateTime=" + DateTimeToStr(DateTime);
 	S += ",";
 	S += "VanNum=" + VanNum;
 	S += ",";
@@ -101,6 +116,8 @@ String __fastcall TOracleVan::ToString() {
 	S += "InvoiceNetto='" + IntToStr(InvoiceNetto) + "'";
 	S += ",";
 	S += "InvoiceTare='" + IntToStr(InvoiceTare) + "'";
+	S += ",";
+	S += "IsBrutto='" + BoolToStr(IsBrutto, true) + "'";
 	S += "}";
 
 	return S;

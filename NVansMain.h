@@ -15,8 +15,7 @@
 
 #include "NVansTSettings.h"
 
-#include "NVansTOracleVan.h"
-#include "NVansTLocalVan.h"
+#include "NVansTVan.h"
 
 // ---------------------------------------------------------------------------
 class TMain : public TForm {
@@ -68,8 +67,8 @@ private:
 
 	TDate FDateLocal;
 
-	TOracleVanList * FServerVanList;
-	TLocalVanList * FLocalVanList;
+	TVanList * FServerVanList;
+	TVanList * FLocalVanList;
 
 	// -----------------------------------------------------------------------
 	void CreateServerColumns();
@@ -79,21 +78,19 @@ private:
 
 	void SetUseLocal();
 
-	int SetServerVan(int Index, TOracleVan * Van);
-	int SetLocalVan(int Index, TLocalVan * Van);
+	int SetServerVan(int Index, TVan * Van);
+	int SetLocalVan(int Index, TVan * Van);
 
 	void SetTrainNum(String Value);
 
 	void SetDateLocal(TDate Value);
 
-	void SetServerVanList(TOracleVanList * Value);
-	void SetLocalVanList(TLocalVanList * Value);
+	void SetServerVanList(TVanList * Value);
+	void SetLocalVanList(TVanList * Value);
 
 	bool ServerLoadTrain(String TrainNum, bool WithJoin);
 	bool LocalLoadVans();
 	bool LocalSaveVanProps();
-
-	int FindMatch();
 
 public:
 	__fastcall TMain(TComponent* Owner);
@@ -111,9 +108,9 @@ public:
 
 	__property TDate DateLocal = {read = FDateLocal, write = SetDateLocal};
 
-	__property TOracleVanList * ServerVanList = {
+	__property TVanList * ServerVanList = {
 		read = FServerVanList, write = SetServerVanList};
-	__property TLocalVanList * LocalVanList = {
+	__property TVanList * LocalVanList = {
 		read = FLocalVanList, write = SetLocalVanList};
 };
 

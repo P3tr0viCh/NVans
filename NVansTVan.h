@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------
 
-#ifndef NVansTLocalVanH
-#define NVansTLocalVanH
+#ifndef NVansTVanH
+#define NVansTVanH
 
 #include <System.Classes.hpp>
 #include <System.SysUtils.hpp>
@@ -9,9 +9,11 @@
 #include <ObjList.h>
 
 // ---------------------------------------------------------------------------
-class TLocalVan : public TObject {
+class TVan : public TObject {
 private:
 	int FID;
+
+	int FNum;
 
 	TDateTime FDateTime;
 
@@ -36,15 +38,17 @@ private:
 	void Init();
 
 public:
-	__fastcall TLocalVan();
-	__fastcall ~TLocalVan();
+	__fastcall TVan();
+	__fastcall ~TVan();
 
 	bool __fastcall Equals(TObject * Obj);
-	void __fastcall Assign(TLocalVan * Source);
+	void __fastcall Assign(TVan * Source);
 	String __fastcall ToString();
 
 	// -----------------------------------------------------------------------
 	__property int ID = {read = FID, write = FID};
+
+	__property int Num = {read = FNum, write = FNum};
 
 	__property TDateTime DateTime = {read = FDateTime, write = FDateTime};
 
@@ -73,7 +77,7 @@ public:
 };
 
 // ---------------------------------------------------------------------------
-typedef TObjList<TLocalVan>TLocalVanList;
+typedef TObjList<TVan>TVanList;
 
 // ---------------------------------------------------------------------------
 #endif

@@ -19,7 +19,7 @@
 __fastcall TDBOracleLoadTrain::TDBOracleLoadTrain
 	(TConnectionInfo * ConnectionInfo, String TrainNum, bool WithJoin)
 	: TDatabaseOperation(ConnectionInfo) {
-	FVanList = new TOracleVanList();
+	FVanList = new TVanList();
 
 	FTrainNum = TrainNum;
 
@@ -110,7 +110,7 @@ void TDBOracleLoadTrain::Operation() {
 
 		Query->Open();
 
-		TOracleVan * Van;
+		TVan * Van;
 
 		while (!Query->Eof) {
 			ProcMess();
@@ -118,7 +118,7 @@ void TDBOracleLoadTrain::Operation() {
 				throw EAbort(IDS_LOG_ERROR_TERMINATED_IN_WORK_PROGRESS);
 			}
 
-			Van = new TOracleVan();
+			Van = new TVan();
 
 			Van->Num = Query->FieldByName("NUM")->AsInteger;
 
