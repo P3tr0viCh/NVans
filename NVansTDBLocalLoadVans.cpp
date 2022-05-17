@@ -119,8 +119,11 @@ void TDBLocalLoadVans::Operation() {
 			Van->InvoiceNetto = Query->FieldByName("invoice_netto")->AsInteger;
 			Van->InvoiceTare = Query->FieldByName("invoice_tare")->AsInteger;
 
-			Van->IsBrutto = Query->FieldByName("status")
+			Van->IsLoaded = Query->FieldByName("status")
 				->AsInteger & BRUTTO_BIT;
+
+			Van->Brutto = Query->FieldByName("brutto")->AsInteger;
+			Van->Netto = Query->FieldByName("netto")->AsInteger;
 
 			FVanList->Add(Van);
 

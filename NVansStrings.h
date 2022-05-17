@@ -8,6 +8,7 @@
 
 #define IDS_QUESTION_CLOSE_PROGRAM					100
 #define IDS_QUESTION_SAVE_VANPROPS                  101
+#define IDS_QUESTION_DATA_OVERWRITE                 102
 
 #define IDS_ERROR_UNKNOWN							200
 #define IDS_ERROR_UNKNOWN_EXCEPTION					201

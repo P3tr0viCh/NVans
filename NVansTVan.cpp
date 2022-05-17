@@ -25,7 +25,10 @@ void TVan::Init() {
 	FInvoiceNetto = 0;
 	FInvoiceTare = 0;
 
-    FBrutto = false;
+	FLoaded = false;
+
+	FBrutto = 0;
+	FNetto = 0;
 }
 
 // ---------------------------------------------------------------------------
@@ -41,15 +44,16 @@ bool __fastcall TVan::Equals(TObject * Obj) {
 
 	TVan * Van = (TVan*) Obj;
 
-	if (ID != Van->ID || Num != Van->Num || DateTime != Van->DateTime || VanNum != Van->VanNum ||
-		CargoType != Van->CargoType || InvoiceNum != Van->InvoiceNum ||
+	if (ID != Van->ID || Num != Van->Num || DateTime != Van->DateTime ||
+		VanNum != Van->VanNum || CargoType != Van->CargoType ||
+		InvoiceNum != Van->InvoiceNum ||
 		InvoiceSupplier != Van->InvoiceSupplier ||
 		InvoiceRecipient != Van->InvoiceRecipient ||
 		DepartStation != Van->DepartStation ||
 		PurposeStation != Van->PurposeStation || Carrying != Van->Carrying ||
 		TareT != Van->TareT || InvoiceNetto != Van->InvoiceNetto ||
-		InvoiceTare != Van->InvoiceTare||
-		IsBrutto != Van->IsBrutto) {
+		InvoiceTare != Van->InvoiceTare || IsLoaded != Van->IsLoaded ||
+		Brutto != Van->Brutto || Netto != Van->Netto) {
 		return false;
 	}
 
@@ -81,7 +85,10 @@ void __fastcall TVan::Assign(TVan * Source) {
 	InvoiceNetto = Source->InvoiceNetto;
 	InvoiceTare = Source->InvoiceTare;
 
-	IsBrutto = Source->IsBrutto;
+	IsLoaded = Source->IsLoaded;
+
+	Brutto = Source->Brutto;
+	Netto = Source->Netto;
 }
 
 // ---------------------------------------------------------------------------
@@ -117,7 +124,11 @@ String __fastcall TVan::ToString() {
 	S += ",";
 	S += "InvoiceTare='" + IntToStr(InvoiceTare) + "'";
 	S += ",";
-	S += "IsBrutto='" + BoolToStr(IsBrutto, true) + "'";
+	S += "IsLoaded='" + BoolToStr(IsLoaded, true) + "'";
+	S += ",";
+	S += "Brutto='" + IntToStr(Brutto) + "'";
+	S += ",";
+	S += "Netto='" + IntToStr(Netto) + "'";
 	S += "}";
 
 	return S;

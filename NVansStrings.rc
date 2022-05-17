@@ -7,6 +7,7 @@ IDS_COPYRIGHT_STATUS,   "© Константин Дураев"
 
 IDS_QUESTION_CLOSE_PROGRAM,     "Закрыть программу?"
 IDS_QUESTION_SAVE_VANPROPS,     "Сохранить значения грузоподъёмности и тары по трафарету в таблицу характеристик вагонов?"
+IDS_QUESTION_DATA_OVERWRITE,    "Заменить существующие данные?"
 
 IDS_ERROR_UNKNOWN,              "Неизвестная ошибка"
 IDS_ERROR_UNKNOWN_EXCEPTION,    "Возникла непредвиденная ошибка:\n\n%s"

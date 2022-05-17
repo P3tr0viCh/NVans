@@ -62,10 +62,14 @@ public:
 	static const TARE_T = 10;
 	static const INVOICE_NETTO = 11;
 	static const INVOICE_TARE = 12;
+	static const NETTO_DIFF = 13;
 
-	static const VISIBLE_COUNT = 13;
+	static const ID = 14;
+	static const NETTO = 15;
 
-	static const COUNT = 13;
+	static const VISIBLE_COUNT = 14;
+
+	static const COUNT = 16;
 
 	TNVansLocalColumns() {
 		LeftAlign =

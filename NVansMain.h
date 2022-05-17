@@ -81,6 +81,12 @@ private:
 	int SetServerVan(int Index, TVan * Van);
 	int SetLocalVan(int Index, TVan * Van);
 
+	int LocalFindVanByID(int ID);
+
+	TVan * GetLocalVan(int Index);
+
+	void LocalUpdateCalcFields(int Index);
+
 	void SetTrainNum(String Value);
 
 	void SetDateLocal(TDate Value);
@@ -91,6 +97,10 @@ private:
 	bool ServerLoadTrain(String TrainNum, bool WithJoin);
 	bool LocalLoadVans();
 	bool LocalSaveVanProps();
+
+	void CopyData();
+	bool CheckField(int Column1, int Column2, int Index1, int Index2);
+	bool DataExists(int Index, bool Reverse);
 
 public:
 	__fastcall TMain(TComponent* Owner);

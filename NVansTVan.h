@@ -32,7 +32,10 @@ private:
 	int FInvoiceNetto;
 	int FInvoiceTare;
 
-	bool FBrutto;
+	bool FLoaded;
+
+	int FBrutto;
+	int FNetto;
 
 	// -----------------------------------------------------------------------
 	void Init();
@@ -73,7 +76,10 @@ public:
 	__property int InvoiceNetto = {read = FInvoiceNetto, write = FInvoiceNetto};
 	__property int InvoiceTare = {read = FInvoiceTare, write = FInvoiceTare};
 
-	__property bool IsBrutto = {read = FBrutto, write = FBrutto};
+	__property bool IsLoaded = {read = FLoaded, write = FLoaded};
+
+	__property int Brutto = {read = FBrutto, write = FBrutto};
+	__property int Netto = {read = FNetto, write = FNetto};
 };
 
 // ---------------------------------------------------------------------------

@@ -234,6 +234,9 @@ void TMain::CreateLocalColumns() {
 		IDS_GRID_HEADER_INVOICE_NETTO, 64);
 	StringGridSetHeader(sgLocal, LocalColumns.INVOICE_TARE,
 		IDS_GRID_HEADER_INVOICE_TARE, 64);
+
+	StringGridSetHeader(sgLocal, LocalColumns.NETTO_DIFF,
+		IDS_GRID_HEADER_NETTO_DIFF, 64);
 }
 
 // ---------------------------------------------------------------------------
@@ -346,12 +349,21 @@ int TMain::SetServerVan(int Index, TVan * Van) {
 	sgServer->Cells[ServerColumns.DEPART_STATION][Index] = Van->DepartStation;
 	sgServer->Cells[ServerColumns.PURPOSE_STATION][Index] = Van->PurposeStation;
 
-	sgServer->Cells[ServerColumns.CARRYING][Index] = IntToStr(Van->Carrying);
-	sgServer->Cells[ServerColumns.TARE_T][Index] = IntToStr(Van->TareT);
-	sgServer->Cells[ServerColumns.INVOICE_NETTO][Index] =
-		IntToStr(Van->InvoiceNetto);
-	sgServer->Cells[ServerColumns.INVOICE_TARE][Index] =
-		IntToStr(Van->InvoiceTare);
+	if (Van->Carrying > 0) {
+		sgServer->Cells[ServerColumns.CARRYING][Index] =
+			IntToStr(Van->Carrying);
+	}
+	if (Van->TareT > 0) {
+		sgServer->Cells[ServerColumns.TARE_T][Index] = IntToStr(Van->TareT);
+	}
+	if (Van->InvoiceNetto > 0) {
+		sgServer->Cells[ServerColumns.INVOICE_NETTO][Index] =
+			IntToStr(Van->InvoiceNetto);
+	}
+	if (Van->InvoiceTare > 0) {
+		sgServer->Cells[ServerColumns.INVOICE_TARE][Index] =
+			IntToStr(Van->InvoiceTare);
+	}
 
 	return Index;
 }
@@ -364,6 +376,8 @@ int TMain::SetLocalVan(int Index, TVan * Van) {
 		}
 		Index = sgLocal->RowCount - 1;
 	}
+
+	sgLocal->Cells[LocalColumns.ID][Index] = IntToStr(Van->ID);
 
 	sgLocal->Cells[LocalColumns.NUM][Index] = IntToStr(Index);
 
@@ -382,14 +396,61 @@ int TMain::SetLocalVan(int Index, TVan * Van) {
 	sgLocal->Cells[LocalColumns.DEPART_STATION][Index] = Van->DepartStation;
 	sgLocal->Cells[LocalColumns.PURPOSE_STATION][Index] = Van->PurposeStation;
 
-	sgLocal->Cells[LocalColumns.CARRYING][Index] = IntToStr(Van->Carrying);
-	sgLocal->Cells[LocalColumns.TARE_T][Index] = IntToStr(Van->TareT);
-	sgLocal->Cells[LocalColumns.INVOICE_NETTO][Index] =
-		IntToStr(Van->InvoiceNetto);
-	sgLocal->Cells[LocalColumns.INVOICE_TARE][Index] =
-		IntToStr(Van->InvoiceTare);
+	if (Van->Carrying > 0) {
+		sgLocal->Cells[LocalColumns.CARRYING][Index] = IntToStr(Van->Carrying);
+	}
+	if (Van->TareT > 0) {
+		sgLocal->Cells[LocalColumns.TARE_T][Index] = IntToStr(Van->TareT);
+	}
+	if (Van->InvoiceNetto > 0) {
+		sgLocal->Cells[LocalColumns.INVOICE_NETTO][Index] =
+			IntToStr(Van->InvoiceNetto);
+	}
+	if (Van->InvoiceTare > 0) {
+		sgLocal->Cells[LocalColumns.INVOICE_TARE][Index] =
+			IntToStr(Van->InvoiceTare);
+	}
+
+	sgLocal->Cells[LocalColumns.NETTO][Index] = IntToStr(Van->Netto);
+
+	LocalUpdateCalcFields(Index);
 
 	return Index;
+}
+
+// ---------------------------------------------------------------------------
+int TMain::LocalFindVanByID(int ID) {
+	for (int i = 0; i < LocalVanList->Count; i++) {
+		if (LocalVanList->Items[i]->ID == ID) {
+			return i;
+		}
+	}
+
+	return -1;
+}
+
+// ---------------------------------------------------------------------------
+TVan * TMain::GetLocalVan(int Index) {
+	return NULL;
+}
+
+// ---------------------------------------------------------------------------
+void TMain::LocalUpdateCalcFields(int Index) {
+	if (IsEmpty(sgLocal->Cells[LocalColumns.NETTO][Index])) {
+		return;
+	}
+	if (IsEmpty(sgLocal->Cells[LocalColumns.INVOICE_NETTO][Index])) {
+		return;
+	}
+
+	int Netto = StrToInt(sgLocal->Cells[LocalColumns.NETTO][Index]);
+	int InvoiceNetto =
+		StrToInt(sgLocal->Cells[LocalColumns.INVOICE_NETTO][Index]);
+
+	if (InvoiceNetto > 0) {
+		sgLocal->Cells[LocalColumns.NETTO_DIFF][Index] =
+			IntToStr(Netto - InvoiceNetto);
+	}
 }
 
 // ---------------------------------------------------------------------------
@@ -454,7 +515,7 @@ void TMain::SetLocalVanList(TVanList * Value) {
 	ProcMess();
 
 	for (int i = 0; i < LocalVanList->Count; i++) {
-		if (LocalVanList->Items[i]->IsBrutto) {
+		if (LocalVanList->Items[i]->IsLoaded) {
 			SetLocalVan(-1, LocalVanList->Items[i]);
 		}
 	}
@@ -629,6 +690,11 @@ void __fastcall TMain::btnSaveVanPropsClick(TObject *Sender) {
 
 // ---------------------------------------------------------------------------
 void __fastcall TMain::btnCopyDataClick(TObject *Sender) {
+	CopyData();
+}
+
+// ---------------------------------------------------------------------------
+void TMain::CopyData() {
 	TStringList * Source = new TStringList();
 	TStringList * Dest = new TStringList();
 
@@ -651,63 +717,141 @@ void __fastcall TMain::btnCopyDataClick(TObject *Sender) {
 		Source->Free();
 	}
 
-	if (FindMatchResult > FIND_MATCH_RESULT_NOT_FOUND) {
-		int FindRow = FindMatchResult + 1;
+	// ---
+	if (FindMatchResult <= FIND_MATCH_RESULT_NOT_FOUND) {
+		MsgBox(IDS_MSG_MATCH_NOT_FOUND);
+		return;
+	}
 
-		TGridRect Selection;
+	int Index = FindMatchResult + 1;
 
-		Selection.Left = LocalColumns.VANNUM;
-		Selection.Right = LocalColumns.VANNUM;
-		if (Reverse) {
-			Selection.Bottom = FindRow;
-			Selection.Top = Selection.Bottom - sgServer->RowCount + 2;
-		}
-		else {
-			Selection.Top = FindRow;
-			Selection.Bottom = Selection.Top + sgServer->RowCount - 2;
-		}
+	TGridRect Selection;
 
-		sgLocal->Selection = Selection;
-
-		for (int i = 1; i < sgServer->RowCount; i++) {
-			sgLocal->Cells[LocalColumns.VANNUM][FindRow] =
-				sgServer->Cells[ServerColumns.VANNUM][i];
-
-			sgLocal->Cells[LocalColumns.CARGOTYPE][FindRow] =
-				sgServer->Cells[ServerColumns.CARGOTYPE][i];
-
-			sgLocal->Cells[LocalColumns.INVOICE_NUM][FindRow] =
-				sgServer->Cells[ServerColumns.INVOICE_NUM][i];
-
-			sgLocal->Cells[LocalColumns.INVOICE_SUPPLIER][FindRow] =
-				sgServer->Cells[ServerColumns.INVOICE_SUPPLIER][i];
-			sgLocal->Cells[LocalColumns.INVOICE_RECIPIENT][FindRow] =
-				sgServer->Cells[ServerColumns.INVOICE_RECIPIENT][i];
-
-			sgLocal->Cells[LocalColumns.DEPART_STATION][FindRow] =
-				sgServer->Cells[ServerColumns.DEPART_STATION][i];
-			sgLocal->Cells[LocalColumns.PURPOSE_STATION][FindRow] =
-				sgServer->Cells[ServerColumns.PURPOSE_STATION][i];
-
-			sgLocal->Cells[LocalColumns.CARRYING][FindRow] =
-				sgServer->Cells[ServerColumns.CARRYING][i];
-			sgLocal->Cells[LocalColumns.TARE_T][FindRow] =
-				sgServer->Cells[ServerColumns.TARE_T][i];
-			sgLocal->Cells[LocalColumns.INVOICE_NETTO][FindRow] =
-				sgServer->Cells[ServerColumns.INVOICE_NETTO][i];
-			sgLocal->Cells[LocalColumns.INVOICE_TARE][FindRow] =
-				sgServer->Cells[ServerColumns.INVOICE_TARE][i];
-
-			if (Reverse) {
-				FindRow--;
-			}
-			else {
-				FindRow++;
-			}
-		}
+	Selection.Left = LocalColumns.VANNUM;
+	Selection.Right = LocalColumns.VANNUM;
+	if (Reverse) {
+		Selection.Bottom = Index;
+		Selection.Top = Selection.Bottom - sgServer->RowCount + 2;
 	}
 	else {
-		MsgBox(IDS_MSG_MATCH_NOT_FOUND);
+		Selection.Top = Index;
+		Selection.Bottom = Selection.Top + sgServer->RowCount - 2;
 	}
+
+	sgLocal->Selection = Selection;
+
+	if (DataExists(Index, Reverse)) {
+		if (!MsgBoxYesNo(IDS_QUESTION_DATA_OVERWRITE)) {
+			return;
+		}
+	}
+
+	for (int i = 1; i < sgServer->RowCount; i++) {
+		sgLocal->Cells[LocalColumns.VANNUM][Index] =
+			sgServer->Cells[ServerColumns.VANNUM][i];
+
+		sgLocal->Cells[LocalColumns.CARGOTYPE][Index] =
+			sgServer->Cells[ServerColumns.CARGOTYPE][i];
+
+		sgLocal->Cells[LocalColumns.INVOICE_NUM][Index] =
+			sgServer->Cells[ServerColumns.INVOICE_NUM][i];
+
+		sgLocal->Cells[LocalColumns.INVOICE_SUPPLIER][Index] =
+			sgServer->Cells[ServerColumns.INVOICE_SUPPLIER][i];
+		sgLocal->Cells[LocalColumns.INVOICE_RECIPIENT][Index] =
+			sgServer->Cells[ServerColumns.INVOICE_RECIPIENT][i];
+
+		sgLocal->Cells[LocalColumns.DEPART_STATION][Index] =
+			sgServer->Cells[ServerColumns.DEPART_STATION][i];
+		sgLocal->Cells[LocalColumns.PURPOSE_STATION][Index] =
+			sgServer->Cells[ServerColumns.PURPOSE_STATION][i];
+
+		sgLocal->Cells[LocalColumns.CARRYING][Index] =
+			sgServer->Cells[ServerColumns.CARRYING][i];
+		sgLocal->Cells[LocalColumns.TARE_T][Index] =
+			sgServer->Cells[ServerColumns.TARE_T][i];
+		sgLocal->Cells[LocalColumns.INVOICE_NETTO][Index] =
+			sgServer->Cells[ServerColumns.INVOICE_NETTO][i];
+		sgLocal->Cells[LocalColumns.INVOICE_TARE][Index] =
+			sgServer->Cells[ServerColumns.INVOICE_TARE][i];
+
+		LocalUpdateCalcFields(Index);
+
+		if (Reverse) {
+			Index--;
+		}
+		else {
+			Index++;
+		}
+	}
+}
+
+// ---------------------------------------------------------------------------
+bool TMain::CheckField(int Column1, int Column2, int Index1, int Index2) {
+	if (!IsEmpty(sgLocal->Cells[Column1][Index1])) {
+		if (!AnsiSameStr(sgLocal->Cells[Column1][Index1],
+			sgServer->Cells[Column2][Index2])) {
+			return true;
+		}
+	}
+	return false;
+}
+
+// ---------------------------------------------------------------------------
+bool TMain::DataExists(int Index, bool Reverse) {
+	for (int i = 1; i < sgServer->RowCount; i++) {
+		if (CheckField(LocalColumns.CARGOTYPE, ServerColumns.CARGOTYPE,
+			Index, i)) {
+			return true;
+		}
+
+		if (CheckField(LocalColumns.INVOICE_NUM, ServerColumns.INVOICE_NUM,
+			Index, i)) {
+			return true;
+		}
+
+		if (CheckField(LocalColumns.INVOICE_SUPPLIER,
+			ServerColumns.INVOICE_SUPPLIER, Index, i)) {
+			return true;
+		}
+		if (CheckField(LocalColumns.INVOICE_RECIPIENT,
+			ServerColumns.INVOICE_RECIPIENT, Index, i)) {
+			return true;
+		}
+
+		if (CheckField(LocalColumns.DEPART_STATION,
+			ServerColumns.DEPART_STATION, Index, i)) {
+			return true;
+		}
+		if (CheckField(LocalColumns.PURPOSE_STATION,
+			ServerColumns.PURPOSE_STATION, Index, i)) {
+			return true;
+		}
+
+		if (CheckField(LocalColumns.CARRYING, ServerColumns.CARRYING, Index, i))
+		{
+			return true;
+		}
+		if (CheckField(LocalColumns.TARE_T, ServerColumns.TARE_T, Index, i)) {
+			return true;
+		}
+		if (CheckField(LocalColumns.INVOICE_NETTO, ServerColumns.INVOICE_NETTO,
+			Index, i)) {
+			return true;
+		}
+		if (CheckField(LocalColumns.INVOICE_TARE, ServerColumns.INVOICE_TARE,
+			Index, i)) {
+			return true;
+		}
+
+		if (Reverse) {
+			Index--;
+		}
+		else {
+			Index++;
+		}
+	}
+
+	return false;
 }
 // ---------------------------------------------------------------------------

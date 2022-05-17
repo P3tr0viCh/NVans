@@ -32,7 +32,7 @@ IDS_SQL_ORACLE_NVANS_TRAINS_WHERE,      "DATE_RECORD>=:DATE_FROM AND DATE_RECORD
 IDS_SQL_ORACLE_NVANS_TRAINS_GROUP,      "RWNUM"
 IDS_SQL_ORACLE_NVANS_TRAINS_ORDER,      "DATETIME DESC"
 
-IDS_SQL_LOCAL_MVANS_SELECT,             "id, bdatetime, invnum, cargotype, invoice_num, invoice_supplier, invoice_consign, depart_station, purpose_station, carrying, tare_t, invoice_netto, invoice_tare, status"
+IDS_SQL_LOCAL_MVANS_SELECT,             "id, bdatetime, invnum, brutto, netto, cargotype, invoice_num, invoice_supplier, invoice_consign, depart_station, purpose_station, carrying, tare_t, invoice_netto, invoice_tare, status"
 IDS_SQL_LOCAL_MVANS_WHERE,              "bdatetime>=:DATE_FROM AND bdatetime<:DATE_TO"
 IDS_SQL_LOCAL_MVANS_ORDER,              "bdatetime DESC"
 IDS_SQL_LOCAL_PVANS_SELECT,             "invnum"
