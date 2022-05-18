@@ -13,9 +13,14 @@
 #include <Vcl.AppEvnts.hpp>
 #include <Vcl.ExtCtrls.hpp>
 
+#include <iostream>
+#include <set>
+
 #include "NVansTSettings.h"
 
 #include "NVansTVan.h"
+
+typedef std::set<int>TIntSet;
 
 // ---------------------------------------------------------------------------
 class TMain : public TForm {
@@ -69,6 +74,8 @@ private:
 
 	TVanList * FServerVanList;
 	TVanList * FLocalVanList;
+
+	TIntSet LocalChanged;
 
 	// -----------------------------------------------------------------------
 	void CreateServerColumns();

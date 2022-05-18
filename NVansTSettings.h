@@ -21,6 +21,7 @@ private:
 
 	String FConfigFileName;
 
+	TColor FColorChanged;
 	TColor FColorReadOnly;
 
 	bool FUseLocal;
@@ -59,6 +60,8 @@ public:
 
 	__property String OptionsPass = {read = FOptionsPass, write = FOptionsPass};
 
+	__property TColor ColorChanged = {
+		read = FColorChanged, write = FColorChanged};
 	__property TColor ColorReadOnly = {
 		read = FColorReadOnly, write = FColorReadOnly};
 

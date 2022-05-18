@@ -26,6 +26,7 @@ __fastcall TSettings::TSettings() {
 
 	FConfigFileName = GetConfigFileName();
 
+	FColorChanged = TColor(0x000085FB); // TODO: save
 	FColorReadOnly = TColor(0x00E8E8E8);
 
 	FUseLocal = false;

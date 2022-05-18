@@ -243,16 +243,17 @@ void TMain::CreateLocalColumns() {
 void __fastcall TMain::sgServerDrawCell(TObject *Sender, int ACol, int ARow,
 	TRect &Rect, TGridDrawState State) {
 	StringGridDrawCell(sgServer, ACol, ARow, Rect, State, NUSet,
-		ServerColumns.LeftAlign, NUSet, Main->Settings->ColorReadOnly,
-		NUColor, true);
+		ServerColumns.LeftAlign, NUSet, Main->Settings->ColorReadOnly, NUColor,
+		true, false, false, NUColor);
 }
 
 // ---------------------------------------------------------------------------
 void __fastcall TMain::sgLocalDrawCell(TObject *Sender, int ACol, int ARow,
 	TRect &Rect, TGridDrawState State) {
 	StringGridDrawCell(sgLocal, ACol, ARow, Rect, State, LocalColumns.ReadOnly,
-		LocalColumns.LeftAlign, NUSet, Main->Settings->ColorReadOnly,
-		NUColor, true);
+		LocalColumns.LeftAlign, NUSet, Main->Settings->ColorReadOnly, NUColor,
+		true, false, LocalChanged.find(ARow) != LocalChanged.end(),
+		Main->Settings->ColorChanged);
 }
 
 // ---------------------------------------------------------------------------
@@ -569,6 +570,8 @@ bool TMain::LocalLoadVans() {
 
 	LocalVanList = NULL;
 
+	LocalChanged.clear();
+
 	TDBLocalLoadVans * DBLocalLoadVans =
 		new TDBLocalLoadVans(Main->Settings->LocalConnection, DateLocal);
 	try {
@@ -635,6 +638,12 @@ void __fastcall TMain::btnServerLoadClick(TObject *Sender) {
 void __fastcall TMain::btnLocalLoadClick(TObject *Sender) {
 	if (!Settings->UseLocal) {
 		return;
+	}
+
+	if (!LocalChanged.empty()) {
+		if (!MsgBoxYesNo(IDS_QUESTION_DATA_NEED_SAVE)) {
+			return;
+		}
 	}
 
 #ifdef _DEBUG
@@ -777,12 +786,21 @@ void TMain::CopyData() {
 
 		LocalUpdateCalcFields(Index);
 
+		LocalChanged.insert(Index);
+
 		if (Reverse) {
 			Index--;
 		}
 		else {
 			Index++;
 		}
+	}
+
+	TRect Rect;
+	for (TIntSet::iterator it = LocalChanged.begin();
+	it != LocalChanged.end(); it++) {
+		Rect = sgLocal->CellRect(0, *it);
+		InvalidateRect(sgLocal->Handle, &Rect, false);
 	}
 }
 

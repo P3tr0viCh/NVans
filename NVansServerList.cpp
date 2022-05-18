@@ -99,7 +99,8 @@ void __fastcall TfrmServerList::FormDestroy(TObject *Sender) {
 void __fastcall TfrmServerList::sgListDrawCell(TObject *Sender, int ACol,
 	int ARow, TRect &Rect, TGridDrawState State) {
 	StringGridDrawCell(sgList, ACol, ARow, Rect, State, NUSet,
-		Columns.LeftAlign, NUSet, Main->Settings->ColorReadOnly, NUColor, true);
+		Columns.LeftAlign, NUSet, Main->Settings->ColorReadOnly, NUColor, true,
+		false, false, NUColor);
 }
 
 // ---------------------------------------------------------------------------
