@@ -38,6 +38,7 @@ __published:
 	TPanel *PanelCommon;
 	TButton *btnSaveVanProps;
 	TButton *btnCopyData;
+	TButton *btnLocalSave;
 
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
@@ -61,6 +62,7 @@ __published:
 	void __fastcall btnSaveVanPropsClick(TObject *Sender);
 	void __fastcall btnCopyDataClick(TObject *Sender);
 	void __fastcall FormShow(TObject *Sender);
+	void __fastcall btnLocalSaveClick(TObject *Sender);
 
 private:
 	TSettings * FSettings;
@@ -85,7 +87,10 @@ private:
 	int SetServerVan(int Index, TVan * Van);
 	int SetLocalVan(int Index, TVan * Van);
 
-	int LocalFindVanByID(int ID);
+	void SetLocalVanChanged(int Index, bool Changed);
+	bool IsLocalVanChanged(int Index);
+
+	void SetLocalChanged(bool Changed);
 
 	TVan * GetLocalVan(int Index);
 
@@ -108,14 +113,21 @@ private:
 		int ServerIndex);
 	bool DataExists(TIntegerList * Result);
 
+	bool LocalSaveData();
+
 public:
 	__fastcall TMain(TComponent* Owner);
 
 	int DefaultRowHeight;
 
+	enum TDBOperation {
+		dboLoad, dboSave
+	};
+
 	// -----------------------------------------------------------------------
-	void StartLoad();
-	void EndLoad();
+	void StartDBOperation(TDBOperation DBOperation);
+
+	void EndDBOperation();
 
 	// -----------------------------------------------------------------------
 	__property TSettings * Settings = {read = FSettings};
@@ -124,7 +136,8 @@ public:
 
 	__property TDate DateLocal = {read = FDateLocal, write = SetDateLocal};
 
-	__property bool LocalChanged = {read = FLocalChanged, write = FLocalChanged};
+	__property bool LocalChanged = {
+		read = FLocalChanged, write = SetLocalChanged};
 
 	__property TVanList * ServerVanList = {
 		read = FServerVanList, write = SetServerVanList};

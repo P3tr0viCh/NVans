@@ -25,6 +25,7 @@
 #include "NVansTDBOracleLoadTrain.h"
 #include "NVansTDBLocalLoadVans.h"
 #include "NVansTDBLocalSaveVanProps.h"
+#include "NVansTDBLocalSaveVan.h"
 
 #include "NVansLogin.h"
 #include "NVansOptions.h"
@@ -254,8 +255,7 @@ void __fastcall TMain::sgLocalDrawCell(TObject *Sender, int ACol, int ARow,
 	TRect &Rect, TGridDrawState State) {
 	StringGridDrawCell(sgLocal, ACol, ARow, Rect, State, LocalColumns.ReadOnly,
 		LocalColumns.LeftAlign, NUSet, Main->Settings->ColorReadOnly, NUColor,
-		true, false, !IsEmpty(sgLocal->Cells[LocalColumns.CHANGED][ARow]),
-		Main->Settings->ColorChanged);
+		true, false, IsLocalVanChanged(ARow), Main->Settings->ColorChanged);
 }
 
 // ---------------------------------------------------------------------------
@@ -306,18 +306,35 @@ void TMain::SetUseLocal() {
 }
 
 // ---------------------------------------------------------------------------
-void TMain::StartLoad() {
+void TMain::StartDBOperation(TDBOperation DBOperation) {
 	ShowWaitCursor();
-	StatusBar->SimpleText = LoadStr(IDS_STATUS_TRAIN_LOAD);
+
+	NativeUInt Ident = 0;
+
+	switch (DBOperation) {
+	case dboLoad:
+		Ident = IDS_STATUS_TRAIN_LOAD;
+		break;
+	case dboSave:
+		Ident = IDS_STATUS_TRAIN_SAVE;
+		break;
+	}
+
+	StatusBar->SimpleText = LoadStr(Ident);
+
 	SetControlsEnabled(false);
+
 	frmServerList->StartLoad();
+
 	ProcMess();
 }
 
 // ---------------------------------------------------------------------------
-void TMain::EndLoad() {
+void TMain::EndDBOperation() {
 	frmServerList->EndLoad();
+
 	SetControlsEnabled(true);
+
 	StatusBar->SimpleText = "";
 
 	btnSaveVanProps->Enabled = !StringGridIsEmpty(sgServer);
@@ -422,19 +439,13 @@ int TMain::SetLocalVan(int Index, TVan * Van) {
 }
 
 // ---------------------------------------------------------------------------
-int TMain::LocalFindVanByID(int ID) {
-	for (int i = 0; i < LocalVanList->Count; i++) {
-		if (LocalVanList->Items[i]->ID == ID) {
-			return i;
-		}
-	}
-
-	return -1;
-}
-
-// ---------------------------------------------------------------------------
 TVan * TMain::GetLocalVan(int Index) {
-	return NULL;
+	TVan * Van = new TVan();
+
+	Van->ID = StrToInt(sgLocal->Cells[LocalColumns.ID][Index]);
+	Van->VanNum = sgLocal->Cells[LocalColumns.VANNUM][Index];
+
+	return Van;
 }
 
 // ---------------------------------------------------------------------------
@@ -530,7 +541,7 @@ bool TMain::ServerLoadTrain(String TrainNum, bool WithJoin) {
 
 	String ResultMessage;
 
-	StartLoad();
+	StartDBOperation(dboLoad);
 
 	ServerVanList = NULL;
 
@@ -547,7 +558,7 @@ bool TMain::ServerLoadTrain(String TrainNum, bool WithJoin) {
 	__finally {
 		DBOracleLoadTrain->Free();
 
-		EndLoad();
+		EndDBOperation();
 	}
 
 	if (Result) {
@@ -568,7 +579,7 @@ bool TMain::LocalLoadVans() {
 
 	String ResultMessage;
 
-	StartLoad();
+	StartDBOperation(dboLoad);
 
 	LocalVanList = NULL;
 
@@ -586,7 +597,7 @@ bool TMain::LocalLoadVans() {
 	__finally {
 		DBLocalLoadVans->Free();
 
-		EndLoad();
+		EndDBOperation();
 	}
 
 	if (!Result) {
@@ -602,7 +613,7 @@ bool TMain::LocalSaveVanProps() {
 
 	String ResultMessage;
 
-	StartLoad();
+	StartDBOperation(dboSave);
 
 	TDBLocalSaveVanProps * DBLocalSaveVanProps =
 		new TDBLocalSaveVanProps(Main->Settings->LocalConnection,
@@ -615,7 +626,7 @@ bool TMain::LocalSaveVanProps() {
 	__finally {
 		DBLocalSaveVanProps->Free();
 
-		EndLoad();
+		EndDBOperation();
 	}
 
 	if (!Result) {
@@ -722,96 +733,123 @@ void TMain::CopyData() {
 
 	try {
 		FindMatchResult = FindMatch(Source, Dest, Result);
+
+		// ---
+		if (FindMatchResult == fmNotFound) {
+			WriteToLog(IDS_LOG_COPY_DATA_NOT_FOUND);
+			MsgBox(IDS_MSG_MATCH_NOT_FOUND);
+			return;
+		}
+
+		for (int i = 0; i < Result->Count; i++) {
+			Result->Items[i]->Value++;
+		}
+
+#ifdef _DEBUG
+		WriteToLog("found result: " + Result->ToString());
+#endif
+
+		TGridRect Selection;
+
+		Selection.Left = LocalColumns.VANNUM;
+		Selection.Right = LocalColumns.VANNUM;
+		if (FindMatchResult == fmFoundReverse) {
+			Selection.Bottom = Result->Items[0]->Value;
+			Selection.Top = Selection.Bottom - sgServer->RowCount + 2;
+		}
+		else {
+			Selection.Top = Result->Items[0]->Value;
+			Selection.Bottom = Selection.Top + sgServer->RowCount - 2;
+		}
+
+		sgLocal->Selection = Selection;
+
+		if (DataExists(Result)) {
+			if (!MsgBoxYesNo(IDS_QUESTION_DATA_OVERWRITE)) {
+				WriteToLog(IDS_LOG_COPY_DATA_OVERWRITE_CANCEL);
+				return;
+			}
+		}
+
+		int LocalIndex;
+		for (int ServerIndex = 1, ResultIndex = 0;
+		ServerIndex < sgServer->RowCount; ServerIndex++, ResultIndex++) {
+			LocalIndex = Result->Items[ResultIndex]->Value;
+
+			CopyField(LocalColumns.VANNUM, ServerColumns.VANNUM, LocalIndex,
+				ServerIndex);
+
+			CopyField(LocalColumns.CARGOTYPE, ServerColumns.CARGOTYPE,
+				LocalIndex, ServerIndex);
+
+			CopyField(LocalColumns.INVOICE_NUM, ServerColumns.INVOICE_NUM,
+				LocalIndex, ServerIndex);
+
+			CopyField(LocalColumns.INVOICE_SUPPLIER,
+				ServerColumns.INVOICE_SUPPLIER, LocalIndex, ServerIndex);
+			CopyField(LocalColumns.INVOICE_RECIPIENT,
+				ServerColumns.INVOICE_RECIPIENT, LocalIndex, ServerIndex);
+
+			CopyField(LocalColumns.DEPART_STATION, ServerColumns.DEPART_STATION,
+				LocalIndex, ServerIndex);
+			CopyField(LocalColumns.PURPOSE_STATION,
+				ServerColumns.PURPOSE_STATION, LocalIndex, ServerIndex);
+
+			CopyField(LocalColumns.CARRYING, ServerColumns.CARRYING, LocalIndex,
+				ServerIndex);
+			CopyField(LocalColumns.TARE_T, ServerColumns.TARE_T, LocalIndex,
+				ServerIndex);
+			CopyField(LocalColumns.INVOICE_NETTO, ServerColumns.INVOICE_NETTO,
+				LocalIndex, ServerIndex);
+			CopyField(LocalColumns.INVOICE_TARE, ServerColumns.INVOICE_TARE,
+				LocalIndex, ServerIndex);
+
+			LocalUpdateCalcFields(LocalIndex);
+
+			SetLocalVanChanged(LocalIndex, true);
+		}
+
+		WriteToLog(Format(IDS_LOG_COPY_DATA, ARRAYOFCONST((Result->Count))));
 	}
 	__finally {
+		Result->Free();
 		Dest->Free();
 		Source->Free();
 	}
+}
 
-	// ---
-	if (FindMatchResult == fmNotFound) {
-		WriteToLog(IDS_LOG_COPY_DATA_NOT_FOUND);
-		MsgBox(IDS_MSG_MATCH_NOT_FOUND);
+// ---------------------------------------------------------------------------
+void TMain::SetLocalVanChanged(int Index, bool Changed) {
+	if (IsLocalVanChanged(Index) == Changed) {
 		return;
 	}
 
-	for (int i = 0; i < Result->Count; i++) {
-		Result->Items[i]->Value++;
-	}
-
-#ifdef _DEBUG
-	WriteToLog("found result: " + Result->ToString());
-#endif
-
-	TGridRect Selection;
-
-	Selection.Left = LocalColumns.VANNUM;
-	Selection.Right = LocalColumns.VANNUM;
-	if (FindMatchResult == fmFoundReverse) {
-		Selection.Bottom = Result->Items[0]->Value;
-		Selection.Top = Selection.Bottom - sgServer->RowCount + 2;
+	if (Changed) {
+		sgLocal->Cells[LocalColumns.CHANGED][Index] = "*";
+		LocalChanged = true;
 	}
 	else {
-		Selection.Top = Result->Items[0]->Value;
-		Selection.Bottom = Selection.Top + sgServer->RowCount - 2;
+		sgLocal->Cells[LocalColumns.CHANGED][Index] = "";
 	}
 
-	sgLocal->Selection = Selection;
+	TRect Rect = sgLocal->CellRect(0, Index);
+	InvalidateRect(sgLocal->Handle, &Rect, false);
+}
 
-	if (DataExists(Result)) {
-		if (!MsgBoxYesNo(IDS_QUESTION_DATA_OVERWRITE)) {
-			WriteToLog(IDS_LOG_COPY_DATA_OVERWRITE_CANCEL);
-			return;
-		}
+// ---------------------------------------------------------------------------
+bool TMain::IsLocalVanChanged(int Index) {
+	return sgLocal->Cells[LocalColumns.CHANGED][Index] == "*";
+}
+
+// ---------------------------------------------------------------------------
+void TMain::SetLocalChanged(bool Changed) {
+	if (FLocalChanged == Changed) {
+		return;
 	}
 
-	int LocalIndex;
-	for (int ServerIndex = 1, ResultIndex = 0; ServerIndex < sgServer->RowCount;
-	ServerIndex++, ResultIndex++) {
-		LocalIndex = Result->Items[ResultIndex]->Value;
+	FLocalChanged = Changed;
 
-		CopyField(LocalColumns.VANNUM, ServerColumns.VANNUM, LocalIndex,
-			ServerIndex);
-
-		CopyField(LocalColumns.CARGOTYPE, ServerColumns.CARGOTYPE, LocalIndex,
-			ServerIndex);
-
-		CopyField(LocalColumns.INVOICE_NUM, ServerColumns.INVOICE_NUM,
-			LocalIndex, ServerIndex);
-
-		CopyField(LocalColumns.INVOICE_SUPPLIER, ServerColumns.INVOICE_SUPPLIER,
-			LocalIndex, ServerIndex);
-		CopyField(LocalColumns.INVOICE_RECIPIENT,
-			ServerColumns.INVOICE_RECIPIENT, LocalIndex, ServerIndex);
-
-		CopyField(LocalColumns.DEPART_STATION, ServerColumns.DEPART_STATION,
-			LocalIndex, ServerIndex);
-		CopyField(LocalColumns.PURPOSE_STATION, ServerColumns.PURPOSE_STATION,
-			LocalIndex, ServerIndex);
-
-		CopyField(LocalColumns.CARRYING, ServerColumns.CARRYING, LocalIndex,
-			ServerIndex);
-		CopyField(LocalColumns.TARE_T, ServerColumns.TARE_T, LocalIndex,
-			ServerIndex);
-		CopyField(LocalColumns.INVOICE_NETTO, ServerColumns.INVOICE_NETTO,
-			LocalIndex, ServerIndex);
-		CopyField(LocalColumns.INVOICE_TARE, ServerColumns.INVOICE_TARE,
-			LocalIndex, ServerIndex);
-
-		LocalUpdateCalcFields(LocalIndex);
-
-		sgLocal->Cells[LocalColumns.CHANGED][LocalIndex] = "*";
-	}
-
-	LocalChanged = true;
-
-	TRect Rect;
-	for (int i = 0; i < Result->Count; i++) {
-		Rect = sgLocal->CellRect(0, Result->Items[i]->Value);
-		InvalidateRect(sgLocal->Handle, &Rect, false);
-	}
-
-	Result->Free();
+	btnLocalSave->Enabled = Changed;
 }
 
 // ---------------------------------------------------------------------------
@@ -888,5 +926,72 @@ bool TMain::DataExists(TIntegerList * Result) {
 	}
 
 	return false;
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TMain::btnLocalSaveClick(TObject *Sender) {
+	LocalSaveData();
+}
+
+// ---------------------------------------------------------------------------
+bool TMain::LocalSaveData() {
+	TVan * Van;
+
+	bool Result = false;
+
+	String ResultMessage;
+
+	int SaveCount = 0;
+
+	StartDBOperation(dboSave);
+
+	TDBLocalSaveVan * DBLocalSaveVan =
+		new TDBLocalSaveVan(Main->Settings->LocalConnection);
+	try {
+		for (int i = 1; i < sgLocal->RowCount; i++) {
+			if (!IsLocalVanChanged(i)) {
+				continue;
+			}
+
+			Van = GetLocalVan(i);
+
+			DBLocalSaveVan->Van = Van;
+
+			Result = DBLocalSaveVan->Execute();
+
+			ResultMessage = DBLocalSaveVan->ErrorMessage;
+
+			if (Result) {
+				SaveCount++;
+
+				SetLocalVanChanged(i, false);
+			}
+			else {
+				break;
+			}
+		}
+
+		if (Result) {
+			LocalChanged = false;
+		}
+	}
+	__finally {
+		DBLocalSaveVan->Free();
+
+		Van->Free();
+
+		EndDBOperation();
+
+		if (SaveCount > 0) {
+			WriteToLog(Format(IDS_LOG_LOCAL_SAVE_VANS_OK,
+				ARRAYOFCONST((SaveCount))));
+		}
+	}
+
+	if (!Result) {
+		MsgBoxErr(Format(IDS_ERROR_LOCAL_SAVE_VANS, ResultMessage));
+	}
+
+	return Result;
 }
 // ---------------------------------------------------------------------------

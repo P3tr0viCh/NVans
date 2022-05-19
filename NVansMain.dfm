@@ -157,6 +157,16 @@ object Main: TMain
       TabOrder = 0
       OnClick = btnLocalLoadClick
     end
+    object btnLocalSave: TButton
+      Left = 96
+      Top = 8
+      Width = 80
+      Height = 32
+      Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
+      Enabled = False
+      TabOrder = 1
+      OnClick = btnLocalSaveClick
+    end
   end
   object PanelCommon: TPanel
     Left = 0

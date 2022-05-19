@@ -188,7 +188,7 @@ bool TfrmServerList::LoadTrains() {
 
 	ShowWaitCursor();
 
-	Main->StartLoad();
+	Main->StartDBOperation(Main->dboLoad);
 
 	TrainList = NULL;
 
@@ -206,7 +206,7 @@ bool TfrmServerList::LoadTrains() {
 	__finally {
 		DBOracleLoadTrains->Free();
 
-		Main->EndLoad();
+		Main->EndDBOperation();
 
 		RestoreCursor();
 	}

@@ -23,6 +23,7 @@ IDS_ERROR_ORACLE_TRAIN_LOAD,    "Во время загрузки состава произошла ошибка:\n\n
 IDS_ERROR_ORACLE_TRAINS_LOAD,   "Во время загрузки списка составов произошла ошибка:\n\n%s"
 IDS_ERROR_LOCAL_LOAD_VANS,      "Во время загрузки вагонов произошла ошибка:\n\n%s"
 IDS_ERROR_LOCAL_SAVE_VANPROPS,  "Во время сохранения характеристик вагонов произошла ошибка:\n\n%s"
+IDS_ERROR_LOCAL_SAVE_VANS,      "Во время сохранения вагонов произошла ошибка:\n\n%s"
 
 IDS_MSG_DATABASE_CONNECT_OK,    "Соединение с базой данных выполнено.\n\nВерсия сервера:\n%s"
 IDS_MSG_DATABASE_CONNECT_FAIL,  "Не удалось подключиться к базе данных.\n\nОшибка:\n%s"
@@ -32,6 +33,7 @@ IDS_MSG_MATCH_NOT_FOUND,        "Не удалось найти соответствие между натурным ли
 IDS_STATUS_TRAIN_LIST_DATE,             "Дата: %s"
 IDS_STATUS_TRAIN_LIST_VAN_COUNT,        "Количество: %s"
 IDS_STATUS_TRAIN_LOAD,                  "Загрузка..."
+IDS_STATUS_TRAIN_SAVE,                  "Сохранение..."
 
 IDS_CONNECTION_MYSQL,           "DRIVER={%s};SERVER=%s;PORT=%s;DATABASE=%s;USER=%s;PASSWORD=%s;OPTION=3;"
 IDS_CONNECTION_ORACLE,          "DRIVER={%s};DBQ=%s:%s/%s;UID=%s;PWD=%s;"
@@ -68,7 +70,10 @@ IDS_LOG_LOCAL_LOAD_VANS_OK,             "local load vans, count=%d"
 IDS_LOG_LOCAL_LOAD_VANS_FAIL,           "local load vans fail: %s"
 IDS_LOG_LOCAL_SAVE_VANPROPS_OK,         "local save vanprops, count=i:%d|u:%d"
 IDS_LOG_LOCAL_SAVE_VANPROPS_FAIL,       "local save vanprops fail: %s"
+IDS_LOG_LOCAL_SAVE_VANS_OK,             "local save vans, count=%d"
+IDS_LOG_LOCAL_SAVE_VANS_FAIL,           "local save vans fail: %s"
 
+IDS_LOG_COPY_DATA,                      "copy data, count=%d"
 IDS_LOG_COPY_DATA_NOT_FOUND,            "copy data: not found"
-IDS_LOG_COPY_DATA_OVERWRITE_CANCEL,     "copy data: found, overwrite cancel"
+IDS_LOG_COPY_DATA_OVERWRITE_CANCEL,     "copy data: overwrite cancel"
 END

@@ -23,6 +23,7 @@
 #define IDS_ERROR_ORACLE_TRAINS_LOAD            	251
 #define IDS_ERROR_LOCAL_LOAD_VANS                   252
 #define IDS_ERROR_LOCAL_SAVE_VANPROPS               253
+#define IDS_ERROR_LOCAL_SAVE_VANS               	254
 
 #define IDS_MSG_DATABASE_CONNECT_OK     			300
 #define IDS_MSG_DATABASE_CONNECT_FAIL   			301
@@ -32,6 +33,7 @@
 #define IDS_STATUS_TRAIN_LIST_DATE   				400
 #define IDS_STATUS_TRAIN_LIST_VAN_COUNT				401
 #define IDS_STATUS_TRAIN_LOAD						402
+#define IDS_STATUS_TRAIN_SAVE                       403
 
 #define IDS_CONNECTION_MYSQL						1000
 #define IDS_CONNECTION_ORACLE						1001
@@ -67,9 +69,12 @@
 #define IDS_LOG_LOCAL_LOAD_VANS_FAIL  				2401
 #define IDS_LOG_LOCAL_SAVE_VANPROPS_OK    	  		2402
 #define IDS_LOG_LOCAL_SAVE_VANPROPS_FAIL  			2403
+#define IDS_LOG_LOCAL_SAVE_VANS_OK                  2404
+#define IDS_LOG_LOCAL_SAVE_VANS_FAIL                2405
 
-#define IDS_LOG_COPY_DATA_NOT_FOUND                 2500
-#define IDS_LOG_COPY_DATA_OVERWRITE_CANCEL          2501
+#define IDS_LOG_COPY_DATA                           2500
+#define IDS_LOG_COPY_DATA_NOT_FOUND                 2501
+#define IDS_LOG_COPY_DATA_OVERWRITE_CANCEL          2502
 
 // ---------------------------------------------------------------------------
 #endif
