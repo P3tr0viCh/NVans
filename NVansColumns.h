@@ -67,9 +67,11 @@ public:
 	static const ID = 14;
 	static const NETTO = 15;
 
+	static const CHANGED = 16;
+
 	static const VISIBLE_COUNT = 14;
 
-	static const COUNT = 16;
+	static const COUNT = 17;
 
 	TNVansLocalColumns() {
 		LeftAlign =

@@ -13,14 +13,11 @@
 #include <Vcl.AppEvnts.hpp>
 #include <Vcl.ExtCtrls.hpp>
 
-#include <iostream>
-#include <set>
+#include <Integer.h>
 
 #include "NVansTSettings.h"
 
 #include "NVansTVan.h"
-
-typedef std::set<int>TIntSet;
 
 // ---------------------------------------------------------------------------
 class TMain : public TForm {
@@ -72,10 +69,10 @@ private:
 
 	TDate FDateLocal;
 
+	bool FLocalChanged;
+
 	TVanList * FServerVanList;
 	TVanList * FLocalVanList;
-
-	TIntSet LocalChanged;
 
 	// -----------------------------------------------------------------------
 	void CreateServerColumns();
@@ -107,7 +104,9 @@ private:
 
 	void CopyData();
 	bool CheckField(int Column1, int Column2, int Index1, int Index2);
-	bool DataExists(int Index, bool Reverse);
+	void CopyField(int LocalColumn, int ServerColumn, int LocalIndex,
+		int ServerIndex);
+	bool DataExists(TIntegerList * Result);
 
 public:
 	__fastcall TMain(TComponent* Owner);
@@ -124,6 +123,8 @@ public:
 	__property String TrainNum = {read = FTrainNum, write = SetTrainNum};
 
 	__property TDate DateLocal = {read = FDateLocal, write = SetDateLocal};
+
+	__property bool LocalChanged = {read = FLocalChanged, write = FLocalChanged};
 
 	__property TVanList * ServerVanList = {
 		read = FServerVanList, write = SetServerVanList};

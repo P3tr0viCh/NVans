@@ -6,6 +6,8 @@ IDS_COPYRIGHT,          "© Константин Дураев (Уральская Сталь)|@P3tr0viCh@yandex
 IDS_COPYRIGHT_STATUS,   "© Константин Дураев"
 
 IDS_QUESTION_CLOSE_PROGRAM,     "Закрыть программу?"
+IDS_QUESTION_CLOSE_PROGRAM_CHANGED,
+                                "Данные были изменены.\nЗакрыть программу без сохранения сделанных изменений?"
 IDS_QUESTION_SAVE_VANPROPS,     "Сохранить значения грузоподъёмности и тары по трафарету в таблицу характеристик вагонов?"
 IDS_QUESTION_DATA_OVERWRITE,    "Заменить существующие данные?"
 IDS_QUESTION_DATA_NEED_SAVE,    "Данные были изменены.\nПродолжить без сохранения сделанных изменений?"
@@ -66,4 +68,7 @@ IDS_LOG_LOCAL_LOAD_VANS_OK,             "local load vans, count=%d"
 IDS_LOG_LOCAL_LOAD_VANS_FAIL,           "local load vans fail: %s"
 IDS_LOG_LOCAL_SAVE_VANPROPS_OK,         "local save vanprops, count=i:%d|u:%d"
 IDS_LOG_LOCAL_SAVE_VANPROPS_FAIL,       "local save vanprops fail: %s"
+
+IDS_LOG_COPY_DATA_NOT_FOUND,            "copy data: not found"
+IDS_LOG_COPY_DATA_OVERWRITE_CANCEL,     "copy data: found, overwrite cancel"
 END

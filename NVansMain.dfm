@@ -62,7 +62,6 @@ object Main: TMain
     OnDrawCell = sgServerDrawCell
     OnFixedCellClick = sgServerFixedCellClick
     OnKeyDown = sgServerKeyDown
-    ExplicitTop = 50
   end
   object sgLocal: TStringGrid
     Left = 0

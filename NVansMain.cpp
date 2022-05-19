@@ -20,6 +20,8 @@
 #include "NVansStrings.h"
 #include "NVansStringsGridHeader.h"
 
+#include "NVansFindMatch.h"
+
 #include "NVansTDBOracleLoadTrain.h"
 #include "NVansTDBLocalLoadVans.h"
 #include "NVansTDBLocalSaveVanProps.h"
@@ -145,8 +147,8 @@ void __fastcall TMain::btnCloseClick(TObject *Sender) {
 // ---------------------------------------------------------------------------
 void __fastcall TMain::FormCloseQuery(TObject *Sender, bool &CanClose) {
 #ifndef FORCECLOSE
-	CanClose = MsgBoxYesNo(IDS_QUESTION_CLOSE_PROGRAM, true,
-		Application->Handle);
+	CanClose = MsgBoxYesNo(LocalChanged ? IDS_QUESTION_CLOSE_PROGRAM_CHANGED :
+		IDS_QUESTION_CLOSE_PROGRAM, true, Application->Handle);
 #endif
 }
 
@@ -252,7 +254,7 @@ void __fastcall TMain::sgLocalDrawCell(TObject *Sender, int ACol, int ARow,
 	TRect &Rect, TGridDrawState State) {
 	StringGridDrawCell(sgLocal, ACol, ARow, Rect, State, LocalColumns.ReadOnly,
 		LocalColumns.LeftAlign, NUSet, Main->Settings->ColorReadOnly, NUColor,
-		true, false, LocalChanged.find(ARow) != LocalChanged.end(),
+		true, false, !IsEmpty(sgLocal->Cells[LocalColumns.CHANGED][ARow]),
 		Main->Settings->ColorChanged);
 }
 
@@ -570,7 +572,7 @@ bool TMain::LocalLoadVans() {
 
 	LocalVanList = NULL;
 
-	LocalChanged.clear();
+	LocalChanged = false;
 
 	TDBLocalLoadVans * DBLocalLoadVans =
 		new TDBLocalLoadVans(Main->Settings->LocalConnection, DateLocal);
@@ -640,7 +642,7 @@ void __fastcall TMain::btnLocalLoadClick(TObject *Sender) {
 		return;
 	}
 
-	if (!LocalChanged.empty()) {
+	if (LocalChanged) {
 		if (!MsgBoxYesNo(IDS_QUESTION_DATA_NEED_SAVE)) {
 			return;
 		}
@@ -707,6 +709,8 @@ void TMain::CopyData() {
 	TStringList * Source = new TStringList();
 	TStringList * Dest = new TStringList();
 
+	TIntegerList * Result = new TIntegerList();
+
 	for (int i = 1; i < sgServer->RowCount; i++) {
 		Source->Add(sgServer->Cells[ServerColumns.VANNUM][i]);
 	}
@@ -714,12 +718,10 @@ void TMain::CopyData() {
 		Dest->Add(sgLocal->Cells[LocalColumns.VANNUM][i]);
 	}
 
-	bool Reverse;
-
-	int FindMatchResult = FIND_MATCH_RESULT_NOT_FOUND;
+	TFindMatchResult FindMatchResult;
 
 	try {
-		FindMatchResult = FindMatch(Source, Dest, Reverse);
+		FindMatchResult = FindMatch(Source, Dest, Result);
 	}
 	__finally {
 		Dest->Free();
@@ -727,88 +729,97 @@ void TMain::CopyData() {
 	}
 
 	// ---
-	if (FindMatchResult <= FIND_MATCH_RESULT_NOT_FOUND) {
+	if (FindMatchResult == fmNotFound) {
+		WriteToLog(IDS_LOG_COPY_DATA_NOT_FOUND);
 		MsgBox(IDS_MSG_MATCH_NOT_FOUND);
 		return;
 	}
 
-	int Index = FindMatchResult + 1;
+	for (int i = 0; i < Result->Count; i++) {
+		Result->Items[i]->Value++;
+	}
+
+#ifdef _DEBUG
+	WriteToLog("found result: " + Result->ToString());
+#endif
 
 	TGridRect Selection;
 
 	Selection.Left = LocalColumns.VANNUM;
 	Selection.Right = LocalColumns.VANNUM;
-	if (Reverse) {
-		Selection.Bottom = Index;
+	if (FindMatchResult == fmFoundReverse) {
+		Selection.Bottom = Result->Items[0]->Value;
 		Selection.Top = Selection.Bottom - sgServer->RowCount + 2;
 	}
 	else {
-		Selection.Top = Index;
+		Selection.Top = Result->Items[0]->Value;
 		Selection.Bottom = Selection.Top + sgServer->RowCount - 2;
 	}
 
 	sgLocal->Selection = Selection;
 
-	if (DataExists(Index, Reverse)) {
+	if (DataExists(Result)) {
 		if (!MsgBoxYesNo(IDS_QUESTION_DATA_OVERWRITE)) {
+			WriteToLog(IDS_LOG_COPY_DATA_OVERWRITE_CANCEL);
 			return;
 		}
 	}
 
-	for (int i = 1; i < sgServer->RowCount; i++) {
-		sgLocal->Cells[LocalColumns.VANNUM][Index] =
-			sgServer->Cells[ServerColumns.VANNUM][i];
+	int LocalIndex;
+	for (int ServerIndex = 1, ResultIndex = 0; ServerIndex < sgServer->RowCount;
+	ServerIndex++, ResultIndex++) {
+		LocalIndex = Result->Items[ResultIndex]->Value;
 
-		sgLocal->Cells[LocalColumns.CARGOTYPE][Index] =
-			sgServer->Cells[ServerColumns.CARGOTYPE][i];
+		CopyField(LocalColumns.VANNUM, ServerColumns.VANNUM, LocalIndex,
+			ServerIndex);
 
-		sgLocal->Cells[LocalColumns.INVOICE_NUM][Index] =
-			sgServer->Cells[ServerColumns.INVOICE_NUM][i];
+		CopyField(LocalColumns.CARGOTYPE, ServerColumns.CARGOTYPE, LocalIndex,
+			ServerIndex);
 
-		sgLocal->Cells[LocalColumns.INVOICE_SUPPLIER][Index] =
-			sgServer->Cells[ServerColumns.INVOICE_SUPPLIER][i];
-		sgLocal->Cells[LocalColumns.INVOICE_RECIPIENT][Index] =
-			sgServer->Cells[ServerColumns.INVOICE_RECIPIENT][i];
+		CopyField(LocalColumns.INVOICE_NUM, ServerColumns.INVOICE_NUM,
+			LocalIndex, ServerIndex);
 
-		sgLocal->Cells[LocalColumns.DEPART_STATION][Index] =
-			sgServer->Cells[ServerColumns.DEPART_STATION][i];
-		sgLocal->Cells[LocalColumns.PURPOSE_STATION][Index] =
-			sgServer->Cells[ServerColumns.PURPOSE_STATION][i];
+		CopyField(LocalColumns.INVOICE_SUPPLIER, ServerColumns.INVOICE_SUPPLIER,
+			LocalIndex, ServerIndex);
+		CopyField(LocalColumns.INVOICE_RECIPIENT,
+			ServerColumns.INVOICE_RECIPIENT, LocalIndex, ServerIndex);
 
-		sgLocal->Cells[LocalColumns.CARRYING][Index] =
-			sgServer->Cells[ServerColumns.CARRYING][i];
-		sgLocal->Cells[LocalColumns.TARE_T][Index] =
-			sgServer->Cells[ServerColumns.TARE_T][i];
-		sgLocal->Cells[LocalColumns.INVOICE_NETTO][Index] =
-			sgServer->Cells[ServerColumns.INVOICE_NETTO][i];
-		sgLocal->Cells[LocalColumns.INVOICE_TARE][Index] =
-			sgServer->Cells[ServerColumns.INVOICE_TARE][i];
+		CopyField(LocalColumns.DEPART_STATION, ServerColumns.DEPART_STATION,
+			LocalIndex, ServerIndex);
+		CopyField(LocalColumns.PURPOSE_STATION, ServerColumns.PURPOSE_STATION,
+			LocalIndex, ServerIndex);
 
-		LocalUpdateCalcFields(Index);
+		CopyField(LocalColumns.CARRYING, ServerColumns.CARRYING, LocalIndex,
+			ServerIndex);
+		CopyField(LocalColumns.TARE_T, ServerColumns.TARE_T, LocalIndex,
+			ServerIndex);
+		CopyField(LocalColumns.INVOICE_NETTO, ServerColumns.INVOICE_NETTO,
+			LocalIndex, ServerIndex);
+		CopyField(LocalColumns.INVOICE_TARE, ServerColumns.INVOICE_TARE,
+			LocalIndex, ServerIndex);
 
-		LocalChanged.insert(Index);
+		LocalUpdateCalcFields(LocalIndex);
 
-		if (Reverse) {
-			Index--;
-		}
-		else {
-			Index++;
-		}
+		sgLocal->Cells[LocalColumns.CHANGED][LocalIndex] = "*";
 	}
+
+	LocalChanged = true;
 
 	TRect Rect;
-	for (TIntSet::iterator it = LocalChanged.begin();
-	it != LocalChanged.end(); it++) {
-		Rect = sgLocal->CellRect(0, *it);
+	for (int i = 0; i < Result->Count; i++) {
+		Rect = sgLocal->CellRect(0, Result->Items[i]->Value);
 		InvalidateRect(sgLocal->Handle, &Rect, false);
 	}
+
+	Result->Free();
 }
 
 // ---------------------------------------------------------------------------
-bool TMain::CheckField(int Column1, int Column2, int Index1, int Index2) {
-	if (!IsEmpty(sgLocal->Cells[Column1][Index1])) {
-		if (!AnsiSameStr(sgLocal->Cells[Column1][Index1],
-			sgServer->Cells[Column2][Index2])) {
+bool TMain::CheckField(int LocalColumn, int ServerColumn, int LocalIndex,
+	int ServerIndex) {
+	if (!IsEmpty(sgLocal->Cells[LocalColumn][LocalIndex])) {
+		if (!AnsiSameStr(sgLocal->Cells[LocalColumn][LocalIndex],
+			sgServer->Cells[ServerColumn][ServerIndex])) {
 			return true;
 		}
 	}
@@ -816,57 +827,63 @@ bool TMain::CheckField(int Column1, int Column2, int Index1, int Index2) {
 }
 
 // ---------------------------------------------------------------------------
-bool TMain::DataExists(int Index, bool Reverse) {
-	for (int i = 1; i < sgServer->RowCount; i++) {
+void TMain::CopyField(int LocalColumn, int ServerColumn, int LocalIndex,
+	int ServerIndex) {
+	sgLocal->Cells[LocalColumn][LocalIndex] =
+		sgServer->Cells[ServerColumn][ServerIndex];
+}
+
+// ---------------------------------------------------------------------------
+bool TMain::DataExists(TIntegerList * Result) {
+	for (int ServerIndex = 1, LocalIndex = 0; ServerIndex < sgServer->RowCount;
+	ServerIndex++, LocalIndex++) {
 		if (CheckField(LocalColumns.CARGOTYPE, ServerColumns.CARGOTYPE,
-			Index, i)) {
+			Result->Items[LocalIndex]->Value, ServerIndex)) {
 			return true;
 		}
 
 		if (CheckField(LocalColumns.INVOICE_NUM, ServerColumns.INVOICE_NUM,
-			Index, i)) {
+			Result->Items[LocalIndex]->Value, ServerIndex)) {
 			return true;
 		}
 
 		if (CheckField(LocalColumns.INVOICE_SUPPLIER,
-			ServerColumns.INVOICE_SUPPLIER, Index, i)) {
+			ServerColumns.INVOICE_SUPPLIER, Result->Items[LocalIndex]->Value,
+			ServerIndex)) {
 			return true;
 		}
 		if (CheckField(LocalColumns.INVOICE_RECIPIENT,
-			ServerColumns.INVOICE_RECIPIENT, Index, i)) {
+			ServerColumns.INVOICE_RECIPIENT, Result->Items[LocalIndex]->Value,
+			ServerIndex)) {
 			return true;
 		}
 
 		if (CheckField(LocalColumns.DEPART_STATION,
-			ServerColumns.DEPART_STATION, Index, i)) {
+			ServerColumns.DEPART_STATION, Result->Items[LocalIndex]->Value,
+			ServerIndex)) {
 			return true;
 		}
 		if (CheckField(LocalColumns.PURPOSE_STATION,
-			ServerColumns.PURPOSE_STATION, Index, i)) {
+			ServerColumns.PURPOSE_STATION, Result->Items[LocalIndex]->Value,
+			ServerIndex)) {
 			return true;
 		}
 
-		if (CheckField(LocalColumns.CARRYING, ServerColumns.CARRYING, Index, i))
-		{
+		if (CheckField(LocalColumns.CARRYING, ServerColumns.CARRYING,
+			Result->Items[LocalIndex]->Value, ServerIndex)) {
 			return true;
 		}
-		if (CheckField(LocalColumns.TARE_T, ServerColumns.TARE_T, Index, i)) {
+		if (CheckField(LocalColumns.TARE_T, ServerColumns.TARE_T,
+			Result->Items[LocalIndex]->Value, ServerIndex)) {
 			return true;
 		}
 		if (CheckField(LocalColumns.INVOICE_NETTO, ServerColumns.INVOICE_NETTO,
-			Index, i)) {
+			Result->Items[LocalIndex]->Value, ServerIndex)) {
 			return true;
 		}
 		if (CheckField(LocalColumns.INVOICE_TARE, ServerColumns.INVOICE_TARE,
-			Index, i)) {
+			Result->Items[LocalIndex]->Value, ServerIndex)) {
 			return true;
-		}
-
-		if (Reverse) {
-			Index--;
-		}
-		else {
-			Index++;
 		}
 	}
 

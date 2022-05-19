@@ -29,11 +29,4 @@ bool CheckDateTimeValue(String Value);
 bool CheckIntValue(String Value);
 
 // ---------------------------------------------------------------------------
-int FindMatchTest();
-
-#define FIND_MATCH_RESULT_NOT_FOUND -1
-
-int FindMatch(TStringList * Source, TStringList * Dest, bool &Reverse);
-
-// ---------------------------------------------------------------------------
 #endif
