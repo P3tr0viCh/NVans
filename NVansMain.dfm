@@ -55,6 +55,7 @@ object Main: TMain
     Height = 100
     Align = alTop
     ColCount = 2
+    DefaultColWidth = 32
     DefaultDrawing = False
     RowCount = 2
     Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goTabs, goFixedColClick]
@@ -70,6 +71,7 @@ object Main: TMain
     Height = 100
     Align = alClient
     ColCount = 2
+    DefaultColWidth = 32
     DefaultDrawing = False
     RowCount = 2
     Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goTabs, goFixedColClick]

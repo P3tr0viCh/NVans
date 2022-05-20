@@ -50,139 +50,80 @@ void TDBLocalSaveVan::SetVan(TVan * Van) {
 void TDBLocalSaveVan::Operation() {
 	Connection->Open();
 
-	TADOQuery * QueryFind = new TADOQuery(NULL);
 	TADOQuery * QueryUpdate = new TADOQuery(NULL);
-	TADOQuery * QueryInsert = new TADOQuery(NULL);
 	try {
-		QueryFind->Connection = Connection;
 		QueryUpdate->Connection = Connection;
-		QueryInsert->Connection = Connection;
 
 		String DateTime = DateTimeToSQLStr(Now());
 
-		bool DoUpdate;
-
-		String QueryFindText = LoadStr(IDS_SQL_SELECT);
-		QueryFindText = SQLMake(QueryFindText, IDS_SQL_LOCAL_PVANS_SELECT);
-		QueryFindText = SQLMake(QueryFindText, IDS_SQL_FROM);
-		QueryFindText = SQLMake(QueryFindText, IDS_SQL_LOCAL_PVANS_TABLE);
-		QueryFindText = SQLMake(QueryFindText, IDS_SQL_WHERE);
-		QueryFindText = SQLMake(QueryFindText, IDS_SQL_LOCAL_PVANS_WHERE);
-
 		String QueryUpdateText = LoadStr(IDS_SQL_UPDATE);
-		QueryUpdateText = SQLMake(QueryUpdateText, IDS_SQL_LOCAL_PVANS_TABLE);
+		QueryUpdateText = SQLMake(QueryUpdateText, IDS_SQL_LOCAL_MVANS_TABLE);
 		QueryUpdateText = SQLMake(QueryUpdateText, IDS_SQL_SET);
-		QueryUpdateText = SQLMake(QueryUpdateText, IDS_SQL_LOCAL_PVANS_UPDATE);
+		QueryUpdateText = SQLMake(QueryUpdateText, IDS_SQL_LOCAL_MVANS_UPDATE);
 		QueryUpdateText = SQLMake(QueryUpdateText, IDS_SQL_WHERE);
-		QueryUpdateText = SQLMake(QueryUpdateText, IDS_SQL_LOCAL_PVANS_WHERE);
+		QueryUpdateText = SQLMake(QueryUpdateText,
+			IDS_SQL_LOCAL_MVANS_UPDATE_WHERE);
 
-		String QueryInsertText = LoadStr(IDS_SQL_INSERT);
-		QueryInsertText = SQLMake(QueryInsertText, IDS_SQL_LOCAL_PVANS_TABLE);
-		QueryInsertText = SQLMake(QueryInsertText,
-			IDS_SQL_LOCAL_PVANS_INSERT_FIELDS);
-		QueryInsertText = SQLMake(QueryInsertText, IDS_SQL_VALUES);
-		QueryInsertText = SQLMake(QueryInsertText,
-			IDS_SQL_LOCAL_PVANS_INSERT_VALUES);
-
-		QueryFind->SQL->Text = QueryFindText;
 		QueryUpdate->SQL->Text = QueryUpdateText;
-		QueryInsert->SQL->Text = QueryInsertText;
 
 #ifdef SQL_TO_LOG
-		WriteToLog(QueryFind->SQL->Text);
 		WriteToLog(QueryUpdate->SQL->Text);
-		WriteToLog(QueryInsert->SQL->Text);
 #endif
 
-		TParameter * pFindVanNum = GetParam(QueryFind, "INVNUM", ftString);
-		TParameter * pUpdateVanNum = GetParam(QueryUpdate, "INVNUM", ftString);
-		TParameter * pInsertVanNum = GetParam(QueryInsert, "INVNUM", ftString);
+		GetParam(QueryUpdate, "ID", ftInteger)->Value = Van->ID;
 
-		TParameter * pUpdateCarrying =
-			GetParam(QueryUpdate, "CARRYING", ftInteger);
-		GetParam(QueryUpdate, "ISCALES_CARRYING", ftInteger)->Value = 0;
-		GetParam(QueryUpdate, "IDATETIME_CARRYING", ftString)->Value = DateTime;
-		TParameter * pUpdateLoadNorm =
-			GetParam(QueryUpdate, "LOADNORM", ftInteger);
-		GetParam(QueryUpdate, "ISCALES_LOADNORM", ftInteger)->Value = 0;
-		GetParam(QueryUpdate, "IDATETIME_LOADNORM", ftString)->Value = DateTime;
-		TParameter * pUpdateTareT = GetParam(QueryUpdate, "TARE_T", ftInteger);
+		GetParam(QueryUpdate, "INVNUM", ftString)->Value = Van->VanNum;
+
+		GetParam(QueryUpdate, "CARRYING", ftInteger)->Value = Van->Carrying;
+		GetParam(QueryUpdate, "LOADNORM", ftInteger)->Value = Van->Carrying;
+
+		GetParam(QueryUpdate, "TARE_T", ftInteger)->Value = Van->TareT;
 		GetParam(QueryUpdate, "ISCALES_TARE_T", ftInteger)->Value = 0;
 		GetParam(QueryUpdate, "IDATETIME_TARE_T", ftString)->Value = DateTime;
 
-		TParameter * pInsertCarrying =
-			GetParam(QueryInsert, "CARRYING", ftInteger);
-		GetParam(QueryInsert, "ISCALES_CARRYING", ftInteger)->Value = 0;
-		GetParam(QueryInsert, "IDATETIME_CARRYING", ftString)->Value = DateTime;
-		TParameter * pInsertLoadNorm =
-			GetParam(QueryInsert, "LOADNORM", ftInteger);
-		GetParam(QueryInsert, "ISCALES_LOADNORM", ftInteger)->Value = 0;
-		GetParam(QueryInsert, "IDATETIME_LOADNORM", ftString)->Value = DateTime;
-		TParameter * pInsertTareT = GetParam(QueryInsert, "TARE_T", ftInteger);
-		GetParam(QueryInsert, "ISCALES_TARE_T", ftInteger)->Value = 0;
-		GetParam(QueryInsert, "IDATETIME_TARE_T", ftString)->Value = DateTime;
+		GetParam(QueryUpdate, "CARGOTYPE", ftString)->Value = Van->CargoType;
+		GetParam(QueryUpdate, "CARGOTYPE_CODE", ftString)->Value = Null();
 
-		// for (int i = 0; i < VanList->Count; i++) {
-		// ProcMess();
-		// if (CheckExit()) {
-		// throw EAbort(IDS_LOG_ERROR_TERMINATED_IN_WORK_PROGRESS);
-		// }
-		//
-		// pFindVanNum->Value = VanList->Items[i]->VanNum;
-		//
-		// #ifdef SQL_TO_LOG
-		// WriteToLog("SELECT PARAMS: INVNUM = " +
-		// VarToStr(pFindVanNum->Value));
-		// #endif
-		// QueryFind->Open();
-		// DoUpdate = QueryFind->RecordCount > 0;
-		// QueryFind->Close();
-		//
-		// if (DoUpdate) {
-		// pUpdateVanNum->Value = VanList->Items[i]->VanNum;
-		//
-		// pUpdateCarrying->Value = VanList->Items[i]->Carrying;
-		// pUpdateLoadNorm->Value = VanList->Items[i]->Carrying;
-		// pUpdateTareT->Value = VanList->Items[i]->TareT;
-		//
-		// #ifdef SQL_TO_LOG
-		// WriteToLog("UPDATE PARAMS: CARRYING = " +
-		// VarToStr(pUpdateCarrying->Value) + ", " + "TARE_T = " +
-		// VarToStr(pUpdateTareT->Value) + ", " + "IDATETIME* = " +
-		// VarToStr(DateTime));
-		// #endif
-		// }
-		// else {
-		// pInsertVanNum->Value = VanList->Items[i]->VanNum;
-		//
-		// pInsertCarrying->Value = VanList->Items[i]->Carrying;
-		// pInsertLoadNorm->Value = VanList->Items[i]->Carrying;
-		// pInsertTareT->Value = VanList->Items[i]->TareT;
-		//
-		// #ifdef SQL_TO_LOG
-		// WriteToLog("INSERT PARAMS: CARRYING = " +
-		// VarToStr(pInsertCarrying->Value) + ", " + "TARE_T = " +
-		// VarToStr(pInsertTareT->Value) + ", " + "IDATETIME* = " +
-		// VarToStr(DateTime));
-		// #endif
-		// }
-		//
-		// if (DoUpdate) {
-		// QueryUpdate->ExecSQL();
-		//
-		// UpdateCount++;
-		// }
-		// else {
-		// QueryInsert->ExecSQL();
-		//
-		// InsertCount++;
-		// }
-		// }
+		GetParam(QueryUpdate, "DEPART_STATION", ftString)->Value =
+			Van->DepartStation;
+		GetParam(QueryUpdate, "DEPART_STATION_CODE", ftString)->Value = Null();
+		GetParam(QueryUpdate, "PURPOSE_STATION", ftString)->Value =
+			Van->PurposeStation;
+		GetParam(QueryUpdate, "PURPOSE_STATION_CODE", ftString)->Value = Null();
+
+		GetParam(QueryUpdate, "INVOICE_NUM", ftString)->Value = Van->InvoiceNum;
+
+		GetParam(QueryUpdate, "INVOICE_SUPPLIER", ftString)->Value =
+			Van->InvoiceSupplier;
+		GetParam(QueryUpdate, "INVOICE_SUPPLIER_CODE", ftString)->Value =
+			Null();
+		GetParam(QueryUpdate, "INVOICE_CONSIGN", ftString)->Value =
+			Van->InvoiceRecipient;
+		GetParam(QueryUpdate, "INVOICE_CONSIGN_CODE", ftString)->Value = Null();
+
+		GetParam(QueryUpdate, "INVOICE_NETTO", ftInteger)->Value =
+			Van->InvoiceNetto;
+		GetParam(QueryUpdate, "INVOICE_TARE", ftInteger)->Value =
+			Van->InvoiceTare;
+
+#ifdef SQL_TO_LOG
+		WriteToLog("UPDATE PARAMS: ID = " + VarToStr(Van->ID) + ", " +
+			"INVNUM = " + VarToStr(Van->VanNum) + ", ...");
+#endif
+
+		QueryUpdate->ExecSQL();
+
+#ifdef SQL_TO_LOG
+		WriteToLog("RowsAffected: " + IntToStr(QueryUpdate->RowsAffected));
+#endif
+
+		if (QueryUpdate->RowsAffected != 1) {
+			throw Exception("record with id=" + IntToStr(Van->ID) +
+				" not exists");
+		}
 	}
 	__finally {
-		QueryInsert->Free();
 		QueryUpdate->Free();
-		QueryFind->Free();
 
 		Connection->Close();
 	}

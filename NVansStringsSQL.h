@@ -36,10 +36,13 @@
 #define IDS_SQL_LOCAL_MVANS_SELECT         		6300
 #define IDS_SQL_LOCAL_MVANS_WHERE          		6301
 #define IDS_SQL_LOCAL_MVANS_ORDER               6302
-#define IDS_SQL_LOCAL_PVANS_SELECT         		6303
-#define IDS_SQL_LOCAL_PVANS_WHERE          		6304
-#define IDS_SQL_LOCAL_PVANS_UPDATE       		6305
-#define IDS_SQL_LOCAL_PVANS_INSERT_FIELDS       6306
-#define IDS_SQL_LOCAL_PVANS_INSERT_VALUES       6307
+#define IDS_SQL_LOCAL_MVANS_UPDATE              6310
+#define IDS_SQL_LOCAL_MVANS_UPDATE_WHERE        6311
+
+#define IDS_SQL_LOCAL_PVANS_SELECT         		6320
+#define IDS_SQL_LOCAL_PVANS_WHERE          		6321
+#define IDS_SQL_LOCAL_PVANS_UPDATE       		6322
+#define IDS_SQL_LOCAL_PVANS_INSERT_FIELDS       6323
+#define IDS_SQL_LOCAL_PVANS_INSERT_VALUES       6324
 // ---------------------------------------------------------------------------
 #endif

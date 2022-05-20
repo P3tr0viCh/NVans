@@ -65,13 +65,14 @@ public:
 	static const NETTO_DIFF = 13;
 
 	static const ID = 14;
-	static const NETTO = 15;
+	static const BRUTTO = 15;
+	static const NETTO = 16;
 
-	static const CHANGED = 16;
+	static const CHANGED = 17;
 
 	static const VISIBLE_COUNT = 14;
 
-	static const COUNT = 17;
+	static const COUNT = 18;
 
 	TNVansLocalColumns() {
 		LeftAlign =
