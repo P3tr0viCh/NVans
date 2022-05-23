@@ -36,7 +36,9 @@ public:
 
 	static const VISIBLE_COUNT = 12;
 
-	static const COUNT = 12;
+	static const VAN_OBJECT = 12;
+
+	static const COUNT = 13;
 
 	TNVansServerColumns() {
 		LeftAlign =
@@ -64,15 +66,13 @@ public:
 	static const INVOICE_TARE = 12;
 	static const NETTO_DIFF = 13;
 
-	static const ID = 14;
-	static const BRUTTO = 15;
-	static const NETTO = 16;
-
-	static const CHANGED = 17;
-
 	static const VISIBLE_COUNT = 14;
 
-	static const COUNT = 18;
+	static const VAN_OBJECT = 14;
+
+	static const CHANGED = 15;
+
+	static const COUNT = 16;
 
 	TNVansLocalColumns() {
 		LeftAlign =

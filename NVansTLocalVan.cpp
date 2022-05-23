@@ -4,18 +4,18 @@
 
 #include "NVansStrings.h"
 
-#include "NVansTVan.h"
+#include "NVansTLocalVan.h"
 
 // ---------------------------------------------------------------------------
 #pragma package(smart_init)
 
 // ---------------------------------------------------------------------------
-__fastcall TVan::TVan() {
+__fastcall TLocalVan::TLocalVan() {
 	Init();
 }
 
 // ---------------------------------------------------------------------------
-void TVan::Init() {
+void TLocalVan::Init() {
 	FID = -1;
 
 	FNum = 0;
@@ -32,17 +32,17 @@ void TVan::Init() {
 }
 
 // ---------------------------------------------------------------------------
-__fastcall TVan::~TVan() {
+__fastcall TLocalVan::~TLocalVan() {
 }
 
 // ---------------------------------------------------------------------------
-bool __fastcall TVan::Equals(TObject * Obj) {
+bool __fastcall TLocalVan::Equals(TObject * Obj) {
 	if (this == Obj)
 		return true;
 	if (Obj == NULL || ClassType() != Obj->ClassType())
 		return false;
 
-	TVan * Van = (TVan*) Obj;
+	TLocalVan * Van = (TLocalVan*) Obj;
 
 	if (ID != Van->ID || Num != Van->Num || DateTime != Van->DateTime ||
 		VanNum != Van->VanNum || CargoType != Van->CargoType ||
@@ -61,7 +61,7 @@ bool __fastcall TVan::Equals(TObject * Obj) {
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TVan::Assign(TVan * Source) {
+void __fastcall TLocalVan::Assign(TLocalVan * Source) {
 	ID = Source->ID;
 
 	Num = Source->Num;
@@ -92,10 +92,10 @@ void __fastcall TVan::Assign(TVan * Source) {
 }
 
 // ---------------------------------------------------------------------------
-String __fastcall TVan::ToString() {
+String __fastcall TLocalVan::ToString() {
 	String S;
 
-	S = "TVan{";
+	S = "TLocalVan{";
 	S += "ID=" + IntToStr(ID);
 	S += ",";
 	S += "Num=" + IntToStr(Num);

@@ -19,9 +19,9 @@
 
 // ---------------------------------------------------------------------------
 __fastcall TDBLocalSaveVanProps::TDBLocalSaveVanProps
-	(TConnectionInfo * ConnectionInfo, TVanList * VanList)
+	(TConnectionInfo * ConnectionInfo, TOracleVanList * VanList)
 	: TDatabaseOperation(ConnectionInfo) {
-	FVanList = new TVanList();
+	FVanList = new TOracleVanList();
 
 	InsertCount = 0;
 	UpdateCount = 0;
@@ -99,7 +99,8 @@ void TDBLocalSaveVanProps::Operation() {
 
 		TParameter * pFindVanNum = GetParam(QueryFind, "INVNUM", ftString);
 		TParameter * pUpdateVanNum = GetParam(QueryUpdate, "INVNUM", ftString);
-		TParameter * pInsertVanNum = GetParam(QueryInsert, "INVNUM", ftString);
+		TParameter * pInserTLocalVanNum =
+			GetParam(QueryInsert, "INVNUM", ftString);
 
 		TParameter * pUpdateCarrying =
 			GetParam(QueryUpdate, "CARRYING", ftInteger);
@@ -156,7 +157,7 @@ void TDBLocalSaveVanProps::Operation() {
 #endif
 			}
 			else {
-				pInsertVanNum->Value = VanList->Items[i]->VanNum;
+				pInserTLocalVanNum->Value = VanList->Items[i]->VanNum;
 
 				pInsertCarrying->Value = VanList->Items[i]->Carrying;
 				pInsertLoadNorm->Value = VanList->Items[i]->Carrying;

@@ -20,7 +20,7 @@
 // ---------------------------------------------------------------------------
 __fastcall TDBLocalSaveVan::TDBLocalSaveVan(TConnectionInfo * ConnectionInfo)
 	: TDatabaseOperation(ConnectionInfo) {
-	FVan = new TVan();
+	FVan = new TLocalVan();
 }
 
 // ---------------------------------------------------------------------------
@@ -42,7 +42,7 @@ void TDBLocalSaveVan::OperationEndFail() {
 }
 
 // ---------------------------------------------------------------------------
-void TDBLocalSaveVan::SetVan(TVan * Van) {
+void TDBLocalSaveVan::SetVan(TLocalVan * Van) {
 	FVan->Assign(Van);
 }
 

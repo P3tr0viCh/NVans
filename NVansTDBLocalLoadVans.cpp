@@ -20,7 +20,7 @@
 // ---------------------------------------------------------------------------
 __fastcall TDBLocalLoadVans::TDBLocalLoadVans(TConnectionInfo * ConnectionInfo,
 	TDate Date) : TDatabaseOperation(ConnectionInfo) {
-	FVanList = new TVanList();
+	FVanList = new TLocalVanList();
 
 	FDate = Date;
 }
@@ -84,7 +84,7 @@ void TDBLocalLoadVans::Operation() {
 
 		Query->Open();
 
-		TVan * Van;
+		TLocalVan * Van;
 
 		while (!Query->Eof) {
 			ProcMess();
@@ -92,7 +92,7 @@ void TDBLocalLoadVans::Operation() {
 				throw EAbort(IDS_LOG_ERROR_TERMINATED_IN_WORK_PROGRESS);
 			}
 
-			Van = new TVan();
+			Van = new TLocalVan();
 
 			Van->ID = Query->FieldByName("id")->AsInteger;
 

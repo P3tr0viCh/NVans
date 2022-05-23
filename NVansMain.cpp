@@ -53,8 +53,8 @@ void __fastcall TMain::FormCreate(TObject *Sender) {
 
 	FTrainNum = "";
 
-	FServerVanList = new TVanList();
-	FLocalVanList = new TVanList();
+	FServerVanList = new TOracleVanList();
+	FLocalVanList = new TLocalVanList();
 
 	DefaultRowHeight = Canvas->TextHeight("ComboBox") + 8;
 
@@ -345,13 +345,15 @@ void TMain::EndDBOperation() {
 }
 
 // ---------------------------------------------------------------------------
-int TMain::SetServerVan(int Index, TVan * Van) {
+int TMain::SetServerVan(int Index, TOracleVan * Van) {
 	if (Index < 0) {
 		if (!StringGridIsEmpty(sgServer)) {
 			sgServer->RowCount++;
 		}
 		Index = sgServer->RowCount - 1;
 	}
+
+	sgServer->Objects[ServerColumns.VAN_OBJECT][Index] = Van;
 
 	sgServer->Cells[ServerColumns.NUM][Index] = IntToStr(Index);
 
@@ -389,7 +391,7 @@ int TMain::SetServerVan(int Index, TVan * Van) {
 }
 
 // ---------------------------------------------------------------------------
-int TMain::SetLocalVan(int Index, TVan * Van) {
+int TMain::SetLocalVan(int Index, TLocalVan * Van) {
 	if (Index < 0) {
 		if (!StringGridIsEmpty(sgLocal)) {
 			sgLocal->RowCount++;
@@ -397,7 +399,7 @@ int TMain::SetLocalVan(int Index, TVan * Van) {
 		Index = sgLocal->RowCount - 1;
 	}
 
-	sgLocal->Cells[LocalColumns.ID][Index] = IntToStr(Van->ID);
+	sgLocal->Objects[LocalColumns.VAN_OBJECT][Index] = Van;
 
 	sgLocal->Cells[LocalColumns.NUM][Index] = IntToStr(Index);
 
@@ -431,60 +433,25 @@ int TMain::SetLocalVan(int Index, TVan * Van) {
 			IntToStr(Van->InvoiceTare);
 	}
 
-	sgLocal->Cells[LocalColumns.BRUTTO][Index] = IntToStr(Van->Brutto);
-	sgLocal->Cells[LocalColumns.NETTO][Index] = IntToStr(Van->Netto);
-
-	LocalUpdateCalcFields(Index);
+	if (Van->Netto > 0 && Van->InvoiceNetto > 0) {
+		sgLocal->Cells[LocalColumns.NETTO_DIFF][Index] =
+			IntToStr(Van->Netto - Van->InvoiceNetto);
+	}
+	else {
+		sgLocal->Cells[LocalColumns.NETTO_DIFF][Index] = "";
+	}
 
 	return Index;
 }
 
 // ---------------------------------------------------------------------------
-TVan * TMain::GetLocalVan(int Index) {
-	TVan * Van = new TVan();
-
-	Van->ID = StrToInt(sgLocal->Cells[LocalColumns.ID][Index]);
-
-	Van->VanNum = sgLocal->Cells[LocalColumns.VANNUM][Index];
-
-	Van->CargoType = sgLocal->Cells[LocalColumns.CARGOTYPE][Index];
-
-	Van->InvoiceNum = sgLocal->Cells[LocalColumns.INVOICE_NUM][Index];
-
-	Van->InvoiceSupplier = sgLocal->Cells[LocalColumns.INVOICE_SUPPLIER][Index];
-	Van->InvoiceRecipient =
-		sgLocal->Cells[LocalColumns.INVOICE_RECIPIENT][Index];
-
-	Van->DepartStation = sgLocal->Cells[LocalColumns.DEPART_STATION][Index];
-	Van->PurposeStation = sgLocal->Cells[LocalColumns.PURPOSE_STATION][Index];
-
-	Van->Carrying =
-		StrToIntDef(sgLocal->Cells[LocalColumns.CARRYING][Index], 0);
-	Van->TareT = StrToIntDef(sgLocal->Cells[LocalColumns.TARE_T][Index], 0);
-	Van->InvoiceNetto =
-		StrToIntDef(sgLocal->Cells[LocalColumns.INVOICE_NETTO][Index], 0);
-	Van->InvoiceTare =
-		StrToIntDef(sgLocal->Cells[LocalColumns.INVOICE_TARE][Index], 0);
-
-	return Van;
+TOracleVan * TMain::GetServerVan(int Index) {
+	return (TOracleVan *) sgServer->Objects[ServerColumns.VAN_OBJECT][Index];
 }
 
 // ---------------------------------------------------------------------------
-void TMain::LocalUpdateCalcFields(int Index) {
-	if (IsEmpty(sgLocal->Cells[LocalColumns.NETTO][Index]) ||
-		IsEmpty(sgLocal->Cells[LocalColumns.INVOICE_NETTO][Index])) {
-		sgLocal->Cells[LocalColumns.NETTO_DIFF][Index] = "";
-		return;
-	}
-
-	int Netto = StrToInt(sgLocal->Cells[LocalColumns.NETTO][Index]);
-	int InvoiceNetto =
-		StrToInt(sgLocal->Cells[LocalColumns.INVOICE_NETTO][Index]);
-
-	if (InvoiceNetto > 0) {
-		sgLocal->Cells[LocalColumns.NETTO_DIFF][Index] =
-			IntToStr(Netto - InvoiceNetto);
-	}
+TLocalVan * TMain::GetLocalVan(int Index) {
+	return (TLocalVan *) sgLocal->Objects[LocalColumns.VAN_OBJECT][Index];
 }
 
 // ---------------------------------------------------------------------------
@@ -518,7 +485,7 @@ void TMain::SetDateLocal(TDate Value) {
 }
 
 // ---------------------------------------------------------------------------
-void TMain::SetServerVanList(TVanList * Value) {
+void TMain::SetServerVanList(TOracleVanList * Value) {
 	if (Value == NULL) {
 		ServerVanList->Clear();
 	}
@@ -536,7 +503,7 @@ void TMain::SetServerVanList(TVanList * Value) {
 }
 
 // ---------------------------------------------------------------------------
-void TMain::SetLocalVanList(TVanList * Value) {
+void TMain::SetLocalVanList(TLocalVanList * Value) {
 	if (Value == NULL) {
 		LocalVanList->Clear();
 	}
@@ -794,57 +761,53 @@ void TMain::CopyData() {
 		int Brutto;
 		int TareT;
 
+		TOracleVan * ServerVan;
+		TLocalVan * LocalVan;
+
 		int LocalIndex;
 		for (int ServerIndex = 1, ResultIndex = 0;
 		ServerIndex < sgServer->RowCount; ServerIndex++, ResultIndex++) {
 			LocalIndex = Result->Items[ResultIndex]->Value;
 
-			CopyField(LocalColumns.VANNUM, ServerColumns.VANNUM, LocalIndex,
-				ServerIndex);
+			ServerVan = GetServerVan(ServerIndex);
+			LocalVan = GetLocalVan(LocalIndex);
 
-			CopyField(LocalColumns.CARGOTYPE, ServerColumns.CARGOTYPE,
-				LocalIndex, ServerIndex);
+			LocalVan->VanNum = ServerVan->VanNum;
 
-			CopyField(LocalColumns.INVOICE_NUM, ServerColumns.INVOICE_NUM,
-				LocalIndex, ServerIndex);
+			LocalVan->CargoType = ServerVan->CargoType;
 
-			CopyField(LocalColumns.INVOICE_SUPPLIER,
-				ServerColumns.INVOICE_SUPPLIER, LocalIndex, ServerIndex);
-			CopyField(LocalColumns.INVOICE_RECIPIENT,
-				ServerColumns.INVOICE_RECIPIENT, LocalIndex, ServerIndex);
+			LocalVan->InvoiceNum = ServerVan->InvoiceNum;
 
-			CopyField(LocalColumns.DEPART_STATION, ServerColumns.DEPART_STATION,
-				LocalIndex, ServerIndex);
-			CopyField(LocalColumns.PURPOSE_STATION,
-				ServerColumns.PURPOSE_STATION, LocalIndex, ServerIndex);
+			LocalVan->InvoiceSupplier = ServerVan->InvoiceSupplier;
+			LocalVan->InvoiceRecipient = ServerVan->InvoiceRecipient;
 
-			CopyField(LocalColumns.CARRYING, ServerColumns.CARRYING, LocalIndex,
-				ServerIndex);
+			LocalVan->DepartStation = ServerVan->DepartStation;
+			LocalVan->PurposeStation = ServerVan->PurposeStation;
 
-			CopyField(LocalColumns.TARE_T, ServerColumns.TARE_T, LocalIndex,
-				ServerIndex);
-			if (true) { // TODO: check tare type
-				if (IsEmpty(sgLocal->Cells[LocalColumns.TARE_T][LocalIndex])) {
-					sgLocal->Cells[LocalColumns.NETTO][LocalIndex] = "";
-				}
-				else {
-					Brutto =
-						StrToInt(sgLocal->Cells[LocalColumns.BRUTTO]
-						[LocalIndex]);
-					TareT = StrToInt
-						(sgLocal->Cells[LocalColumns.TARE_T][LocalIndex]);
+			// TODO: copy tare, update calc fields
+			// LocalVan->Carrying = ServerVan->Carrying;
 
-					sgLocal->Cells[LocalColumns.NETTO][LocalIndex] =
-						IntToStr(Brutto - TareT);
-				}
-			}
+			// sgLocal->Cells[LocalColumns.TARE_T][LocalIndex] = ServerVan->TareT;
+			// if (true) { // TODO: check tare type
+			// if (IsEmpty(sgLocal->Cells[LocalColumns.TARE_T][LocalIndex])) {
+			// sgLocal->Cells[LocalColumns.NETTO][LocalIndex] = "";
+			// }
+			// else {
+			// Brutto =
+			// StrToInt(sgLocal->Cells[LocalColumns.BRUTTO]
+			// [LocalIndex]);
+			// TareT = StrToInt
+			// (sgLocal->Cells[LocalColumns.TARE_T][LocalIndex]);
+			//
+			// sgLocal->Cells[LocalColumns.NETTO][LocalIndex] =
+			// IntToStr(Brutto - TareT);
+			// }
+			// }
 
-			CopyField(LocalColumns.INVOICE_NETTO, ServerColumns.INVOICE_NETTO,
-				LocalIndex, ServerIndex);
-			CopyField(LocalColumns.INVOICE_TARE, ServerColumns.INVOICE_TARE,
-				LocalIndex, ServerIndex);
+			LocalVan->InvoiceNetto = ServerVan->InvoiceNetto;
+			LocalVan->InvoiceTare = ServerVan->InvoiceTare;
 
-			LocalUpdateCalcFields(LocalIndex);
+			SetLocalVan(LocalIndex, LocalVan);
 
 			SetLocalVanChanged(LocalIndex, true);
 		}
@@ -905,13 +868,6 @@ bool TMain::CheckField(int LocalColumn, int ServerColumn, int LocalIndex,
 }
 
 // ---------------------------------------------------------------------------
-void TMain::CopyField(int LocalColumn, int ServerColumn, int LocalIndex,
-	int ServerIndex) {
-	sgLocal->Cells[LocalColumn][LocalIndex] =
-		sgServer->Cells[ServerColumn][ServerIndex];
-}
-
-// ---------------------------------------------------------------------------
 bool TMain::DataExists(TIntegerList * Result) {
 	for (int ServerIndex = 1, LocalIndex = 0; ServerIndex < sgServer->RowCount;
 	ServerIndex++, LocalIndex++) {
@@ -947,14 +903,17 @@ bool TMain::DataExists(TIntegerList * Result) {
 			return true;
 		}
 
-		if (CheckField(LocalColumns.CARRYING, ServerColumns.CARRYING,
-			Result->Items[LocalIndex]->Value, ServerIndex)) {
-			return true;
-		}
-		if (CheckField(LocalColumns.TARE_T, ServerColumns.TARE_T,
-			Result->Items[LocalIndex]->Value, ServerIndex)) {
-			return true;
-		}
+		// TODO: copy tare, update calc fields
+		// if (CheckField(LocalColumns.CARRYING, ServerColumns.CARRYING,
+		// Result->Items[LocalIndex]->Value, ServerIndex)) {
+		// return true;
+		// }
+
+		// if (CheckField(LocalColumns.TARE_T, ServerColumns.TARE_T,
+		// Result->Items[LocalIndex]->Value, ServerIndex)) {
+		// return true;
+		// }
+
 		if (CheckField(LocalColumns.INVOICE_NETTO, ServerColumns.INVOICE_NETTO,
 			Result->Items[LocalIndex]->Value, ServerIndex)) {
 			return true;
@@ -970,13 +929,11 @@ bool TMain::DataExists(TIntegerList * Result) {
 
 // ---------------------------------------------------------------------------
 void __fastcall TMain::btnLocalSaveClick(TObject * Sender) {
-	LocalSaveData();
+	LocalSaveVans();
 }
 
 // ---------------------------------------------------------------------------
-bool TMain::LocalSaveData() {
-	TVan * Van;
-
+bool TMain::LocalSaveVans() {
 	bool Result = false;
 
 	String ResultMessage;
@@ -993,9 +950,7 @@ bool TMain::LocalSaveData() {
 				continue;
 			}
 
-			Van = GetLocalVan(i);
-
-			DBLocalSaveVan->Van = Van;
+			DBLocalSaveVan->Van = GetLocalVan(i);
 
 			Result = DBLocalSaveVan->Execute();
 
@@ -1017,8 +972,6 @@ bool TMain::LocalSaveData() {
 	}
 	__finally {
 		DBLocalSaveVan->Free();
-
-		Van->Free();
 
 		EndDBOperation();
 

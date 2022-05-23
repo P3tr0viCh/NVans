@@ -3,14 +3,14 @@
 #ifndef NVansTDBLocalSaveVanH
 #define NVansTDBLocalSaveVanH
 
-#include "NVansTVan.h"
+#include "NVansTLocalVan.h"
 
 #include "NVansTDatabaseOperation.h"
 
 // ---------------------------------------------------------------------------
 class TDBLocalSaveVan : public TDatabaseOperation {
 private:
-	TVan * FVan;
+	TLocalVan * FVan;
 
 public:
 	__fastcall TDBLocalSaveVan(TConnectionInfo * ConnectionInfo);
@@ -22,10 +22,10 @@ public:
 
 	void Operation();
 
-	void SetVan(TVan * Van);
+	void SetVan(TLocalVan * Van);
 
 	// -----------------------------------------------------------------------
-	__property TVan * Van = {read = FVan, write = SetVan};
+	__property TLocalVan * Van = {read = FVan, write = SetVan};
 };
 
 // ---------------------------------------------------------------------------

@@ -17,7 +17,8 @@
 
 #include "NVansTSettings.h"
 
-#include "NVansTVan.h"
+#include "NVansTLocalVan.h"
+#include "NVansTOracleVan.h"
 
 // ---------------------------------------------------------------------------
 class TMain : public TForm {
@@ -73,8 +74,8 @@ private:
 
 	bool FLocalChanged;
 
-	TVanList * FServerVanList;
-	TVanList * FLocalVanList;
+	TOracleVanList * FServerVanList;
+	TLocalVanList * FLocalVanList;
 
 	// -----------------------------------------------------------------------
 	void CreateServerColumns();
@@ -84,36 +85,32 @@ private:
 
 	void SetUseLocal();
 
-	int SetServerVan(int Index, TVan * Van);
-	int SetLocalVan(int Index, TVan * Van);
+	int SetServerVan(int Index, TOracleVan * Van);
+	int SetLocalVan(int Index, TLocalVan * Van);
 
 	void SetLocalVanChanged(int Index, bool Changed);
 	bool IsLocalVanChanged(int Index);
 
 	void SetLocalChanged(bool Changed);
 
-	TVan * GetLocalVan(int Index);
-
-	void LocalUpdateCalcFields(int Index);
+	TOracleVan * GetServerVan(int Index);
+	TLocalVan * GetLocalVan(int Index);
 
 	void SetTrainNum(String Value);
 
 	void SetDateLocal(TDate Value);
 
-	void SetServerVanList(TVanList * Value);
-	void SetLocalVanList(TVanList * Value);
+	void SetServerVanList(TOracleVanList * Value);
+	void SetLocalVanList(TLocalVanList * Value);
 
 	bool ServerLoadTrain(String TrainNum, bool WithJoin);
 	bool LocalLoadVans();
 	bool LocalSaveVanProps();
+	bool LocalSaveVans();
 
 	void CopyData();
 	bool CheckField(int Column1, int Column2, int Index1, int Index2);
-	void CopyField(int LocalColumn, int ServerColumn, int LocalIndex,
-		int ServerIndex);
 	bool DataExists(TIntegerList * Result);
-
-	bool LocalSaveData();
 
 public:
 	__fastcall TMain(TComponent* Owner);
@@ -139,9 +136,9 @@ public:
 	__property bool LocalChanged = {
 		read = FLocalChanged, write = SetLocalChanged};
 
-	__property TVanList * ServerVanList = {
+	__property TOracleVanList * ServerVanList = {
 		read = FServerVanList, write = SetServerVanList};
-	__property TVanList * LocalVanList = {
+	__property TLocalVanList * LocalVanList = {
 		read = FLocalVanList, write = SetLocalVanList};
 };
 
