@@ -72,10 +72,12 @@ void __fastcall TMain::FormCreate(TObject *Sender) {
 
 	TFileIni * FileIni = TFileIni::GetNewInstance();
 	try {
-		FileIni->ReadFormBounds(this);
-
 		sgServer->Height = FileIni->ReadInteger(Name, "ServerHeight",
 			sgServer->Height);
+		Splitter->Top = sgServer->Top + sgServer->Height;
+		PanelCommon->Top = Splitter->Top + Splitter->Height;
+
+		FileIni->ReadFormBounds(this);
 
 		StringGridColWidthsReadFromIni(sgServer, FileIni, Name,
 			"ServerColWidths");
@@ -680,8 +682,18 @@ void __fastcall TMain::btnOptionsClick(TObject *Sender) {
 
 // ---------------------------------------------------------------------------
 void __fastcall TMain::FormResize(TObject *Sender) {
-	if (Splitter->Top >= ClientHeight - 112) {
-		sgServer->Height = ClientHeight - 224;
+	if (!Visible) {
+		return;
+	}
+
+	if (!Settings->UseLocal) {
+		return;
+	}
+
+	if (sgLocal->Height < Splitter->MinSize) {
+		sgServer->Height = ClientHeight - Splitter->MinSize -
+			PanelServer->Height - Splitter->Height - PanelCommon->Height -
+			PanelLocal->Height - StatusBar->Height;
 	}
 }
 
@@ -698,7 +710,89 @@ void __fastcall TMain::btnSaveVanPropsClick(TObject *Sender) {
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TMain::btnCopyDataClick(TObject *Sender) {
+HWND TMain::AvitekGetProtFormBtn(TAvitekBtn AvitekBtn) {
+	HWND hChild;
+
+	int ToolBarIndex;
+	int BtnIndex;
+
+	String ControlText;
+	String BtnControlText;
+
+	int ErrorBtnNotFound;
+
+	HWND hWnd = FindWindowByClass("TWVanProtForm");
+
+	ToolBarIndex = 5;
+
+	switch (AvitekBtn) {
+	case abSave:
+		BtnIndex = 2;
+		BtnControlText = "Сохранить F7";
+		ErrorBtnNotFound = IDS_LOG_ERROR_AVITEK_SAVE_BTN_NOT_FOUND;
+		break;
+	}
+
+	if (!hWnd) {
+		hWnd = FindWindowByClass("TWTrainProtForm");
+
+		ToolBarIndex = 3;
+	}
+
+	if (hWnd) {
+#ifdef _DEBUG
+		TStringList * S = new TStringList();
+		DebugEnumWindowControls(hWnd, S);
+		for (int i = 0; i < S->Count; i++) {
+			WriteToLog(S->Strings[i]);
+		}
+		S->Free();
+#endif
+
+		hChild = GetWindowChildByIndex(hWnd, ToolBarIndex);
+		if (hChild) {
+			hChild = GetWindowChildByIndex(hChild, BtnIndex);
+			if (hChild) {
+				ControlText = GetControlText(hChild);
+			}
+		}
+
+		if (AnsiSameStr(ControlText, BtnControlText)) {
+			return hChild;
+		}
+		else {
+			WriteToLog(ErrorBtnNotFound);
+		}
+	}
+
+	return 0;
+}
+
+// ---------------------------------------------------------------------------
+bool TMain::AvitekIsDataNeedSave(HWND &BtnSaveHwnd) {
+	BtnSaveHwnd = AvitekGetProtFormBtn(abSave);
+
+	if (BtnSaveHwnd) {
+		return IsWindowEnabled(BtnSaveHwnd);
+	}
+
+	return false;
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TMain::btnCopyDataClick(TObject * Sender) {
+	HWND BtnSaveHwnd;
+
+	if (AvitekIsDataNeedSave(BtnSaveHwnd)) {
+		WriteToLog(IDS_LOG_ERROR_AVITEK_NEED_SAVE);
+
+		if (MsgBoxYesNo(IDS_ERROR_AVITEK_NEED_SAVE)) {
+			SwitchToThisWindow(BtnSaveHwnd, true);
+		}
+
+		return;
+	}
+
 	CopyData();
 }
 
@@ -733,7 +827,7 @@ void TMain::CopyData() {
 		}
 
 #ifdef _DEBUG
-		WriteToLog("found result: " + Result->ToString());
+		WriteToLog(" found result : " + Result->ToString());
 #endif
 
 		TGridRect Selection;
@@ -790,7 +884,7 @@ void TMain::CopyData() {
 			// sgLocal->Cells[LocalColumns.TARE_T][LocalIndex] = ServerVan->TareT;
 			// if (true) { // TODO: check tare type
 			// if (IsEmpty(sgLocal->Cells[LocalColumns.TARE_T][LocalIndex])) {
-			// sgLocal->Cells[LocalColumns.NETTO][LocalIndex] = "";
+			// sgLocal->Cells[LocalColumns.NETTO][LocalIndex] = " ";
 			// }
 			// else {
 			// Brutto =
@@ -828,11 +922,11 @@ void TMain::SetLocalVanChanged(int Index, bool Changed) {
 	}
 
 	if (Changed) {
-		sgLocal->Cells[LocalColumns.CHANGED][Index] = "*";
+		sgLocal->Cells[LocalColumns.CHANGED][Index] = " * ";
 		LocalChanged = true;
 	}
 	else {
-		sgLocal->Cells[LocalColumns.CHANGED][Index] = "";
+		sgLocal->Cells[LocalColumns.CHANGED][Index] = " ";
 	}
 
 	TRect Rect = sgLocal->CellRect(0, Index);
@@ -841,7 +935,7 @@ void TMain::SetLocalVanChanged(int Index, bool Changed) {
 
 // ---------------------------------------------------------------------------
 bool TMain::IsLocalVanChanged(int Index) {
-	return sgLocal->Cells[LocalColumns.CHANGED][Index] == "*";
+	return sgLocal->Cells[LocalColumns.CHANGED][Index] == " * ";
 }
 
 // ---------------------------------------------------------------------------

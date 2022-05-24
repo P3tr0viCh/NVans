@@ -112,6 +112,13 @@ private:
 	bool CheckField(int Column1, int Column2, int Index1, int Index2);
 	bool DataExists(TIntegerList * Result);
 
+	enum TAvitekBtn {
+		abSave, abUpdate
+	};
+
+	HWND AvitekGetProtFormBtn(TAvitekBtn AvitekBtn);
+	bool AvitekIsDataNeedSave(HWND &BtnSaveHwnd);
+
 public:
 	__fastcall TMain(TComponent* Owner);
 
