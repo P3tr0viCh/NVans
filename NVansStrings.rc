@@ -31,7 +31,6 @@ IDS_MSG_DATABASE_CONNECT_FAIL,  "Не удалось подключиться к базе данных.\n\nОшибк
 IDS_MSG_RWNUM_NOT_EXISTS,       "Поезд с номером «%s» в базе данных отсутствует."
 IDS_MSG_MATCH_NOT_FOUND,        "Не удалось найти соответствие между натурным листом и вагонами в базе данных весов."
 
-IDS_STATUS_TRAIN_LIST_DATE,             "Дата: %s"
 IDS_STATUS_TRAIN_LIST_VAN_COUNT,        "Количество: %s"
 IDS_STATUS_TRAIN_LOAD,                  "Загрузка..."
 IDS_STATUS_TRAIN_SAVE,                  "Сохранение..."
@@ -57,10 +56,11 @@ IDS_LOG_ERROR_CHECK_SETTINGS,           "check settings for %s"
 IDS_LOG_ERROR_PASS_WRONG,               "login: pass wrong"
 IDS_LOG_ERROR_TERMINATED_IN_WORK_PROGRESS,
                                         "app terminated in work progress"
-IDS_LOG_ERROR_AVITEK_NEED_SAVE,         "avitek prot_form opened, need save"
+IDS_LOG_ERROR_AVITEK_NEED_SAVE,         "error: avitek prot_form opened, need save"
 IDS_LOG_ERROR_AVITEK_SAVE_BTN_NOT_FOUND,
-                                        "avitek prot_form opened, but save_btn not found"
-
+                                        "error: avitek prot_form opened, but save_btn not found"
+IDS_LOG_ERROR_AVITEK_UPD_BTN_NOT_FOUND,
+                                        "error: avitek prot_form opened, but update_btn not found"
 IDS_LOG_DATABASE_CONNECT,               "try database connect: %s@%s:%s/%s"
 IDS_LOG_DATABASE_CONNECT_OK,            "database connected, version: %s"
 IDS_LOG_DATABASE_CONNECT_FAIL,          "database connect fail: %s"

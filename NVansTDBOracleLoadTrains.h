@@ -4,19 +4,20 @@
 #define NVansTDBOracleLoadTrainsH
 
 #include "NVansTOracleTrain.h"
+#include "NVansTFilterOracleTrains.h"
 
 #include "NVansTDatabaseOperation.h"
 
 // ---------------------------------------------------------------------------
 class TDBOracleLoadTrains : public TDatabaseOperation {
 private:
-	TDate FDate;
+	TFilterOracleTrains * FFilter;
 
 	TOracleTrainList * FTrainList;
 
 public:
 	__fastcall TDBOracleLoadTrains(TConnectionInfo * ConnectionInfo,
-		TDate Date);
+		TFilterOracleTrains * Filter);
 	__fastcall ~TDBOracleLoadTrains();
 
 	void OperationStart();
@@ -26,7 +27,7 @@ public:
 	void Operation();
 
 	// -----------------------------------------------------------------------
-	__property TDate Date = {read = FDate};
+	__property TFilterOracleTrains * Filter = {read = FFilter};
 
 	__property TOracleTrainList * TrainList = {read = FTrainList};
 };

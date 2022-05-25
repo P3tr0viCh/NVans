@@ -100,12 +100,10 @@ void TDBOracleLoadTrain::Operation() {
 		WriteToLog(Query->SQL->Text);
 #endif
 
-		TParameter * Param = Query->Parameters->ParamByName("RWNUM");
-		Param->DataType = ftFixedWideChar;
-		Param->Value = TrainNum;
+		GetParam(Query, "RWNUM", ftFixedWideChar)->Value = TrainNum;
 
 #ifdef SQL_TO_LOG
-		WriteToLog("PARAMS: RWNUM = " + VarToStr(Param->Value));
+		WriteToLog("PARAMS: RWNUM = " + TrainNum);
 #endif
 
 		Query->Open();
@@ -122,7 +120,7 @@ void TDBOracleLoadTrain::Operation() {
 
 			Van->Num = Query->FieldByName("NUM")->AsInteger;
 
-			Van->VanNum = Query->FieldByName("INVNUM")->AsString;
+			Van->VanNum = Trim(Query->FieldByName("INVNUM")->AsString);
 
 			Van->CargoType = Trim(Query->FieldByName("CARGOTYPE")->AsString);
 

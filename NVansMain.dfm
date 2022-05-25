@@ -63,6 +63,7 @@ object Main: TMain
     OnDrawCell = sgServerDrawCell
     OnFixedCellClick = sgServerFixedCellClick
     OnKeyDown = sgServerKeyDown
+    OnSelectCell = sgServerSelectCell
   end
   object sgLocal: TStringGrid
     Left = 0
@@ -77,6 +78,9 @@ object Main: TMain
     Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goTabs, goFixedColClick]
     TabOrder = 3
     OnDrawCell = sgLocalDrawCell
+    OnFixedCellClick = sgServerFixedCellClick
+    OnKeyDown = sgServerKeyDown
+    OnSelectCell = sgLocalSelectCell
   end
   object PanelServer: TPanel
     Left = 0

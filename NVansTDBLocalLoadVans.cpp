@@ -70,16 +70,12 @@ void TDBLocalLoadVans::Operation() {
 		WriteToLog(Query->SQL->Text);
 #endif
 
-		TParameter * Param1 = Query->Parameters->ParamByName("DATE_FROM");
-		Param1->DataType = ftDate;
-		Param1->Value = Date - 1;
-		TParameter * Param2 = Query->Parameters->ParamByName("DATE_TO");
-		Param2->DataType = ftDate;
-		Param2->Value = Date + 1;
+		GetParam(Query, "DATE_FROM", ftDate)->Value = Date - 1;
+		GetParam(Query, "DATE_TO", ftDate)->Value = Date + 1;
 
 #ifdef SQL_TO_LOG
-		WriteToLog("PARAMS: DATE_FROM = " + VarToStr(Param1->Value) + ", " +
-			"DATE_TO = " + VarToStr(Param2->Value));
+		WriteToLog("PARAMS: DATE_FROM = " + DateToStr(Date - 1) + ", " +
+			"DATE_TO = " + DateToStr(Date + 1));
 #endif
 
 		Query->Open();

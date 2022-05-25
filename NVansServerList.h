@@ -12,6 +12,8 @@
 #include <Vcl.ExtCtrls.hpp>
 #include <Vcl.Grids.hpp>
 
+#include "NVansTFilterOracleTrains.h"
+
 #include "NVansTOracleTrain.h"
 
 // ---------------------------------------------------------------------------
@@ -22,6 +24,10 @@ __published:
 	TPanel *PanelTop;
 	TButton *btnServerLoad;
 	TButton *btnClose;
+	TPanel *PanelFilter;
+	TDateTimePicker *pckrFilterDate;
+	TButton *btnFilterClear;
+	TLabeledEdit *eFilterVanNum;
 
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
@@ -33,12 +39,17 @@ __published:
 	void __fastcall sgListDblClick(TObject *Sender);
 	void __fastcall sgListSelectCell(TObject *Sender, int ACol, int ARow,
 		bool &CanSelect);
-	void __fastcall sgListKeyDown(TObject *Sender, WORD &Key, TShiftState Shift);
+	void __fastcall sgListKeyDown(TObject *Sender, WORD &Key,
+		TShiftState Shift);
+	void __fastcall pckrFilterDateKeyDown(TObject *Sender, WORD &Key,
+		TShiftState Shift);
+	void __fastcall btnFilterClearClick(TObject *Sender);
+	void __fastcall eFilterVanNumChange(TObject *Sender);
 
 private:
-	TDate FDate;
-
 	int SelectedRow;
+
+	TFilterOracleTrains * Filter;
 
 	TOracleTrainList * FTrainList;
 
@@ -49,10 +60,12 @@ private:
 
 	int SetTrain(int Index, TOracleTrain * Train);
 
-	void SetDate(TDate Value);
 	void SetTrainList(TOracleTrainList * Value);
 
+	void UpdateFilter();
+
 	bool LoadTrains();
+	void UpdateTrains();
 
 public:
 	__fastcall TfrmServerList(TComponent* Owner);
@@ -62,7 +75,6 @@ public:
 	void EndLoad();
 
 	// -----------------------------------------------------------------------
-	__property TDate Date = {read = FDate, write = SetDate};
 	__property TOracleTrainList * TrainList = {
 		read = FTrainList, write = SetTrainList};
 };

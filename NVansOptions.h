@@ -52,6 +52,7 @@ __published:
 private:
 	TSettings * Settings;
 
+	// -----------------------------------------------------------------------
 	void ControlSetFocus(TWinControl * Control);
 
 	void UpdateForm();

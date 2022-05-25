@@ -61,7 +61,7 @@ void TDBLocalSaveVanProps::Operation() {
 		QueryUpdate->Connection = Connection;
 		QueryInsert->Connection = Connection;
 
-		String DateTime = DateTimeToSQLStr(Now());
+		String DateTime = DTToSQLS(Now());
 
 		bool DoUpdate;
 

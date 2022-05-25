@@ -17,16 +17,19 @@
 
 // ---------------------------------------------------------------------------
 __fastcall TDBOracleLoadTrains::TDBOracleLoadTrains
-	(TConnectionInfo * ConnectionInfo, TDate Date)
+	(TConnectionInfo * ConnectionInfo, TFilterOracleTrains * Filter)
 	: TDatabaseOperation(ConnectionInfo) {
+	FFilter = new TFilterOracleTrains();
+
 	FTrainList = new TOracleTrainList();
 
-	FDate = Date;
+	FFilter->Assign(Filter);
 }
 
 // ---------------------------------------------------------------------------
 __fastcall TDBOracleLoadTrains::~TDBOracleLoadTrains() {
 	FTrainList->Free();
+	FFilter->Free();
 }
 
 // ---------------------------------------------------------------------------
@@ -52,6 +55,8 @@ void TDBOracleLoadTrains::Operation() {
 	try {
 		Query->Connection = Connection;
 
+		bool SearchByDate = IsEmpty(Filter->VanNum);
+
 		String QueryText;
 
 		QueryText = SQLMake(QueryText, IDS_SQL_SELECT);
@@ -59,7 +64,24 @@ void TDBOracleLoadTrains::Operation() {
 		QueryText = SQLMake(QueryText, IDS_SQL_FROM);
 		QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TABLE);
 		QueryText = SQLMake(QueryText, IDS_SQL_WHERE);
-		QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TRAINS_WHERE);
+		if (SearchByDate) {
+			QueryText =
+				SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TRAINS_WHERE_DT);
+		}
+		else {
+			QueryText =
+				SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TRAINS_WHERE_IN_VN);
+			QueryText = SQLMake(QueryText, "(");
+			QueryText = SQLMake(QueryText, IDS_SQL_SELECT);
+			QueryText =
+				SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TRAINS_SELECT_VN);
+			QueryText = SQLMake(QueryText, IDS_SQL_FROM);
+			QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TABLE);
+			QueryText = SQLMake(QueryText, IDS_SQL_WHERE);
+			QueryText =
+				SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TRAINS_WHERE_VN);
+			QueryText = SQLMake(QueryText, ")");
+		}
 		QueryText = SQLMake(QueryText, IDS_SQL_GROUP);
 		QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TRAINS_GROUP);
 		QueryText = SQLMake(QueryText, IDS_SQL_ORDER);
@@ -71,17 +93,24 @@ void TDBOracleLoadTrains::Operation() {
 		WriteToLog(Query->SQL->Text);
 #endif
 
-		TParameter * Param1 = Query->Parameters->ParamByName("DATE_FROM");
-		Param1->DataType = ftDate;
-		Param1->Value = Date;
-		TParameter * Param2 = Query->Parameters->ParamByName("DATE_TO");
-		Param2->DataType = ftDate;
-		Param2->Value = Date + 1;
+		if (SearchByDate) {
+			GetParam(Query, "DATE_FROM", ftDate)->Value = Filter->Date;
+			GetParam(Query, "DATE_TO", ftDate)->Value = Filter->Date + 1;
 
 #ifdef SQL_TO_LOG
-		WriteToLog("PARAMS: DATE_FROM = " + VarToStr(Param1->Value) + ", " +
-			"DATE_TO = " + VarToStr(Param2->Value));
+			WriteToLog("PARAMS: DATE_FROM = " + DateToStr(Filter->Date) + ", " +
+				"DATE_TO = " + DateToStr(Filter->Date + 1));
 #endif
+		}
+		else {
+			GetParam(Query, "INVNUM", ftFixedWideChar)->Value = Filter->VanNum;
+			GetParam(Query, "DATE_FROM", ftDate)->Value = Filter->Date - 30;
+
+#ifdef SQL_TO_LOG
+			WriteToLog("PARAMS: INVNUM = " + Filter->VanNum + ", " +
+				"DATE_FROM = " + DateToStr(Filter->Date - 30));
+#endif
+		}
 
 		Query->Open();
 

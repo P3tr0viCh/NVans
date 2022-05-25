@@ -58,14 +58,20 @@ TParameter * GetParam(TADOQuery * Query, String Name, TFieldType DataType) {
 }
 
 // ---------------------------------------------------------------------------
-String DateTimeToSQLStr(TDateTime ADateTime) {
+String DTToSQLS(TDateTime ADateTime) {
 	return FormatDateTime("yyyyMMddhhnnss", ADateTime);
 }
 
 // ---------------------------------------------------------------------------
-int DateTimeToWTime(TDateTime ADateTime) {
+int DTToWTime(TDateTime ADateTime) {
 	// TODO: Magic Number
 	return int(DateTimeToUnix(IncHour(ADateTime, -3)));
+}
+
+// ---------------------------------------------------------------------------
+String DTToS(TDateTime ADateTime, bool WithSecs) {
+	return WithSecs ? FormatDateTime("dd.MM.yyyy hh:nn:ss", ADateTime) :
+		FormatDateTime("dd.MM.yyyy hh:nn", ADateTime);
 }
 
 // ---------------------------------------------------------------------------

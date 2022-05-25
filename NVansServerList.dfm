@@ -38,7 +38,7 @@ object frmServerList: TfrmServerList
   object sgList: TStringGrid
     Left = 0
     Top = 48
-    Width = 352
+    Width = 200
     Height = 136
     Align = alClient
     ColCount = 2
@@ -51,6 +51,7 @@ object frmServerList: TfrmServerList
     OnDrawCell = sgListDrawCell
     OnKeyDown = sgListKeyDown
     OnSelectCell = sgListSelectCell
+    ExplicitWidth = 352
   end
   object PanelTop: TPanel
     Left = 0
@@ -81,6 +82,51 @@ object frmServerList: TfrmServerList
       Caption = #1047#1072#1082#1088#1099#1090#1100
       TabOrder = 1
       OnClick = btnCloseClick
+    end
+  end
+  object PanelFilter: TPanel
+    Left = 200
+    Top = 48
+    Width = 152
+    Height = 136
+    Align = alRight
+    BevelOuter = bvNone
+    TabOrder = 3
+    ExplicitLeft = 208
+    DesignSize = (
+      152
+      136)
+    object pckrFilterDate: TDateTimePicker
+      Left = 8
+      Top = 0
+      Width = 136
+      Height = 25
+      Date = 44706.439248831020000000
+      Time = 44706.439248831020000000
+      TabOrder = 0
+      OnKeyDown = pckrFilterDateKeyDown
+    end
+    object btnFilterClear: TButton
+      Left = 64
+      Top = 96
+      Width = 80
+      Height = 32
+      Anchors = [akRight, akBottom]
+      Caption = #1057#1073#1088#1086#1089
+      TabOrder = 2
+      OnClick = btnFilterClearClick
+    end
+    object eFilterVanNum: TLabeledEdit
+      Left = 8
+      Top = 56
+      Width = 136
+      Height = 25
+      EditLabel.Width = 86
+      EditLabel.Height = 17
+      EditLabel.Caption = #1053#1086#1084#1077#1088' '#1074#1072#1075#1086#1085#1072
+      TabOrder = 1
+      OnChange = eFilterVanNumChange
+      OnKeyDown = pckrFilterDateKeyDown
     end
   end
 end

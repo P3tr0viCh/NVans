@@ -64,6 +64,10 @@ __published:
 	void __fastcall btnCopyDataClick(TObject *Sender);
 	void __fastcall FormShow(TObject *Sender);
 	void __fastcall btnLocalSaveClick(TObject *Sender);
+	void __fastcall sgServerSelectCell(TObject *Sender, int ACol, int ARow,
+		bool &CanSelect);
+	void __fastcall sgLocalSelectCell(TObject *Sender, int ACol, int ARow, bool &CanSelect);
+
 
 private:
 	TSettings * FSettings;
@@ -73,6 +77,9 @@ private:
 	TDate FDateLocal;
 
 	bool FLocalChanged;
+
+	int ServerSelectedRow;
+	int LocalSelectedRow;
 
 	TOracleVanList * FServerVanList;
 	TLocalVanList * FLocalVanList;
@@ -117,7 +124,8 @@ private:
 	};
 
 	HWND AvitekGetProtFormBtn(TAvitekBtn AvitekBtn);
-	bool AvitekIsDataNeedSave(HWND &BtnSaveHwnd);
+	bool AvitekCheckNeedSave();
+	void AvitekUpdateProt();
 
 public:
 	__fastcall TMain(TComponent* Owner);

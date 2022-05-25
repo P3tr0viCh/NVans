@@ -23,6 +23,7 @@ private:
 
 	TColor FColorChanged;
 	TColor FColorReadOnly;
+	TColor FColorSelected;
 
 	bool FUseLocal;
 
@@ -64,6 +65,8 @@ public:
 		read = FColorChanged, write = FColorChanged};
 	__property TColor ColorReadOnly = {
 		read = FColorReadOnly, write = FColorReadOnly};
+	__property TColor ColorSelected = {
+		read = FColorSelected, write = FColorSelected};
 
 	__property bool UseLocal = {read = FUseLocal, write = FUseLocal};
 

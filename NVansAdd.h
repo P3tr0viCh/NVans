@@ -20,8 +20,9 @@ String SQLMake(String S1, NativeUInt Ident);
 TParameter * GetParam(TADOQuery * Query, String Name, TFieldType DataType);
 
 // ---------------------------------------------------------------------------
-String DateTimeToSQLStr(TDateTime ADateTime);
-int DateTimeToWTime(TDateTime ADateTime);
+String DTToSQLS(TDateTime ADateTime);
+int DTToWTime(TDateTime ADateTime);
+String DTToS(TDateTime ADateTime, bool WithSecs = true);
 
 // ---------------------------------------------------------------------------
 String CheckStrValue(String Value, int MaxLength);

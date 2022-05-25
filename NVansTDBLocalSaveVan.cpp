@@ -54,7 +54,7 @@ void TDBLocalSaveVan::Operation() {
 	try {
 		QueryUpdate->Connection = Connection;
 
-		String DateTime = DateTimeToSQLStr(Now());
+		String DateTime = DTToSQLS(Now());
 
 		String QueryUpdateText = LoadStr(IDS_SQL_UPDATE);
 		QueryUpdateText = SQLMake(QueryUpdateText, IDS_SQL_LOCAL_MVANS_TABLE);
@@ -107,8 +107,8 @@ void TDBLocalSaveVan::Operation() {
 			Van->InvoiceTare;
 
 #ifdef SQL_TO_LOG
-		WriteToLog("UPDATE PARAMS: ID = " + VarToStr(Van->ID) + ", " +
-			"INVNUM = " + VarToStr(Van->VanNum) + ", ...");
+		WriteToLog("UPDATE PARAMS: ID = " + IntToStr(Van->ID) + ", " +
+			"INVNUM = " + Van->VanNum + ", ...");
 #endif
 
 		QueryUpdate->ExecSQL();

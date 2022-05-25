@@ -53,6 +53,9 @@ void __fastcall TMain::FormCreate(TObject *Sender) {
 
 	FTrainNum = "";
 
+	ServerSelectedRow = -1;
+	LocalSelectedRow = -1;
+
 	FServerVanList = new TOracleVanList();
 	FLocalVanList = new TLocalVanList();
 
@@ -249,7 +252,7 @@ void __fastcall TMain::sgServerDrawCell(TObject *Sender, int ACol, int ARow,
 	TRect &Rect, TGridDrawState State) {
 	StringGridDrawCell(sgServer, ACol, ARow, Rect, State, NUSet,
 		ServerColumns.LeftAlign, NUSet, Main->Settings->ColorReadOnly, NUColor,
-		true, false, false, NUColor);
+		true, false, false, NUColor, true, Main->Settings->ColorSelected);
 }
 
 // ---------------------------------------------------------------------------
@@ -257,7 +260,8 @@ void __fastcall TMain::sgLocalDrawCell(TObject *Sender, int ACol, int ARow,
 	TRect &Rect, TGridDrawState State) {
 	StringGridDrawCell(sgLocal, ACol, ARow, Rect, State, LocalColumns.ReadOnly,
 		LocalColumns.LeftAlign, NUSet, Main->Settings->ColorReadOnly, NUColor,
-		true, false, IsLocalVanChanged(ARow), Main->Settings->ColorChanged);
+		true, false, IsLocalVanChanged(ARow), Main->Settings->ColorChanged,
+		true, Main->Settings->ColorSelected);
 }
 
 // ---------------------------------------------------------------------------
@@ -405,7 +409,7 @@ int TMain::SetLocalVan(int Index, TLocalVan * Van) {
 
 	sgLocal->Cells[LocalColumns.NUM][Index] = IntToStr(Index);
 
-	sgLocal->Cells[LocalColumns.DATETIME][Index] = DateTimeToStr(Van->DateTime);
+	sgLocal->Cells[LocalColumns.DATETIME][Index] = DTToS(Van->DateTime);
 
 	sgLocal->Cells[LocalColumns.VANNUM][Index] = Van->VanNum;
 
@@ -495,6 +499,8 @@ void TMain::SetServerVanList(TOracleVanList * Value) {
 		ServerVanList->Assign(Value);
 	}
 
+	ServerSelectedRow = -1;
+
 	StringGridClear(sgServer);
 
 	ProcMess();
@@ -502,6 +508,8 @@ void TMain::SetServerVanList(TOracleVanList * Value) {
 	for (int i = 0; i < ServerVanList->Count; i++) {
 		SetServerVan(-1, ServerVanList->Items[i]);
 	}
+
+	ServerSelectedRow = StringGridIsEmpty(sgServer) ? -1 : 1;
 }
 
 // ---------------------------------------------------------------------------
@@ -513,6 +521,8 @@ void TMain::SetLocalVanList(TLocalVanList * Value) {
 		LocalVanList->Assign(Value);
 	}
 
+	LocalSelectedRow = -1;
+
 	StringGridClear(sgLocal);
 
 	ProcMess();
@@ -522,6 +532,8 @@ void TMain::SetLocalVanList(TLocalVanList * Value) {
 			SetLocalVan(-1, LocalVanList->Items[i]);
 		}
 	}
+
+	LocalSelectedRow = StringGridIsEmpty(sgLocal) ? -1 : 1;
 }
 
 // ---------------------------------------------------------------------------
@@ -689,7 +701,7 @@ void __fastcall TMain::FormResize(TObject *Sender) {
 	if (!Settings->UseLocal) {
 		return;
 	}
-
+	// TODO: bug from maximized to normal
 	if (sgLocal->Height < Splitter->MinSize) {
 		sgServer->Height = ClientHeight - Splitter->MinSize -
 			PanelServer->Height - Splitter->Height - PanelCommon->Height -
@@ -731,6 +743,11 @@ HWND TMain::AvitekGetProtFormBtn(TAvitekBtn AvitekBtn) {
 		BtnControlText = "Сохранить F7";
 		ErrorBtnNotFound = IDS_LOG_ERROR_AVITEK_SAVE_BTN_NOT_FOUND;
 		break;
+	case abUpdate:
+		BtnIndex = 4;
+		BtnControlText = "Обновить F5";
+		ErrorBtnNotFound = IDS_LOG_ERROR_AVITEK_UPD_BTN_NOT_FOUND;
+		break;
 	}
 
 	if (!hWnd) {
@@ -740,7 +757,7 @@ HWND TMain::AvitekGetProtFormBtn(TAvitekBtn AvitekBtn) {
 	}
 
 	if (hWnd) {
-#ifdef _DEBUG
+#ifdef ENUM_AVITEK_CONTROLS
 		TStringList * S = new TStringList();
 		DebugEnumWindowControls(hWnd, S);
 		for (int i = 0; i < S->Count; i++) {
@@ -769,27 +786,38 @@ HWND TMain::AvitekGetProtFormBtn(TAvitekBtn AvitekBtn) {
 }
 
 // ---------------------------------------------------------------------------
-bool TMain::AvitekIsDataNeedSave(HWND &BtnSaveHwnd) {
-	BtnSaveHwnd = AvitekGetProtFormBtn(abSave);
+bool TMain::AvitekCheckNeedSave() {
+	HWND hButton = AvitekGetProtFormBtn(abSave);
 
-	if (BtnSaveHwnd) {
-		return IsWindowEnabled(BtnSaveHwnd);
+	if (hButton) {
+		if (IsWindowEnabled(hButton)) {
+			WriteToLog(IDS_LOG_ERROR_AVITEK_NEED_SAVE);
+
+			if (MsgBoxYesNo(IDS_ERROR_AVITEK_NEED_SAVE)) {
+				SwitchToThisWindow(hButton, true);
+			}
+
+			return true;
+		}
 	}
 
 	return false;
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TMain::btnCopyDataClick(TObject * Sender) {
-	HWND BtnSaveHwnd;
+void TMain::AvitekUpdateProt() {
+	HWND hButton = AvitekGetProtFormBtn(abUpdate);
 
-	if (AvitekIsDataNeedSave(BtnSaveHwnd)) {
-		WriteToLog(IDS_LOG_ERROR_AVITEK_NEED_SAVE);
-
-		if (MsgBoxYesNo(IDS_ERROR_AVITEK_NEED_SAVE)) {
-			SwitchToThisWindow(BtnSaveHwnd, true);
+	if (hButton) {
+		if (IsWindowEnabled(hButton)) {
+			SendMessage(hButton, BM_CLICK, (WPARAM)NULL, (LPARAM)NULL);
 		}
+	}
+}
 
+// ---------------------------------------------------------------------------
+void __fastcall TMain::btnCopyDataClick(TObject * Sender) {
+	if (AvitekCheckNeedSave()) {
 		return;
 	}
 
@@ -827,7 +855,7 @@ void TMain::CopyData() {
 		}
 
 #ifdef _DEBUG
-		WriteToLog(" found result : " + Result->ToString());
+		WriteToLog("found result : " + Result->ToString());
 #endif
 
 		TGridRect Selection;
@@ -836,14 +864,20 @@ void TMain::CopyData() {
 		Selection.Right = LocalColumns.VANNUM;
 		if (FindMatchResult == fmFoundReverse) {
 			Selection.Bottom = Result->Items[0]->Value;
-			Selection.Top = Selection.Bottom - sgServer->RowCount + 2;
+			Selection.Top = Result->Items[Result->Count - 1]->Value;
 		}
 		else {
 			Selection.Top = Result->Items[0]->Value;
-			Selection.Bottom = Selection.Top + sgServer->RowCount - 2;
+			Selection.Bottom = Result->Items[Result->Count - 1]->Value;
 		}
 
+		int OldSelectedRow = sgLocal->Row;
+
 		sgLocal->Selection = Selection;
+
+		LocalSelectedRow = sgLocal->Row;
+
+		StringGridInvalidateCell(sgLocal, 0, OldSelectedRow);
 
 		if (DataExists(Result)) {
 			if (!MsgBoxYesNo(IDS_QUESTION_DATA_OVERWRITE)) {
@@ -916,26 +950,61 @@ void TMain::CopyData() {
 }
 
 // ---------------------------------------------------------------------------
+void __fastcall TMain::sgServerSelectCell(TObject *Sender, int ACol, int ARow,
+	bool &CanSelect) {
+	if (StringGridIsEmpty(sgServer)) {
+		return;
+	}
+
+	if (ServerSelectedRow == ARow) {
+		return;
+	}
+
+	StringGridInvalidateCell(sgServer, 0, ServerSelectedRow);
+
+	ServerSelectedRow = ARow;
+
+	StringGridInvalidateCell(sgServer, 0, ServerSelectedRow);
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TMain::sgLocalSelectCell(TObject *Sender, int ACol, int ARow,
+	bool &CanSelect) {
+	if (StringGridIsEmpty(sgLocal)) {
+		return;
+	}
+
+	if (LocalSelectedRow == ARow) {
+		return;
+	}
+
+	StringGridInvalidateCell(sgLocal, 0, LocalSelectedRow);
+
+	LocalSelectedRow = ARow;
+
+	StringGridInvalidateCell(sgLocal, 0, LocalSelectedRow);
+}
+
+// ---------------------------------------------------------------------------
 void TMain::SetLocalVanChanged(int Index, bool Changed) {
 	if (IsLocalVanChanged(Index) == Changed) {
 		return;
 	}
 
 	if (Changed) {
-		sgLocal->Cells[LocalColumns.CHANGED][Index] = " * ";
+		sgLocal->Cells[LocalColumns.CHANGED][Index] = "*";
 		LocalChanged = true;
 	}
 	else {
-		sgLocal->Cells[LocalColumns.CHANGED][Index] = " ";
+		sgLocal->Cells[LocalColumns.CHANGED][Index] = "";
 	}
 
-	TRect Rect = sgLocal->CellRect(0, Index);
-	InvalidateRect(sgLocal->Handle, &Rect, false);
+	StringGridInvalidateCell(sgLocal, 0, Index);
 }
 
 // ---------------------------------------------------------------------------
 bool TMain::IsLocalVanChanged(int Index) {
-	return sgLocal->Cells[LocalColumns.CHANGED][Index] == " * ";
+	return sgLocal->Cells[LocalColumns.CHANGED][Index] == "*";
 }
 
 // ---------------------------------------------------------------------------
@@ -1023,7 +1092,13 @@ bool TMain::DataExists(TIntegerList * Result) {
 
 // ---------------------------------------------------------------------------
 void __fastcall TMain::btnLocalSaveClick(TObject * Sender) {
-	LocalSaveVans();
+	if (AvitekCheckNeedSave()) {
+		return;
+	}
+
+	if (LocalSaveVans()) {
+		AvitekUpdateProt();
+	}
 }
 
 // ---------------------------------------------------------------------------
