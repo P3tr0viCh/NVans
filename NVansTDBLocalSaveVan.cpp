@@ -81,6 +81,8 @@ void TDBLocalSaveVan::Operation() {
 		GetParam(QueryUpdate, "ISCALES_TARE_T", ftInteger)->Value = 0;
 		GetParam(QueryUpdate, "IDATETIME_TARE_T", ftString)->Value = DateTime;
 
+		GetParam(QueryUpdate, "OVERLOAD", ftInteger)->Value = Van->Overload;
+
 		GetParam(QueryUpdate, "CARGOTYPE", ftString)->Value = Van->CargoType;
 		GetParam(QueryUpdate, "CARGOTYPE_CODE", ftString)->Value = Null();
 

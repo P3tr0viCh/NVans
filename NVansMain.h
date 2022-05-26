@@ -19,6 +19,7 @@
 
 #include "NVansTLocalVan.h"
 #include "NVansTOracleVan.h"
+#include <Vcl.Menus.hpp>
 
 // ---------------------------------------------------------------------------
 class TMain : public TForm {
@@ -38,8 +39,10 @@ __published:
 	TButton *btnLocalLoad;
 	TPanel *PanelCommon;
 	TButton *btnSaveVanProps;
-	TButton *btnCopyData;
+	TButton *btnCopyDataAll;
 	TButton *btnLocalSave;
+	TTimer *TimerResize;
+	TButton *btnCopyDataMass;
 
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
@@ -61,12 +64,14 @@ __published:
 		TShiftState Shift);
 	void __fastcall btnLocalLoadClick(TObject *Sender);
 	void __fastcall btnSaveVanPropsClick(TObject *Sender);
-	void __fastcall btnCopyDataClick(TObject *Sender);
+	void __fastcall btnCopyDataAllClick(TObject *Sender);
 	void __fastcall FormShow(TObject *Sender);
 	void __fastcall btnLocalSaveClick(TObject *Sender);
 	void __fastcall sgServerSelectCell(TObject *Sender, int ACol, int ARow,
 		bool &CanSelect);
 	void __fastcall sgLocalSelectCell(TObject *Sender, int ACol, int ARow, bool &CanSelect);
+	void __fastcall TimerResizeTimer(TObject *Sender);
+	void __fastcall sgLocalDblClick(TObject *Sender);
 
 
 private:
@@ -115,7 +120,7 @@ private:
 	bool LocalSaveVanProps();
 	bool LocalSaveVans();
 
-	void CopyData();
+	void CopyData(bool CopyAll);
 	bool CheckField(int Column1, int Column2, int Index1, int Index2);
 	bool DataExists(TIntegerList * Result);
 

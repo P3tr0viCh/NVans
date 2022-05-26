@@ -29,6 +29,8 @@ void TLocalVan::Init() {
 
 	FBrutto = 0;
 	FNetto = 0;
+
+	FNettoDiff = 0;
 }
 
 // ---------------------------------------------------------------------------
@@ -132,6 +134,56 @@ String __fastcall TLocalVan::ToString() {
 	S += "}";
 
 	return S;
+}
+
+// ---------------------------------------------------------------------------
+void TLocalVan::UpdateCalcValues() {
+	if (FCarrying > 0 && FNetto > 0) {
+		FOverload = FNetto - FCarrying;
+	}
+	else {
+		FOverload = 0;
+	}
+
+	if (FNetto > 0 && FInvoiceNetto > 0) {
+		FNettoDiff = FNetto - FInvoiceNetto;
+	}
+	else {
+		FNettoDiff = 0;
+	}
+}
+
+// ---------------------------------------------------------------------------
+void TLocalVan::SetCarrying(int Value) {
+	if (FCarrying == Value) {
+		return;
+	}
+
+	FCarrying = Value;
+
+	UpdateCalcValues();
+}
+
+// ---------------------------------------------------------------------------
+void TLocalVan::SetInvoiceNetto(int Value) {
+	if (FInvoiceNetto == Value) {
+		return;
+	}
+
+	FInvoiceNetto = Value;
+
+	UpdateCalcValues();
+}
+
+// ---------------------------------------------------------------------------
+void TLocalVan::SetNetto(int Value) {
+	if (FNetto == Value) {
+		return;
+	}
+
+	FNetto = Value;
+
+	UpdateCalcValues();
 }
 
 // ---------------------------------------------------------------------------

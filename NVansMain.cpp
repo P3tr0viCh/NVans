@@ -344,8 +344,9 @@ void TMain::EndDBOperation() {
 	StatusBar->SimpleText = "";
 
 	btnSaveVanProps->Enabled = !StringGridIsEmpty(sgServer);
-	btnCopyData->Enabled = !StringGridIsEmpty(sgServer) && !StringGridIsEmpty
+	btnCopyDataAll->Enabled = !StringGridIsEmpty(sgServer) && !StringGridIsEmpty
 		(sgLocal);
+	btnCopyDataMass->Enabled = btnCopyDataAll->Enabled;
 
 	RestoreCursor();
 }
@@ -377,21 +378,13 @@ int TMain::SetServerVan(int Index, TOracleVan * Van) {
 	sgServer->Cells[ServerColumns.DEPART_STATION][Index] = Van->DepartStation;
 	sgServer->Cells[ServerColumns.PURPOSE_STATION][Index] = Van->PurposeStation;
 
-	if (Van->Carrying > 0) {
-		sgServer->Cells[ServerColumns.CARRYING][Index] =
-			IntToStr(Van->Carrying);
-	}
-	if (Van->TareT > 0) {
-		sgServer->Cells[ServerColumns.TARE_T][Index] = IntToStr(Van->TareT);
-	}
-	if (Van->InvoiceNetto > 0) {
-		sgServer->Cells[ServerColumns.INVOICE_NETTO][Index] =
-			IntToStr(Van->InvoiceNetto);
-	}
-	if (Van->InvoiceTare > 0) {
-		sgServer->Cells[ServerColumns.INVOICE_TARE][Index] =
-			IntToStr(Van->InvoiceTare);
-	}
+	StringGridSetCellInt(sgServer, ServerColumns.CARRYING, Index,
+		Van->Carrying);
+	StringGridSetCellInt(sgServer, ServerColumns.TARE_T, Index, Van->TareT);
+	StringGridSetCellInt(sgServer, ServerColumns.INVOICE_NETTO, Index,
+		Van->InvoiceNetto);
+	StringGridSetCellInt(sgServer, ServerColumns.INVOICE_TARE, Index,
+		Van->InvoiceTare);
 
 	return Index;
 }
@@ -424,28 +417,15 @@ int TMain::SetLocalVan(int Index, TLocalVan * Van) {
 	sgLocal->Cells[LocalColumns.DEPART_STATION][Index] = Van->DepartStation;
 	sgLocal->Cells[LocalColumns.PURPOSE_STATION][Index] = Van->PurposeStation;
 
-	if (Van->Carrying > 0) {
-		sgLocal->Cells[LocalColumns.CARRYING][Index] = IntToStr(Van->Carrying);
-	}
-	if (Van->TareT > 0) {
-		sgLocal->Cells[LocalColumns.TARE_T][Index] = IntToStr(Van->TareT);
-	}
-	if (Van->InvoiceNetto > 0) {
-		sgLocal->Cells[LocalColumns.INVOICE_NETTO][Index] =
-			IntToStr(Van->InvoiceNetto);
-	}
-	if (Van->InvoiceTare > 0) {
-		sgLocal->Cells[LocalColumns.INVOICE_TARE][Index] =
-			IntToStr(Van->InvoiceTare);
-	}
+	StringGridSetCellInt(sgLocal, LocalColumns.CARRYING, Index, Van->Carrying);
+	StringGridSetCellInt(sgLocal, LocalColumns.TARE_T, Index, Van->TareT);
+	StringGridSetCellInt(sgLocal, LocalColumns.INVOICE_NETTO, Index,
+		Van->InvoiceNetto);
+	StringGridSetCellInt(sgLocal, LocalColumns.INVOICE_TARE, Index,
+		Van->InvoiceTare);
 
-	if (Van->Netto > 0 && Van->InvoiceNetto > 0) {
-		sgLocal->Cells[LocalColumns.NETTO_DIFF][Index] =
-			IntToStr(Van->Netto - Van->InvoiceNetto);
-	}
-	else {
-		sgLocal->Cells[LocalColumns.NETTO_DIFF][Index] = "";
-	}
+	StringGridSetCellInt(sgLocal, LocalColumns.NETTO_DIFF, Index,
+		Van->NettoDiff);
 
 	return Index;
 }
@@ -701,7 +681,15 @@ void __fastcall TMain::FormResize(TObject *Sender) {
 	if (!Settings->UseLocal) {
 		return;
 	}
-	// TODO: bug from maximized to normal
+
+	TimerResize->Enabled = false;
+	TimerResize->Enabled = true;
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TMain::TimerResizeTimer(TObject *Sender) {
+	TimerResize->Enabled = false;
+
 	if (sgLocal->Height < Splitter->MinSize) {
 		sgServer->Height = ClientHeight - Splitter->MinSize -
 			PanelServer->Height - Splitter->Height - PanelCommon->Height -
@@ -816,16 +804,16 @@ void TMain::AvitekUpdateProt() {
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TMain::btnCopyDataClick(TObject * Sender) {
+void __fastcall TMain::btnCopyDataAllClick(TObject * Sender) {
 	if (AvitekCheckNeedSave()) {
 		return;
 	}
 
-	CopyData();
+	CopyData(((TButton *) Sender)->Tag == 0);
 }
 
 // ---------------------------------------------------------------------------
-void TMain::CopyData() {
+void TMain::CopyData(bool CopyAll) {
 	TStringList * Source = new TStringList();
 	TStringList * Dest = new TStringList();
 
@@ -873,16 +861,19 @@ void TMain::CopyData() {
 
 		int OldSelectedRow = sgLocal->Row;
 
+		sgLocal->Row = Selection.Top;
 		sgLocal->Selection = Selection;
 
 		LocalSelectedRow = sgLocal->Row;
 
 		StringGridInvalidateCell(sgLocal, 0, OldSelectedRow);
 
-		if (DataExists(Result)) {
-			if (!MsgBoxYesNo(IDS_QUESTION_DATA_OVERWRITE)) {
-				WriteToLog(IDS_LOG_COPY_DATA_OVERWRITE_CANCEL);
-				return;
+		if (CopyAll) {
+			if (DataExists(Result)) {
+				if (!MsgBoxYesNo(IDS_QUESTION_DATA_OVERWRITE)) {
+					WriteToLog(IDS_LOG_COPY_DATA_OVERWRITE_CANCEL);
+					return;
+				}
 			}
 		}
 
@@ -902,19 +893,21 @@ void TMain::CopyData() {
 
 			LocalVan->VanNum = ServerVan->VanNum;
 
-			LocalVan->CargoType = ServerVan->CargoType;
+			if (CopyAll) {
+				LocalVan->CargoType = ServerVan->CargoType;
 
-			LocalVan->InvoiceNum = ServerVan->InvoiceNum;
+				LocalVan->InvoiceNum = ServerVan->InvoiceNum;
 
-			LocalVan->InvoiceSupplier = ServerVan->InvoiceSupplier;
-			LocalVan->InvoiceRecipient = ServerVan->InvoiceRecipient;
+				LocalVan->InvoiceSupplier = ServerVan->InvoiceSupplier;
+				LocalVan->InvoiceRecipient = ServerVan->InvoiceRecipient;
 
-			LocalVan->DepartStation = ServerVan->DepartStation;
-			LocalVan->PurposeStation = ServerVan->PurposeStation;
+				LocalVan->DepartStation = ServerVan->DepartStation;
+				LocalVan->PurposeStation = ServerVan->PurposeStation;
+			}
+
+			LocalVan->Carrying = ServerVan->Carrying;
 
 			// TODO: copy tare, update calc fields
-			// LocalVan->Carrying = ServerVan->Carrying;
-
 			// sgLocal->Cells[LocalColumns.TARE_T][LocalIndex] = ServerVan->TareT;
 			// if (true) { // TODO: check tare type
 			// if (IsEmpty(sgLocal->Cells[LocalColumns.TARE_T][LocalIndex])) {
@@ -1066,12 +1059,12 @@ bool TMain::DataExists(TIntegerList * Result) {
 			return true;
 		}
 
-		// TODO: copy tare, update calc fields
-		// if (CheckField(LocalColumns.CARRYING, ServerColumns.CARRYING,
-		// Result->Items[LocalIndex]->Value, ServerIndex)) {
-		// return true;
-		// }
+		if (CheckField(LocalColumns.CARRYING, ServerColumns.CARRYING,
+			Result->Items[LocalIndex]->Value, ServerIndex)) {
+			return true;
+		}
 
+		// TODO: copy tare, update calc fields
 		// if (CheckField(LocalColumns.TARE_T, ServerColumns.TARE_T,
 		// Result->Items[LocalIndex]->Value, ServerIndex)) {
 		// return true;
@@ -1155,5 +1148,16 @@ bool TMain::LocalSaveVans() {
 	}
 
 	return Result;
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TMain::sgLocalDblClick(TObject *Sender) {
+	if (LocalSelectedRow > 0) {
+		TLocalVan * Van = GetLocalVan(LocalSelectedRow);
+		MsgBox("VanNum: " + Van->VanNum + sLineBreak + "Brutto: " +
+			Van->Brutto + sLineBreak + "TareT: " + Van->TareT + sLineBreak +
+			"Netto: " + Van->Netto + sLineBreak + "Carrying: " + Van->Carrying +
+			sLineBreak + "Overload: " + Van->Overload);
+	}
 }
 // ---------------------------------------------------------------------------

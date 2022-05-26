@@ -37,8 +37,19 @@ private:
 	int FBrutto;
 	int FNetto;
 
+	int FNettoDiff;
+	int FOverload;
+
 	// -----------------------------------------------------------------------
 	void Init();
+
+	void UpdateCalcValues();
+
+	void SetCarrying(int Value);
+
+	void SetInvoiceNetto(int Value);
+
+	void SetNetto(int Value);
 
 public:
 	__fastcall TLocalVan();
@@ -71,15 +82,19 @@ public:
 	__property String PurposeStation = {
 		read = FPurposeStation, write = FPurposeStation};
 
-	__property int Carrying = {read = FCarrying, write = FCarrying};
+	__property int Carrying = {read = FCarrying, write = SetCarrying};
 	__property int TareT = {read = FTareT, write = FTareT};
-	__property int InvoiceNetto = {read = FInvoiceNetto, write = FInvoiceNetto};
+	__property int InvoiceNetto = {read = FInvoiceNetto, write = SetInvoiceNetto
+	};
 	__property int InvoiceTare = {read = FInvoiceTare, write = FInvoiceTare};
 
 	__property bool IsLoaded = {read = FLoaded, write = FLoaded};
 
 	__property int Brutto = {read = FBrutto, write = FBrutto};
-	__property int Netto = {read = FNetto, write = FNetto};
+	__property int Netto = {read = FNetto, write = SetNetto};
+
+	__property int NettoDiff = {read = FNettoDiff};
+	__property int Overload = {read = FOverload};
 };
 
 // ---------------------------------------------------------------------------

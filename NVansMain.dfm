@@ -77,6 +77,7 @@ object Main: TMain
     RowCount = 2
     Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goTabs, goFixedColClick]
     TabOrder = 3
+    OnDblClick = sgLocalDblClick
     OnDrawCell = sgLocalDrawCell
     OnFixedCellClick = sgServerFixedCellClick
     OnKeyDown = sgServerKeyDown
@@ -183,29 +184,47 @@ object Main: TMain
     BevelOuter = bvNone
     TabOrder = 2
     object btnSaveVanProps: TButton
-      Left = 104
+      Left = 304
       Top = 0
       Width = 112
       Height = 32
       Caption = #1061#1072#1088#1072#1082#1090#1077#1088#1080#1089#1090#1080#1082#1080
       Enabled = False
-      TabOrder = 1
+      TabOrder = 2
       OnClick = btnSaveVanPropsClick
     end
-    object btnCopyData: TButton
+    object btnCopyDataAll: TButton
       Left = 8
       Top = 0
-      Width = 88
+      Width = 112
       Height = 32
-      Caption = #1050#1086#1087#1080#1088#1086#1074#1072#1090#1100
+      Caption = #1050#1086#1087#1080#1088#1086#1074#1072#1090#1100' '#1074#1089#1105
       Enabled = False
       TabOrder = 0
-      OnClick = btnCopyDataClick
+      OnClick = btnCopyDataAllClick
+    end
+    object btnCopyDataMass: TButton
+      Tag = 1
+      Left = 128
+      Top = 0
+      Width = 160
+      Height = 32
+      Caption = #1050#1086#1087#1080#1088#1086#1074#1072#1090#1100' '#1090#1086#1083#1100#1082#1086' '#1074#1077#1089
+      Enabled = False
+      TabOrder = 1
+      OnClick = btnCopyDataAllClick
     end
   end
   object ApplicationEvents: TApplicationEvents
     OnException = ApplicationEventsException
-    Left = 608
-    Top = 104
+    Left = 600
+    Top = 80
+  end
+  object TimerResize: TTimer
+    Enabled = False
+    Interval = 100
+    OnTimer = TimerResizeTimer
+    Left = 504
+    Top = 80
   end
 end
