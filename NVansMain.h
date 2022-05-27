@@ -12,14 +12,14 @@
 #include <Vcl.Grids.hpp>
 #include <Vcl.AppEvnts.hpp>
 #include <Vcl.ExtCtrls.hpp>
+#include <Vcl.Menus.hpp>
 
-#include <Integer.h>
+#include <IntegerPair.h>
 
 #include "NVansTSettings.h"
 
 #include "NVansTLocalVan.h"
 #include "NVansTOracleVan.h"
-#include <Vcl.Menus.hpp>
 
 // ---------------------------------------------------------------------------
 class TMain : public TForm {
@@ -120,9 +120,9 @@ private:
 	bool LocalSaveVanProps();
 	bool LocalSaveVans();
 
-	void CopyData(bool CopyAll);
 	bool CheckField(int Column1, int Column2, int Index1, int Index2);
-	bool DataExists(TIntegerList * Result);
+	bool DataExists(TIntegerPairList * Result);
+	void CopyData(bool CopyAll);
 
 	enum TAvitekBtn {
 		abSave, abUpdate

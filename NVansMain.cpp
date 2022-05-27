@@ -813,11 +813,84 @@ void __fastcall TMain::btnCopyDataAllClick(TObject * Sender) {
 }
 
 // ---------------------------------------------------------------------------
+bool TMain::CheckField(int LocalColumn, int ServerColumn, int LocalIndex,
+	int ServerIndex) {
+	if (!IsEmpty(sgLocal->Cells[LocalColumn][LocalIndex])) {
+		if (!AnsiSameStr(sgLocal->Cells[LocalColumn][LocalIndex],
+			sgServer->Cells[ServerColumn][ServerIndex])) {
+			return true;
+		}
+	}
+	return false;
+}
+
+// ---------------------------------------------------------------------------
+bool TMain::DataExists(TIntegerPairList * Result) {
+	int ServerIndex;
+	int LocalIndex;
+
+	for (int i = 0; i < Result->Count; i++) {
+		ServerIndex = Result->Items[i]->Int1->Value;
+		LocalIndex = Result->Items[i]->Int2->Value;
+
+		if (CheckField(LocalColumns.CARGOTYPE, ServerColumns.CARGOTYPE,
+			LocalIndex, ServerIndex)) {
+			return true;
+		}
+
+		if (CheckField(LocalColumns.INVOICE_NUM, ServerColumns.INVOICE_NUM,
+			LocalIndex, ServerIndex)) {
+			return true;
+		}
+
+		if (CheckField(LocalColumns.INVOICE_SUPPLIER,
+			ServerColumns.INVOICE_SUPPLIER, LocalIndex, ServerIndex)) {
+			return true;
+		}
+		if (CheckField(LocalColumns.INVOICE_RECIPIENT,
+			ServerColumns.INVOICE_RECIPIENT, LocalIndex, ServerIndex)) {
+			return true;
+		}
+
+		if (CheckField(LocalColumns.DEPART_STATION,
+			ServerColumns.DEPART_STATION, LocalIndex, ServerIndex)) {
+			return true;
+		}
+		if (CheckField(LocalColumns.PURPOSE_STATION,
+			ServerColumns.PURPOSE_STATION, LocalIndex, ServerIndex)) {
+			return true;
+		}
+
+		if (CheckField(LocalColumns.CARRYING, ServerColumns.CARRYING,
+			LocalIndex, ServerIndex)) {
+			return true;
+		}
+
+		// TODO: copy tare, update calc fields
+		// if (CheckField(LocalColumns.TARE_T, ServerColumns.TARE_T,
+		// Result->Items[LocalIndex]->Value, ServerIndex)) {
+		// return true;
+		// }
+
+		if (CheckField(LocalColumns.INVOICE_NETTO, ServerColumns.INVOICE_NETTO,
+			LocalIndex, ServerIndex)) {
+			return true;
+		}
+		if (CheckField(LocalColumns.INVOICE_TARE, ServerColumns.INVOICE_TARE,
+			LocalIndex, ServerIndex)) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+// ---------------------------------------------------------------------------
 void TMain::CopyData(bool CopyAll) {
 	TStringList * Source = new TStringList();
 	TStringList * Dest = new TStringList();
 
-	TIntegerList * Result = new TIntegerList();
+	TIntegerPairList * Result = new TIntegerPairList();
 
 	for (int i = 1; i < sgServer->RowCount; i++) {
 		Source->Add(sgServer->Cells[ServerColumns.VANNUM][i]);
@@ -839,7 +912,8 @@ void TMain::CopyData(bool CopyAll) {
 		}
 
 		for (int i = 0; i < Result->Count; i++) {
-			Result->Items[i]->Value++;
+			Result->Items[i]->Int1->Value++;
+			Result->Items[i]->Int2->Value++;
 		}
 
 #ifdef _DEBUG
@@ -851,12 +925,12 @@ void TMain::CopyData(bool CopyAll) {
 		Selection.Left = LocalColumns.VANNUM;
 		Selection.Right = LocalColumns.VANNUM;
 		if (FindMatchResult == fmFoundReverse) {
-			Selection.Bottom = Result->Items[0]->Value;
-			Selection.Top = Result->Items[Result->Count - 1]->Value;
+			Selection.Bottom = Result->Items[0]->Int2->Value;
+			Selection.Top = Result->Items[Result->Count - 1]->Int2->Value;
 		}
 		else {
-			Selection.Top = Result->Items[0]->Value;
-			Selection.Bottom = Result->Items[Result->Count - 1]->Value;
+			Selection.Top = Result->Items[0]->Int2->Value;
+			Selection.Bottom = Result->Items[Result->Count - 1]->Int2->Value;
 		}
 
 		int OldSelectedRow = sgLocal->Row;
@@ -883,10 +957,11 @@ void TMain::CopyData(bool CopyAll) {
 		TOracleVan * ServerVan;
 		TLocalVan * LocalVan;
 
+		int ServerIndex;
 		int LocalIndex;
-		for (int ServerIndex = 1, ResultIndex = 0;
-		ServerIndex < sgServer->RowCount; ServerIndex++, ResultIndex++) {
-			LocalIndex = Result->Items[ResultIndex]->Value;
+		for (int i = 0; i < Result->Count; i++) {
+			ServerIndex = Result->Items[i]->Int1->Value;
+			LocalIndex = Result->Items[i]->Int2->Value;
 
 			ServerVan = GetServerVan(ServerIndex);
 			LocalVan = GetLocalVan(LocalIndex);
@@ -1009,78 +1084,6 @@ void TMain::SetLocalChanged(bool Changed) {
 	FLocalChanged = Changed;
 
 	btnLocalSave->Enabled = Changed;
-}
-
-// ---------------------------------------------------------------------------
-bool TMain::CheckField(int LocalColumn, int ServerColumn, int LocalIndex,
-	int ServerIndex) {
-	if (!IsEmpty(sgLocal->Cells[LocalColumn][LocalIndex])) {
-		if (!AnsiSameStr(sgLocal->Cells[LocalColumn][LocalIndex],
-			sgServer->Cells[ServerColumn][ServerIndex])) {
-			return true;
-		}
-	}
-	return false;
-}
-
-// ---------------------------------------------------------------------------
-bool TMain::DataExists(TIntegerList * Result) {
-	for (int ServerIndex = 1, LocalIndex = 0; ServerIndex < sgServer->RowCount;
-	ServerIndex++, LocalIndex++) {
-		if (CheckField(LocalColumns.CARGOTYPE, ServerColumns.CARGOTYPE,
-			Result->Items[LocalIndex]->Value, ServerIndex)) {
-			return true;
-		}
-
-		if (CheckField(LocalColumns.INVOICE_NUM, ServerColumns.INVOICE_NUM,
-			Result->Items[LocalIndex]->Value, ServerIndex)) {
-			return true;
-		}
-
-		if (CheckField(LocalColumns.INVOICE_SUPPLIER,
-			ServerColumns.INVOICE_SUPPLIER, Result->Items[LocalIndex]->Value,
-			ServerIndex)) {
-			return true;
-		}
-		if (CheckField(LocalColumns.INVOICE_RECIPIENT,
-			ServerColumns.INVOICE_RECIPIENT, Result->Items[LocalIndex]->Value,
-			ServerIndex)) {
-			return true;
-		}
-
-		if (CheckField(LocalColumns.DEPART_STATION,
-			ServerColumns.DEPART_STATION, Result->Items[LocalIndex]->Value,
-			ServerIndex)) {
-			return true;
-		}
-		if (CheckField(LocalColumns.PURPOSE_STATION,
-			ServerColumns.PURPOSE_STATION, Result->Items[LocalIndex]->Value,
-			ServerIndex)) {
-			return true;
-		}
-
-		if (CheckField(LocalColumns.CARRYING, ServerColumns.CARRYING,
-			Result->Items[LocalIndex]->Value, ServerIndex)) {
-			return true;
-		}
-
-		// TODO: copy tare, update calc fields
-		// if (CheckField(LocalColumns.TARE_T, ServerColumns.TARE_T,
-		// Result->Items[LocalIndex]->Value, ServerIndex)) {
-		// return true;
-		// }
-
-		if (CheckField(LocalColumns.INVOICE_NETTO, ServerColumns.INVOICE_NETTO,
-			Result->Items[LocalIndex]->Value, ServerIndex)) {
-			return true;
-		}
-		if (CheckField(LocalColumns.INVOICE_TARE, ServerColumns.INVOICE_TARE,
-			Result->Items[LocalIndex]->Value, ServerIndex)) {
-			return true;
-		}
-	}
-
-	return false;
 }
 
 // ---------------------------------------------------------------------------

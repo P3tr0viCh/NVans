@@ -110,10 +110,9 @@
         <LinkPackageStatics>rtl.lib;vcl.lib;dbrtl.lib;adortl.lib</LinkPackageStatics>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Icon_MainIcon>NVans_Icon.ico</Icon_MainIcon>
-        <VerInfo_MinorVer>8</VerInfo_MinorVer>
-        <VerInfo_Keys>CompanyName=П3тр0виЧъ;FileDescription=Натурный лист;FileVersion=0.8.1.0;InternalName=NVans;LegalCopyright=© П3тр0виЧъ;LegalTrademarks=П3тр0виЧъ™;OriginalFilename=NVans.exe;ProgramID=ru.p3tr0vich.$(MSBuildProjectName);ProductName=Натурный лист;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_MinorVer>9</VerInfo_MinorVer>
+        <VerInfo_Keys>CompanyName=П3тр0виЧъ;FileDescription=Натурный лист;FileVersion=0.9.0.0;InternalName=NVans;LegalCopyright=© П3тр0виЧъ;LegalTrademarks=П3тр0виЧъ™;OriginalFilename=NVans.exe;ProgramID=ru.p3tr0vich.$(MSBuildProjectName);ProductName=Натурный лист;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Release>1</VerInfo_Release>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <Defines>NDEBUG;$(Defines)</Defines>
@@ -125,15 +124,18 @@
         <LinkPackageStatics>rtl.lib;vcl.lib;dbrtl.lib;adortl.lib</LinkPackageStatics>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Icon_MainIcon>NVans_Icon.ico</Icon_MainIcon>
-        <VerInfo_MinorVer>8</VerInfo_MinorVer>
-        <VerInfo_Keys>CompanyName=П3тр0виЧъ;FileDescription=Натурный лист;FileVersion=0.8.1.0;InternalName=NVans;LegalCopyright=© П3тр0виЧъ;LegalTrademarks=П3тр0виЧъ™;OriginalFilename=NVans.exe;ProgramID=ru.p3tr0vich.$(MSBuildProjectName);ProductName=Натурный лист;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_MinorVer>9</VerInfo_MinorVer>
+        <VerInfo_Keys>CompanyName=П3тр0виЧъ;FileDescription=Натурный лист;FileVersion=0.9.0.0;InternalName=NVans;LegalCopyright=© П3тр0виЧъ;LegalTrademarks=П3тр0виЧъ™;OriginalFilename=NVans.exe;ProgramID=ru.p3tr0vich.$(MSBuildProjectName);ProductName=Натурный лист;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Release>1</VerInfo_Release>
     </PropertyGroup>
     <ItemGroup>
         <CppCompile Include="..\!UtilsAndComps\Integer.cpp">
             <DependentOn>..\!UtilsAndComps\Integer.h</DependentOn>
             <BuildOrder>44</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\!UtilsAndComps\IntegerPair.cpp">
+            <DependentOn>..\!UtilsAndComps\IntegerPair.h</DependentOn>
+            <BuildOrder>48</BuildOrder>
         </CppCompile>
         <CppCompile Include="..\!UtilsAndComps\UtilsCryptoPP.cpp">
             <DependentOn>..\!UtilsAndComps\UtilsCryptoPP.h</DependentOn>
