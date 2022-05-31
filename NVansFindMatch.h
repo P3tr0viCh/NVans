@@ -9,16 +9,10 @@
 #include "IntegerPair.h"
 
 // ---------------------------------------------------------------------------
-enum TFindMatchResult {
-	fmNotFound = 0, fmFound, fmFoundReverse, fmFoundVanNumsOrdered,
-	fmFoundVanNums
-};
-
-// ---------------------------------------------------------------------------
 int FindMatchTest();
 
 // ---------------------------------------------------------------------------
-TFindMatchResult FindMatch(TStringList * Source, TStringList * Dest,
+void FindMatch(TStringList * Source, TStringList * Dest,
 	TIntegerPairList * Result);
 
 // ---------------------------------------------------------------------------

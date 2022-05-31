@@ -899,13 +899,11 @@ void TMain::CopyData(bool CopyAll) {
 		Dest->Add(sgLocal->Cells[LocalColumns.VANNUM][i]);
 	}
 
-	TFindMatchResult FindMatchResult;
-
 	try {
-		FindMatchResult = FindMatch(Source, Dest, Result);
+		FindMatch(Source, Dest, Result);
 
 		// ---
-		if (FindMatchResult == fmNotFound) {
+		if (Result->Count == 0) {
 			WriteToLog(IDS_LOG_COPY_DATA_NOT_FOUND);
 			MsgBox(IDS_MSG_MATCH_NOT_FOUND);
 			return;
@@ -916,21 +914,27 @@ void TMain::CopyData(bool CopyAll) {
 			Result->Items[i]->Int2->Value++;
 		}
 
-#ifdef _DEBUG
-		WriteToLog("found result : " + Result->ToString());
-#endif
-
 		TGridRect Selection;
 
 		Selection.Left = LocalColumns.VANNUM;
 		Selection.Right = LocalColumns.VANNUM;
-		if (FindMatchResult == fmFoundReverse) {
-			Selection.Bottom = Result->Items[0]->Int2->Value;
-			Selection.Top = Result->Items[Result->Count - 1]->Int2->Value;
+
+		int MinInt2 = Result->Items[0]->Int2->Value;
+		int MaxInt2 = Result->Items[0]->Int2->Value;
+		for (int i = 0; i < Result->Count; i++) {
+			if (Result->Items[i]->Int2->Value < MinInt2) {
+				MinInt2 = Result->Items[i]->Int2->Value;
+			}
+			if (Result->Items[i]->Int2->Value > MaxInt2) {
+				MaxInt2 = Result->Items[i]->Int2->Value;
+			}
+		}
+		Selection.Top = MinInt2;
+		if (MaxInt2 - MinInt2 > Result->Count) {
+			Selection.Bottom = Selection.Top;
 		}
 		else {
-			Selection.Top = Result->Items[0]->Int2->Value;
-			Selection.Bottom = Result->Items[Result->Count - 1]->Int2->Value;
+			Selection.Bottom = MaxInt2;
 		}
 
 		int OldSelectedRow = sgLocal->Row;
@@ -951,14 +955,12 @@ void TMain::CopyData(bool CopyAll) {
 			}
 		}
 
-		int Brutto;
-		int TareT;
-
 		TOracleVan * ServerVan;
 		TLocalVan * LocalVan;
 
 		int ServerIndex;
 		int LocalIndex;
+
 		for (int i = 0; i < Result->Count; i++) {
 			ServerIndex = Result->Items[i]->Int1->Value;
 			LocalIndex = Result->Items[i]->Int2->Value;
