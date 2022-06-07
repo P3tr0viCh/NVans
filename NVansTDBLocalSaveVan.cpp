@@ -78,8 +78,6 @@ void TDBLocalSaveVan::Operation() {
 		GetParam(QueryUpdate, "LOADNORM", ftInteger)->Value = Van->Carrying;
 
 		GetParam(QueryUpdate, "TARE_T", ftInteger)->Value = Van->TareT;
-		GetParam(QueryUpdate, "ISCALES_TARE_T", ftInteger)->Value = 0;
-		GetParam(QueryUpdate, "IDATETIME_TARE_T", ftString)->Value = DateTime;
 
 		GetParam(QueryUpdate, "OVERLOAD", ftInteger)->Value = Van->Overload;
 

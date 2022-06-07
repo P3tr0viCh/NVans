@@ -19,19 +19,20 @@
 #define IDS_ERROR_NEED_RWNUM						204
 #define IDS_ERROR_PASS_WRONG						205
 #define IDS_ERROR_CHECK_PASS						206
-#define IDS_ERROR_ORACLE_TRAIN_LOAD            		250
-#define IDS_ERROR_ORACLE_TRAINS_LOAD            	251
-#define IDS_ERROR_LOCAL_LOAD_VANS                   252
-#define IDS_ERROR_LOCAL_SAVE_VANPROPS               253
-#define IDS_ERROR_LOCAL_SAVE_VANS               	254
-#define IDS_ERROR_AVITEK_NEED_SAVE                  255
+#define IDS_ERROR_ORACLE_TRAIN_LOAD            		220
+#define IDS_ERROR_ORACLE_TRAINS_LOAD            	221
+#define IDS_ERROR_LOCAL_LOAD_VANS                   230
+#define IDS_ERROR_LOCAL_SAVE_VANPROPS               231
+#define IDS_ERROR_LOCAL_SAVE_VANS               	232
+#define IDS_ERROR_LOCAL_TRAINS_LOAD            		233
+#define IDS_ERROR_AVITEK_NEED_SAVE                  250
 
 #define IDS_MSG_DATABASE_CONNECT_OK     			300
 #define IDS_MSG_DATABASE_CONNECT_FAIL   			301
 #define IDS_MSG_RWNUM_NOT_EXISTS					302
 #define IDS_MSG_MATCH_NOT_FOUND     				303
 
-#define IDS_STATUS_TRAIN_LIST_VAN_COUNT				400
+#define IDS_STATUS_TRAIN_LIST_COUNT					400
 #define IDS_STATUS_TRAIN_LOAD						401
 #define IDS_STATUS_TRAIN_SAVE                       402
 
@@ -74,6 +75,8 @@
 #define IDS_LOG_LOCAL_SAVE_VANPROPS_FAIL  			2403
 #define IDS_LOG_LOCAL_SAVE_VANS_OK                  2404
 #define IDS_LOG_LOCAL_SAVE_VANS_FAIL                2405
+#define IDS_LOG_LOCAL_LOAD_TRAINS_OK    			2406
+#define IDS_LOG_LOCAL_LOAD_TRAINS_FAIL  			2407
 
 #define IDS_LOG_COPY_DATA                           2500
 #define IDS_LOG_COPY_DATA_NOT_FOUND                 2501

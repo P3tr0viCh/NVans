@@ -19,29 +19,29 @@
 #include "NVansColumns.h"
 #include "NVansStrings.h"
 #include "NVansStringsGridHeader.h"
-#include "NVansTDBOracleLoadTrains.h"
+
+#include "NVansTDBLocalLoadTrains.h"
 
 #include "NVansMain.h"
 
-#include "NVansServerList.h"
+#include "NVansLocalTrains.h"
 
 // ---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
 
-TfrmServerList *frmServerList;
+TfrmLocalTrains *frmLocalTrains;
 
-static TNVansServerListColumns Columns;
+static TNVansLocalTrainsColumns Columns;
 
 // ---------------------------------------------------------------------------
-__fastcall TfrmServerList::TfrmServerList(TComponent* Owner) : TForm(Owner) {
+__fastcall TfrmLocalTrains::TfrmLocalTrains(TComponent* Owner) : TForm(Owner) {
 }
 
 // ---------------------------------------------------------------------------
-void TfrmServerList::CreateColumns() {
+void TfrmLocalTrains::CreateColumns() {
 	sgList->ColCount = Columns.VISIBLE_COUNT;
 
-	StringGridSetHeader(sgList, Columns.RWNUM, IDS_GRID_HEADER_RWNUM, 80);
 	StringGridSetHeader(sgList, Columns.DATETIME,
 		IDS_GRID_HEADER_DATETIME, 112);
 	StringGridSetHeader(sgList, Columns.VAN_COUNT,
@@ -49,12 +49,12 @@ void TfrmServerList::CreateColumns() {
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TfrmServerList::FormCreate(TObject *Sender) {
+void __fastcall TfrmLocalTrains::FormCreate(TObject *Sender) {
 	SelectedRow = -1;
 
-	Filter = new TFilterOracleTrains();
+	Filter = new TFilterLocalTrains();
 
-	FTrainList = new TOracleTrainList();
+	FTrainList = new TLocalTrainList();
 
 	CreateColumns();
 
@@ -73,19 +73,14 @@ void __fastcall TfrmServerList::FormCreate(TObject *Sender) {
 	}
 
 #ifdef _DEBUG
-	pckrFilterDate->Date = StrToDate("12.04.2022");
+	Filter->Date = StrToDate("12.02.2019");
 #else
-	pckrFilterDate->Date = Now();
+	Filter->Date = Now();
 #endif
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TfrmServerList::FormShow(TObject *Sender) {
-	UpdateTrains();
-}
-
-// ---------------------------------------------------------------------------
-void __fastcall TfrmServerList::FormDestroy(TObject *Sender) {
+void __fastcall TfrmLocalTrains::FormDestroy(TObject *Sender) {
 	TFileIni * FileIni = TFileIni::GetNewInstance();
 	try {
 		FileIni->WriteFormBounds(this);
@@ -101,44 +96,38 @@ void __fastcall TfrmServerList::FormDestroy(TObject *Sender) {
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TfrmServerList::sgListDrawCell(TObject *Sender, int ACol,
+void __fastcall TfrmLocalTrains::sgListDrawCell(TObject *Sender, int ACol,
 	int ARow, TRect &Rect, TGridDrawState State) {
 	StringGridDrawCell(sgList, ACol, ARow, Rect, State, NUSet,
 		Columns.LeftAlign, NUSet, Main->Settings->ColorReadOnly, NUColor, true,
 		false, false, NUColor, false, NUColor);
+
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TfrmServerList::btnServerLoadClick(TObject *Sender) {
-	UpdateTrains();
-}
-
-// ---------------------------------------------------------------------------
-void __fastcall TfrmServerList::btnCloseClick(TObject *Sender) {
+void __fastcall TfrmLocalTrains::btnCloseClick(TObject *Sender) {
 	Close();
 }
 
 // ---------------------------------------------------------------------------
-void TfrmServerList::SetControlsEnabled(const bool Enabled) {
-	btnServerLoad->Enabled = Enabled;
+void TfrmLocalTrains::SetControlsEnabled(const bool Enabled) {
+	btnUpdate->Enabled = Enabled;
 
 	sgList->Enabled = Enabled;
-
-	PanelFilter->Enabled = Enabled;
 }
 
 // ---------------------------------------------------------------------------
-void TfrmServerList::StartLoad() {
+void TfrmLocalTrains::StartLoad() {
 	SetControlsEnabled(false);
 }
 
 // ---------------------------------------------------------------------------
-void TfrmServerList::EndLoad() {
+void TfrmLocalTrains::EndLoad() {
 	SetControlsEnabled(true);
 }
 
 // ---------------------------------------------------------------------------
-int TfrmServerList::SetTrain(int Index, TOracleTrain * Train) {
+int TfrmLocalTrains::SetTrain(int Index, TLocalTrain * Train) {
 	if (Index < 0) {
 		if (!StringGridIsEmpty(sgList)) {
 			sgList->RowCount++;
@@ -146,15 +135,15 @@ int TfrmServerList::SetTrain(int Index, TOracleTrain * Train) {
 		Index = sgList->RowCount - 1;
 	}
 
-	sgList->Cells[Columns.RWNUM][Index] = Train->TrainNum;
 	sgList->Cells[Columns.DATETIME][Index] = DTToS(Train->DateTime, false);
 	sgList->Cells[Columns.VAN_COUNT][Index] = IntToStr(Train->VanCount);
+	sgList->Cells[Columns.TRAIN_NUM][Index] = Train->TrainNum;
 
 	return Index;
 }
 
 // ---------------------------------------------------------------------------
-void TfrmServerList::SetTrainList(TOracleTrainList * Value) {
+void TfrmLocalTrains::SetTrainList(TLocalTrainList * Value) {
 	if (Value == NULL) {
 		TrainList->Clear();
 	}
@@ -176,7 +165,7 @@ void TfrmServerList::SetTrainList(TOracleTrainList * Value) {
 }
 
 // ---------------------------------------------------------------------------
-bool TfrmServerList::LoadTrains() {
+bool TfrmLocalTrains::LoadTrains() {
 	bool Result;
 
 	String ResultMessage;
@@ -189,17 +178,17 @@ bool TfrmServerList::LoadTrains() {
 
 	ProcMess();
 
-	TDBOracleLoadTrains * DBOracleLoadTrains =
-		new TDBOracleLoadTrains(Main->Settings->ServerOracleConnection, Filter);
+	TDBLocalLoadTrains * DBLocalLoadTrains =
+		new TDBLocalLoadTrains(Main->Settings->LocalConnection, Filter);
 	try {
-		Result = DBOracleLoadTrains->Execute();
+		Result = DBLocalLoadTrains->Execute();
 
-		ResultMessage = DBOracleLoadTrains->ErrorMessage;
+		ResultMessage = DBLocalLoadTrains->ErrorMessage;
 
-		TrainList = DBOracleLoadTrains->TrainList;
+		TrainList = DBLocalLoadTrains->TrainList;
 	}
 	__finally {
-		DBOracleLoadTrains->Free();
+		DBLocalLoadTrains->Free();
 
 		Main->EndDBOperation();
 
@@ -207,34 +196,41 @@ bool TfrmServerList::LoadTrains() {
 	}
 
 	if (!Result) {
-		MsgBoxErr(Format(IDS_ERROR_ORACLE_TRAINS_LOAD, ResultMessage));
+		MsgBoxErr(Format(IDS_ERROR_LOCAL_TRAINS_LOAD, ResultMessage));
 	}
 
 	return Result;
 }
 
 // ---------------------------------------------------------------------------
-void TfrmServerList::UpdateFilter() {
-	Filter->Date = pckrFilterDate->Date;
-	Filter->VanNum = eFilterVanNum->Text;
-}
+void TfrmLocalTrains::UpdateTrains() {
+	String TrainNum = "";
 
-// ---------------------------------------------------------------------------
-void TfrmServerList::UpdateTrains() {
+	if (!StringGridIsEmpty(sgList) && SelectedRow > 0) {
+		TrainNum = sgList->Cells[Columns.TRAIN_NUM][SelectedRow];
+	}
+
 	SelectedRow = -1;
 
 	StatusBar->Panels->Items[0]->Text = "";
 
-	UpdateFilter();
-
 	LoadTrains();
 
-	StatusBar->Panels->Items[0]->Text = Format(IDS_STATUS_TRAIN_LIST_VAN_COUNT,
-		IntToStr(TrainList->Count));
+	StatusBar->Panels->Items[0]->Text =
+		Format(IDS_STATUS_TRAIN_LIST_COUNT, IntToStr(TrainList->Count));
+
+	if (!IsEmpty(TrainNum)) {
+		for (int i = 1; i < sgList->RowCount; i++) {
+			if (AnsiSameStr(sgList->Cells[Columns.TRAIN_NUM][i], TrainNum)) {
+				sgList->Row = i;
+				break;
+			}
+		}
+	}
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TfrmServerList::sgListDblClick(TObject *Sender) {
+void __fastcall TfrmLocalTrains::sgListDblClick(TObject *Sender) {
 	if (SelectedRow < 0) {
 		return;
 	}
@@ -243,11 +239,21 @@ void __fastcall TfrmServerList::sgListDblClick(TObject *Sender) {
 		return;
 	}
 
-	Main->TrainNum = TrainList->Items[SelectedRow - 1]->TrainNum;
+	Main->LocalTrainNum = sgList->Cells[Columns.TRAIN_NUM][SelectedRow];
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TfrmServerList::sgListSelectCell(TObject *Sender, int ACol,
+void __fastcall TfrmLocalTrains::btnUpdateClick(TObject *Sender) {
+	UpdateTrains();
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TfrmLocalTrains::FormShow(TObject *Sender) {
+	UpdateTrains();
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TfrmLocalTrains::sgListSelectCell(TObject *Sender, int ACol,
 	int ARow, bool &CanSelect) {
 	if (StringGridIsEmpty(sgList)) {
 		return;
@@ -258,45 +264,5 @@ void __fastcall TfrmServerList::sgListSelectCell(TObject *Sender, int ACol,
 	}
 
 	SelectedRow = ARow;
-}
-
-// ---------------------------------------------------------------------------
-void __fastcall TfrmServerList::sgListKeyDown(TObject *Sender, WORD &Key,
-	TShiftState Shift) {
-	TStringGrid * S = (TStringGrid*) Sender;
-
-	if (StringGridIsEmpty(S)) {
-		return;
-	}
-
-	if (Key == 'C' && Shift == (TShiftState() << ssCtrl)) {
-		Clipboard()->AsText = S->Cells[S->Col][S->Row];
-	}
-}
-
-// ---------------------------------------------------------------------------
-void __fastcall TfrmServerList::pckrFilterDateKeyDown(TObject *Sender,
-	WORD &Key, TShiftState Shift) {
-	if (Key == VK_RETURN && Shift.Empty()) {
-		btnServerLoad->Click();
-	}
-}
-
-// ---------------------------------------------------------------------------
-void __fastcall TfrmServerList::btnFilterClearClick(TObject *Sender) {
-#ifdef _DEBUG
-	pckrFilterDate->Date = StrToDate("12.04.2022");
-#else
-	pckrFilterDate->Date = Now();
-#endif
-
-	eFilterVanNum->Text = "";
-
-	btnServerLoad->Click();
-}
-
-// ---------------------------------------------------------------------------
-void __fastcall TfrmServerList::eFilterVanNumChange(TObject *Sender) {
-	pckrFilterDate->Enabled = IsEmpty(eFilterVanNum->Text);
 }
 // ---------------------------------------------------------------------------

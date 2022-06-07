@@ -19,10 +19,12 @@
 
 // ---------------------------------------------------------------------------
 __fastcall TDBLocalLoadVans::TDBLocalLoadVans(TConnectionInfo * ConnectionInfo,
-	TDate Date) : TDatabaseOperation(ConnectionInfo) {
+	TDate Date, String TrainNum) : TDatabaseOperation(ConnectionInfo) {
 	FVanList = new TLocalVanList();
 
 	FDate = Date;
+
+	FTrainNum = TrainNum;
 }
 
 // ---------------------------------------------------------------------------
@@ -53,6 +55,8 @@ void TDBLocalLoadVans::Operation() {
 	try {
 		Query->Connection = Connection;
 
+		bool SearchByDate = IsEmpty(TrainNum);
+
 		String QueryText;
 
 		QueryText = SQLMake(QueryText, IDS_SQL_SELECT);
@@ -60,9 +64,19 @@ void TDBLocalLoadVans::Operation() {
 		QueryText = SQLMake(QueryText, IDS_SQL_FROM);
 		QueryText = SQLMake(QueryText, IDS_SQL_LOCAL_MVANS_TABLE);
 		QueryText = SQLMake(QueryText, IDS_SQL_WHERE);
-		QueryText = SQLMake(QueryText, IDS_SQL_LOCAL_MVANS_WHERE);
+		if (SearchByDate) {
+			QueryText = SQLMake(QueryText, IDS_SQL_LOCAL_MVANS_WHERE_DT);
+		}
+		else {
+			QueryText = SQLMake(QueryText, IDS_SQL_LOCAL_MVANS_WHERE_TRAIN_NUM);
+		}
 		QueryText = SQLMake(QueryText, IDS_SQL_ORDER);
-		QueryText = SQLMake(QueryText, IDS_SQL_LOCAL_MVANS_ORDER);
+		if (SearchByDate) {
+			QueryText = SQLMake(QueryText, IDS_SQL_LOCAL_MVANS_ORDER_DT);
+		}
+		else {
+			QueryText = SQLMake(QueryText, IDS_SQL_LOCAL_MVANS_ORDER_NUM);
+		}
 
 		Query->SQL->Text = QueryText;
 
@@ -70,13 +84,22 @@ void TDBLocalLoadVans::Operation() {
 		WriteToLog(Query->SQL->Text);
 #endif
 
-		GetParam(Query, "DATE_FROM", ftDate)->Value = Date - 1;
-		GetParam(Query, "DATE_TO", ftDate)->Value = Date + 1;
+		if (SearchByDate) {
+			GetParam(Query, "DATE_FROM", ftDate)->Value = Date - 1;
+			GetParam(Query, "DATE_TO", ftDate)->Value = Date + 1;
 
 #ifdef SQL_TO_LOG
-		WriteToLog("PARAMS: DATE_FROM = " + DateToStr(Date - 1) + ", " +
-			"DATE_TO = " + DateToStr(Date + 1));
+			WriteToLog("PARAMS: DATE_FROM = " + DateToStr(Date - 1) + ", " +
+				"DATE_TO = " + DateToStr(Date + 1));
 #endif
+		}
+		else {
+			GetParam(Query, "TRAIN_NUM", ftInteger)->Value = StrToInt(TrainNum);
+
+#ifdef SQL_TO_LOG
+			WriteToLog("PARAMS: TRAIN_NUM = " + StrToInt(TrainNum));
+#endif
+		}
 
 		Query->Open();
 

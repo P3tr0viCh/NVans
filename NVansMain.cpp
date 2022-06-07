@@ -29,13 +29,15 @@
 
 #include "NVansLogin.h"
 #include "NVansOptions.h"
-#include "NVansServerList.h"
+#include "NVansServerTrains.h"
+#include "NVansLocalTrains.h"
 
 #include "NVansMain.h"
 
 // ---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
+
 TMain *Main;
 
 static TNVansServerColumns ServerColumns;
@@ -51,7 +53,7 @@ void __fastcall TMain::FormCreate(TObject *Sender) {
 
 	FSettings = new TSettings();
 
-	FTrainNum = "";
+	FOracleTrainNum = "";
 
 	ServerSelectedRow = -1;
 	LocalSelectedRow = -1;
@@ -255,13 +257,16 @@ void __fastcall TMain::sgServerDrawCell(TObject *Sender, int ACol, int ARow,
 		true, false, false, NUColor, true, Main->Settings->ColorSelected);
 }
 
+const TIntegerSet LocalColumnsRowIsTare = TIntegerSet() << LocalColumns.VANNUM;
+
 // ---------------------------------------------------------------------------
 void __fastcall TMain::sgLocalDrawCell(TObject *Sender, int ACol, int ARow,
 	TRect &Rect, TGridDrawState State) {
-	StringGridDrawCell(sgLocal, ACol, ARow, Rect, State, LocalColumns.ReadOnly,
-		LocalColumns.LeftAlign, NUSet, Main->Settings->ColorReadOnly, NUColor,
-		true, false, IsLocalVanChanged(ARow), Main->Settings->ColorChanged,
-		true, Main->Settings->ColorSelected);
+	StringGridDrawCell(sgLocal, ACol, ARow, Rect, State, IsLocalVanTare(ARow) ?
+		LocalColumnsRowIsTare : NUSet, LocalColumns.LeftAlign, NUSet,
+		Main->Settings->ColorReadOnly, NUColor, true, false,
+		IsLocalVanChanged(ARow), Main->Settings->ColorChanged, true,
+		Main->Settings->ColorSelected);
 }
 
 // ---------------------------------------------------------------------------
@@ -330,14 +335,16 @@ void TMain::StartDBOperation(TDBOperation DBOperation) {
 
 	SetControlsEnabled(false);
 
-	frmServerList->StartLoad();
+	frmServerTrains->StartLoad();
+	frmLocalTrains->StartLoad();
 
 	ProcMess();
 }
 
 // ---------------------------------------------------------------------------
 void TMain::EndDBOperation() {
-	frmServerList->EndLoad();
+	frmLocalTrains->EndLoad();
+	frmServerTrains->EndLoad();
 
 	SetControlsEnabled(true);
 
@@ -427,6 +434,8 @@ int TMain::SetLocalVan(int Index, TLocalVan * Van) {
 	StringGridSetCellInt(sgLocal, LocalColumns.NETTO_DIFF, Index,
 		Van->NettoDiff);
 
+	SetLocalVanTare(Index, !Van->IsLoaded);
+
 	return Index;
 }
 
@@ -453,14 +462,31 @@ bool IsRightTrainNum(String Value) {
 }
 
 // ---------------------------------------------------------------------------
-void TMain::SetTrainNum(String Value) {
-	FTrainNum = Value;
+void TMain::SetOracleTrainNum(String Value) {
+	FOracleTrainNum = Value;
 
-	eRWNum->Text = TrainNum;
+	eRWNum->Text = OracleTrainNum;
 
-	bool WithJoin = IsRightTrainNum(TrainNum) && !IsShift();
+	bool WithJoin = IsRightTrainNum(OracleTrainNum) && !IsShift();
 
-	ServerLoadTrain(TrainNum, WithJoin);
+	ServerLoadTrain(OracleTrainNum, WithJoin);
+}
+
+// ---------------------------------------------------------------------------
+void TMain::SetLocalTrainNum(String Value) {
+	if (FLocalTrainNum == Value) {
+		return;
+	}
+
+	if (LocalChanged) {
+		if (!MsgBoxYesNo(IDS_QUESTION_DATA_NEED_SAVE)) {
+			return;
+		}
+	}
+
+	FLocalTrainNum = Value;
+
+	LocalLoadVans();
 }
 
 // ---------------------------------------------------------------------------
@@ -508,7 +534,7 @@ void TMain::SetLocalVanList(TLocalVanList * Value) {
 	ProcMess();
 
 	for (int i = 0; i < LocalVanList->Count; i++) {
-		if (LocalVanList->Items[i]->IsLoaded) {
+		if (!IsEmpty(LocalTrainNum) || LocalVanList->Items[i]->IsLoaded) {
 			SetLocalVan(-1, LocalVanList->Items[i]);
 		}
 	}
@@ -567,7 +593,8 @@ bool TMain::LocalLoadVans() {
 	LocalChanged = false;
 
 	TDBLocalLoadVans * DBLocalLoadVans =
-		new TDBLocalLoadVans(Main->Settings->LocalConnection, DateLocal);
+		new TDBLocalLoadVans(Main->Settings->LocalConnection, DateLocal,
+		LocalTrainNum);
 	try {
 		Result = DBLocalLoadVans->Execute();
 
@@ -625,7 +652,7 @@ void __fastcall TMain::btnServerLoadClick(TObject *Sender) {
 		return;
 	}
 
-	TrainNum = eRWNum->Text;
+	OracleTrainNum = eRWNum->Text;
 }
 
 // ---------------------------------------------------------------------------
@@ -641,7 +668,12 @@ void __fastcall TMain::btnLocalLoadClick(TObject *Sender) {
 	}
 
 #ifdef _DEBUG
-	DateLocal = StrToDate("02.02.2021");
+	if (true) {
+		DateLocal = StrToDate("12.02.2019");
+	}
+	else {
+		DateLocal = StrToDate("02.02.2021");
+	}
 #else
 	DateLocal = Now();
 #endif
@@ -698,8 +730,13 @@ void __fastcall TMain::TimerResizeTimer(TObject *Sender) {
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TMain::btnServerListClick(TObject *Sender) {
-	frmServerList->Visible = !frmServerList->Visible;
+void __fastcall TMain::btnServerTrainsClick(TObject *Sender) {
+	frmServerTrains->Visible = !frmServerTrains->Visible;
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TMain::btnLocalTrainsClick(TObject *Sender) {
+	frmLocalTrains->Visible = !frmLocalTrains->Visible;
 }
 
 // ---------------------------------------------------------------------------
@@ -896,13 +933,16 @@ void TMain::CopyData(bool CopyAll) {
 		Source->Add(sgServer->Cells[ServerColumns.VANNUM][i]);
 	}
 	for (int i = 1; i < sgLocal->RowCount; i++) {
-		Dest->Add(sgLocal->Cells[LocalColumns.VANNUM][i]);
+		if (GetLocalVan(i)->IsLoaded) {
+			Dest->Add(sgLocal->Cells[LocalColumns.VANNUM][i]);
+		} else {
+			Dest->Add("*");
+		}
 	}
 
 	try {
 		FindMatch(Source, Dest, Result);
 
-		// ---
 		if (Result->Count == 0) {
 			WriteToLog(IDS_LOG_COPY_DATA_NOT_FOUND);
 			MsgBox(IDS_MSG_MATCH_NOT_FOUND);
@@ -937,14 +977,15 @@ void TMain::CopyData(bool CopyAll) {
 			Selection.Bottom = MaxInt2;
 		}
 
-		int OldSelectedRow = sgLocal->Row;
+		int OldLocalSelectedRow = sgLocal->Row;
 
 		sgLocal->Row = Selection.Top;
 		sgLocal->Selection = Selection;
 
 		LocalSelectedRow = sgLocal->Row;
 
-		StringGridInvalidateCell(sgLocal, 0, OldSelectedRow);
+		StringGridInvalidateCell(sgLocal, 0, OldLocalSelectedRow);
+		StringGridInvalidateCell(sgLocal, 0, LocalSelectedRow);
 
 		if (CopyAll) {
 			if (DataExists(Result)) {
@@ -1078,6 +1119,25 @@ bool TMain::IsLocalVanChanged(int Index) {
 }
 
 // ---------------------------------------------------------------------------
+void TMain::SetLocalVanTare(int Index, bool Tare) {
+	if (IsLocalVanTare(Index) == Tare) {
+		return;
+	}
+
+	if (Tare) {
+		sgLocal->Cells[LocalColumns.WEIGHT_TYPE_TARE][Index] = "*";
+	}
+	else {
+		sgLocal->Cells[LocalColumns.WEIGHT_TYPE_TARE][Index] = "";
+	}
+}
+
+// ---------------------------------------------------------------------------
+bool TMain::IsLocalVanTare(int Index) {
+	return sgLocal->Cells[LocalColumns.WEIGHT_TYPE_TARE][Index] == "*";
+}
+
+// ---------------------------------------------------------------------------
 void TMain::SetLocalChanged(bool Changed) {
 	if (FLocalChanged == Changed) {
 		return;
@@ -1157,6 +1217,7 @@ bool TMain::LocalSaveVans() {
 
 // ---------------------------------------------------------------------------
 void __fastcall TMain::sgLocalDblClick(TObject *Sender) {
+#ifdef _DEBUG
 	if (LocalSelectedRow > 0) {
 		TLocalVan * Van = GetLocalVan(LocalSelectedRow);
 		MsgBox("VanNum: " + Van->VanNum + sLineBreak + "Brutto: " +
@@ -1164,5 +1225,6 @@ void __fastcall TMain::sgLocalDblClick(TObject *Sender) {
 			"Netto: " + Van->Netto + sLineBreak + "Carrying: " + Van->Carrying +
 			sLineBreak + "Overload: " + Van->Overload);
 	}
+#endif
 }
 // ---------------------------------------------------------------------------

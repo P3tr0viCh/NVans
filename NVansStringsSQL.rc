@@ -18,6 +18,7 @@ IDS_SQL_ORACLE_VERSION,         "SELECT * FROM v$version"
 
 IDS_SQL_ORACLE_NVANS_TABLE,     "BPTL.RP_NVANS"
 IDS_SQL_LOCAL_MVANS_TABLE,      "mvans"
+IDS_SQL_LOCAL_MTRAINS_TABLE,    "mtrains"
 IDS_SQL_LOCAL_PVANS_TABLE,      "pvans"
 
 IDS_SQL_ORACLE_NVANS_TRAIN_SELECT,      "NUM, TO_NCHAR(INVNUM) INVNUM, TO_NCHAR(CARGOTYPE) CARGOTYPE, TO_NCHAR(INVOICE_NUM) INVOICE_NUM, TO_NCHAR(INVOICE_SUPPLIER) INVOICE_SUPPLIER, TO_NCHAR(INVOICE_CONSIGN) INVOICE_CONSIGN, TO_NCHAR(DEPART_STATION) DEPART_STATION, TO_NCHAR(PURPOSE_STATION) PURPOSE_STATION, CARRYING, TARE_T, INVOICE_NETTO, INVOICE_TARE, RWNUM, DATE_RECORD"
@@ -36,10 +37,16 @@ IDS_SQL_ORACLE_NVANS_TRAINS_GROUP,      "RWNUM"
 IDS_SQL_ORACLE_NVANS_TRAINS_ORDER,      "DATETIME DESC"
 
 IDS_SQL_LOCAL_MVANS_SELECT,             "id, bdatetime, invnum, brutto, netto, cargotype, invoice_num, invoice_supplier, invoice_consign, depart_station, purpose_station, carrying, tare_t, invoice_netto, invoice_tare, status"
-IDS_SQL_LOCAL_MVANS_WHERE,              "bdatetime>=:DATE_FROM AND bdatetime<:DATE_TO"
-IDS_SQL_LOCAL_MVANS_ORDER,              "bdatetime DESC"
-IDS_SQL_LOCAL_MVANS_UPDATE,             "invnum=:INVNUM, carrying=:CARRYING, loadnorm=:LOADNORM, tare_t=:TARE_T, iscales_tare_t=:ISCALES_TARE_T, idatetime_tare_t=:IDATETIME_TARE_T, overload=:OVERLOAD, cargotype=:CARGOTYPE, cargotype_code=:CARGOTYPE_CODE, depart_station=:DEPART_STATION, depart_station_code=:DEPART_STATION_CODE, purpose_station=:PURPOSE_STATION, purpose_station_code=:PURPOSE_STATION_CODE, invoice_num=:INVOICE_NUM, invoice_supplier=:INVOICE_SUPPLIER, invoice_supplier_code=:INVOICE_SUPPLIER_CODE, invoice_consign=:INVOICE_CONSIGN, invoice_consign_code=:INVOICE_CONSIGN_CODE, invoice_netto=:INVOICE_NETTO, invoice_tare=:INVOICE_TARE, data_sent=0"
+IDS_SQL_LOCAL_MVANS_WHERE_DT            "bdatetime>=:DATE_FROM AND bdatetime<:DATE_TO"
+IDS_SQL_LOCAL_MVANS_WHERE_TRAIN_NUM     "trnum=:TRAIN_NUM"
+IDS_SQL_LOCAL_MVANS_ORDER_DT,           "bdatetime DESC"
+IDS_SQL_LOCAL_MVANS_ORDER_NUM,          "num"
+IDS_SQL_LOCAL_MVANS_UPDATE,             "invnum=:INVNUM, carrying=:CARRYING, loadnorm=:LOADNORM, tare_t=:TARE_T, overload=:OVERLOAD, cargotype=:CARGOTYPE, cargotype_code=:CARGOTYPE_CODE, depart_station=:DEPART_STATION, depart_station_code=:DEPART_STATION_CODE, purpose_station=:PURPOSE_STATION, purpose_station_code=:PURPOSE_STATION_CODE, invoice_num=:INVOICE_NUM, invoice_supplier=:INVOICE_SUPPLIER, invoice_supplier_code=:INVOICE_SUPPLIER_CODE, invoice_consign=:INVOICE_CONSIGN, invoice_consign_code=:INVOICE_CONSIGN_CODE, invoice_netto=:INVOICE_NETTO, invoice_tare=:INVOICE_TARE, data_sent=0"
 IDS_SQL_LOCAL_MVANS_UPDATE_WHERE,       "id=:ID"
+
+IDS_SQL_LOCAL_MTRAINS_SELECT,           "id, trnum, bdatetime, nvans, status"
+IDS_SQL_LOCAL_MTRAINS_WHERE,            "bdatetime>=:DATE_FROM AND bdatetime<:DATE_TO"
+IDS_SQL_LOCAL_MTRAINS_ORDER,            "bdatetime DESC"
 
 IDS_SQL_LOCAL_PVANS_SELECT,             "invnum"
 IDS_SQL_LOCAL_PVANS_WHERE,              "invnum=:INVNUM"

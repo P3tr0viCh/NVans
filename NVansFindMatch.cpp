@@ -312,6 +312,56 @@ int FindMatchTest() {
 		if (FindMatchTestCheckFail(Source, Dest, Result)) {
 			return FindMatchTestNum;
 		}
+
+		// поиск по номерам, вагоны идут не по порядку, дублируются
+		SetFindMatchTestNum(15, FindMatchTestNum);
+
+		Source->Clear();
+		Source->Add("0010"); // 0
+		Source->Add("0011"); // 1
+		Source->Add("0001"); // 2
+		Source->Add("0002"); // 3
+		Source->Add("0003"); // 4
+		Source->Add("0004"); // 5
+		Source->Add("0005"); // 6
+
+		Dest->Clear();
+		Dest->Add("0000"); // 0
+		Dest->Add("0000"); // 1
+		Dest->Add("0002"); // 2
+		Dest->Add("0001"); // 3
+		Dest->Add("0003"); // 4
+		Dest->Add("0000"); // 5
+		Dest->Add("0002"); // 6
+		Dest->Add("0000"); // 7
+
+		Result->Clear();
+		Result->Add(new TIntegerPair(2, 3));
+		Result->Add(new TIntegerPair(3, 2));
+		Result->Add(new TIntegerPair(4, 4));
+
+		if (FindMatchTestCheckFail(Source, Dest, Result)) {
+			return FindMatchTestNum;
+		}
+
+		// неоднозначность
+		SetFindMatchTestNum(16, FindMatchTestNum);
+
+		Source->Clear();
+		Source->Add("0001"); // 0
+		Source->Add("0002"); // 1
+
+		Dest->Clear();
+		Dest->Add("0001"); // 0
+		Dest->Add(""); // 1
+		Dest->Add("0002"); // 2
+		Dest->Add("0000"); // 7
+
+		Result->Clear();
+
+		if (FindMatchTestCheckFail(Source, Dest, Result)) {
+			return FindMatchTestNum;
+		}
 	}
 	__finally {
 		Result->Free();
@@ -356,7 +406,11 @@ bool CompareIntegerPairList(TIntegerPairList * Item1, TIntegerPairList * Item2)
 }
 
 // ---------------------------------------------------------------------------
-int __fastcall CompareIntegerPairInt1(void * Item1, void * Item2) {
+int __fastcall CompareIntegerPair(void * Item1, void * Item2) {
+	if (((TIntegerPair*)Item1)->Int1->Equals(((TIntegerPair*)Item2)->Int1)) {
+		return ((TIntegerPair*)Item1)->Int2->Value - ((TIntegerPair*)Item2)
+			->Int2->Value;
+	}
 	return ((TIntegerPair*)Item1)->Int1->Value - ((TIntegerPair*)Item2)
 		->Int1->Value;
 }
@@ -480,7 +534,21 @@ void FindMatch(TStringList * Source, TStringList * Dest,
 
 	Results->Free();
 
-	Result->Sort(CompareIntegerPairInt1);
+	Result->Sort(CompareIntegerPair);
+
+#ifdef FIND_MATCH_TEST
+	WriteToLog("Results united and sorted:");
+	WriteToLog(IntegerPairListToStr(Result));
+#endif
+
+	for (int i = 0; i < Result->Count; i++) {
+		for (int j = i + 1; j < Result->Count; j++) {
+			if (Result->Items[i]->Int1->Equals(Result->Items[j]->Int1)) {
+				Result->Clear();
+				break;
+			}
+		}
+	}
 }
 
 // ---------------------------------------------------------------------------

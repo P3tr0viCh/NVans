@@ -137,14 +137,14 @@ object Main: TMain
       TabOrder = 3
       OnClick = btnOptionsClick
     end
-    object btnServerList: TButton
+    object btnServerTrains: TButton
       Left = 336
       Top = 8
       Width = 80
       Height = 32
       Caption = #1057#1087#1080#1089#1086#1082
       TabOrder = 2
-      OnClick = btnServerListClick
+      OnClick = btnServerTrainsClick
     end
   end
   object PanelLocal: TPanel
@@ -173,6 +173,15 @@ object Main: TMain
       Enabled = False
       TabOrder = 1
       OnClick = btnLocalSaveClick
+    end
+    object btnLocalTrains: TButton
+      Left = 192
+      Top = 8
+      Width = 80
+      Height = 32
+      Caption = #1055#1086#1077#1079#1076#1072
+      TabOrder = 2
+      OnClick = btnLocalTrainsClick
     end
   end
   object PanelCommon: TPanel

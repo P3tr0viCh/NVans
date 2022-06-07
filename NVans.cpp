@@ -4,10 +4,11 @@
 #pragma hdrstop
 #include <tchar.h>
 // ---------------------------------------------------------------------------
-USEFORM("NVansMain.cpp", Main);
+USEFORM("NVansServerTrains.cpp", frmServerTrains);
 USEFORM("NVansLogin.cpp", frmLogin);
-USEFORM("NVansServerList.cpp", frmServerList);
 USEFORM("NVansOptions.cpp", frmOptions);
+USEFORM("NVansMain.cpp", Main);
+USEFORM("NVansLocalTrains.cpp", frmLocalTrains);
 //---------------------------------------------------------------------------
 int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int) {
 	try {
@@ -15,7 +16,8 @@ int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int) {
 		Application->MainFormOnTaskBar = true;
 		Application->Title = "Натурный лист";
 		Application->CreateForm(__classid(TMain), &Main);
-		Application->CreateForm(__classid(TfrmServerList), &frmServerList);
+		Application->CreateForm(__classid(TfrmServerTrains), &frmServerTrains);
+		Application->CreateForm(__classid(TfrmLocalTrains), &frmLocalTrains);
 		Application->Run();
 	}
 	catch (Exception &exception) {

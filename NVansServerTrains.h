@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------
 
-#ifndef NVansServerListH
-#define NVansServerListH
+#ifndef NVansServerTrainsH
+#define NVansServerTrainsH
 
 // ---------------------------------------------------------------------------
 #include <System.Classes.hpp>
@@ -12,17 +12,16 @@
 #include <Vcl.ExtCtrls.hpp>
 #include <Vcl.Grids.hpp>
 
+#include "NVansTOracleTrain.h"
 #include "NVansTFilterOracleTrains.h"
 
-#include "NVansTOracleTrain.h"
-
 // ---------------------------------------------------------------------------
-class TfrmServerList : public TForm {
+class TfrmServerTrains : public TForm {
 __published:
 	TStatusBar *StatusBar;
 	TStringGrid *sgList;
 	TPanel *PanelTop;
-	TButton *btnServerLoad;
+	TButton *btnUpdate;
 	TButton *btnClose;
 	TPanel *PanelFilter;
 	TDateTimePicker *pckrFilterDate;
@@ -33,7 +32,7 @@ __published:
 	void __fastcall FormDestroy(TObject *Sender);
 	void __fastcall sgListDrawCell(TObject *Sender, int ACol, int ARow,
 		TRect &Rect, TGridDrawState State);
-	void __fastcall btnServerLoadClick(TObject *Sender);
+	void __fastcall btnUpdateClick(TObject *Sender);
 	void __fastcall btnCloseClick(TObject *Sender);
 	void __fastcall FormShow(TObject *Sender);
 	void __fastcall sgListDblClick(TObject *Sender);
@@ -68,7 +67,7 @@ private:
 	void UpdateTrains();
 
 public:
-	__fastcall TfrmServerList(TComponent* Owner);
+	__fastcall TfrmServerTrains(TComponent* Owner);
 
 	// -----------------------------------------------------------------------
 	void StartLoad();
@@ -80,6 +79,6 @@ public:
 };
 
 // ---------------------------------------------------------------------------
-extern PACKAGE TfrmServerList *frmServerList;
+extern PACKAGE TfrmServerTrains *frmServerTrains;
 // ---------------------------------------------------------------------------
 #endif

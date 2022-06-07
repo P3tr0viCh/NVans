@@ -72,7 +72,9 @@ public:
 
 	static const CHANGED = 15;
 
-	static const COUNT = 16;
+	static const WEIGHT_TYPE_TARE = 16;
+
+	static const COUNT = 17;
 
 	TNVansLocalColumns() {
 		LeftAlign =
@@ -83,7 +85,7 @@ public:
 };
 
 // ---------------------------------------------------------------------------
-class TNVansServerListColumns : public TNVansBaseColumns {
+class TNVansServerTrainsColumns : public TNVansBaseColumns {
 public:
 	static const RWNUM = 0;
 	static const DATETIME = 1;
@@ -95,6 +97,23 @@ public:
 
 	TNVansServerListColumns() {
 		LeftAlign = TIntegerSet() << RWNUM << DATETIME;
+	}
+};
+
+// ---------------------------------------------------------------------------
+class TNVansLocalTrainsColumns : public TNVansBaseColumns {
+public:
+	static const DATETIME = 0;
+	static const VAN_COUNT = 1;
+
+	static const VISIBLE_COUNT = 2;
+
+	static const TRAIN_NUM = 2;
+
+	static const COUNT = 3;
+
+	TNVansServerListColumns() {
+		LeftAlign = TIntegerSet() << DATETIME;
 	}
 };
 

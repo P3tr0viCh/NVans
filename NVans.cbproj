@@ -110,8 +110,8 @@
         <LinkPackageStatics>rtl.lib;vcl.lib;dbrtl.lib;adortl.lib</LinkPackageStatics>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Icon_MainIcon>NVans_Icon.ico</Icon_MainIcon>
-        <VerInfo_MinorVer>9</VerInfo_MinorVer>
-        <VerInfo_Keys>CompanyName=П3тр0виЧъ;FileDescription=Натурный лист;FileVersion=0.9.0.0;InternalName=NVans;LegalCopyright=© П3тр0виЧъ;LegalTrademarks=П3тр0виЧъ™;OriginalFilename=NVans.exe;ProgramID=ru.p3tr0vich.$(MSBuildProjectName);ProductName=Натурный лист;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_MinorVer>11</VerInfo_MinorVer>
+        <VerInfo_Keys>CompanyName=П3тр0виЧъ;FileDescription=Натурный лист;FileVersion=0.11.0.0;InternalName=NVans;LegalCopyright=© П3тр0виЧъ;LegalTrademarks=П3тр0виЧъ™;OriginalFilename=NVans.exe;ProgramID=ru.p3tr0vich.$(MSBuildProjectName);ProductName=Натурный лист;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
@@ -124,8 +124,8 @@
         <LinkPackageStatics>rtl.lib;vcl.lib;dbrtl.lib;adortl.lib</LinkPackageStatics>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Icon_MainIcon>NVans_Icon.ico</Icon_MainIcon>
-        <VerInfo_MinorVer>9</VerInfo_MinorVer>
-        <VerInfo_Keys>CompanyName=П3тр0виЧъ;FileDescription=Натурный лист;FileVersion=0.9.0.0;InternalName=NVans;LegalCopyright=© П3тр0виЧъ;LegalTrademarks=П3тр0виЧъ™;OriginalFilename=NVans.exe;ProgramID=ru.p3tr0vich.$(MSBuildProjectName);ProductName=Натурный лист;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_MinorVer>11</VerInfo_MinorVer>
+        <VerInfo_Keys>CompanyName=П3тр0виЧъ;FileDescription=Натурный лист;FileVersion=0.11.0.0;InternalName=NVans;LegalCopyright=© П3тр0виЧъ;LegalTrademarks=П3тр0виЧъ™;OriginalFilename=NVans.exe;ProgramID=ru.p3tr0vich.$(MSBuildProjectName);ProductName=Натурный лист;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
     </PropertyGroup>
     <ItemGroup>
@@ -203,6 +203,12 @@
             <DependentOn>NVansFindMatch.h</DependentOn>
             <BuildOrder>43</BuildOrder>
         </CppCompile>
+        <CppCompile Include="NVansLocalTrains.cpp">
+            <Form>frmLocalTrains</Form>
+            <FormType>dfm</FormType>
+            <DependentOn>NVansLocalTrains.h</DependentOn>
+            <BuildOrder>49</BuildOrder>
+        </CppCompile>
         <CppCompile Include="NVansLogin.cpp">
             <Form>frmLogin</Form>
             <FormType>dfm</FormType>
@@ -225,10 +231,10 @@
             <BuildOrder>1</BuildOrder>
             <PCH>true</PCH>
         </PCHCompile>
-        <CppCompile Include="NVansServerList.cpp">
-            <Form>frmServerList</Form>
+        <CppCompile Include="NVansServerTrains.cpp">
+            <Form>frmServerTrains</Form>
             <FormType>dfm</FormType>
-            <DependentOn>NVansServerList.h</DependentOn>
+            <DependentOn>NVansServerTrains.h</DependentOn>
             <BuildOrder>37</BuildOrder>
         </CppCompile>
         <None Include="NVansStrings.h">
@@ -284,6 +290,10 @@
             <DependentOn>NVansTDBCheckOracle.h</DependentOn>
             <BuildOrder>32</BuildOrder>
         </CppCompile>
+        <CppCompile Include="NVansTDBLocalLoadTrains.cpp">
+            <DependentOn>NVansTDBLocalLoadTrains.h</DependentOn>
+            <BuildOrder>51</BuildOrder>
+        </CppCompile>
         <CppCompile Include="NVansTDBLocalLoadVans.cpp">
             <DependentOn>NVansTDBLocalLoadVans.h</DependentOn>
             <BuildOrder>42</BuildOrder>
@@ -304,9 +314,17 @@
             <DependentOn>NVansTDBOracleLoadTrains.h</DependentOn>
             <BuildOrder>39</BuildOrder>
         </CppCompile>
+        <CppCompile Include="NVansTFilterLocalTrains.cpp">
+            <DependentOn>NVansTFilterLocalTrains.h</DependentOn>
+            <BuildOrder>52</BuildOrder>
+        </CppCompile>
         <CppCompile Include="NVansTFilterOracleTrains.cpp">
             <DependentOn>NVansTFilterOracleTrains.h</DependentOn>
             <BuildOrder>47</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="NVansTLocalTrain.cpp">
+            <DependentOn>NVansTLocalTrain.h</DependentOn>
+            <BuildOrder>50</BuildOrder>
         </CppCompile>
         <CppCompile Include="NVansTLocalVan.cpp">
             <DependentOn>NVansTLocalVan.h</DependentOn>
@@ -324,10 +342,11 @@
             <DependentOn>NVansTSettings.h</DependentOn>
             <BuildOrder>17</BuildOrder>
         </CppCompile>
-        <FormResources Include="NVansMain.dfm"/>
+        <FormResources Include="NVansServerTrains.dfm"/>
         <FormResources Include="NVansLogin.dfm"/>
-        <FormResources Include="NVansServerList.dfm"/>
         <FormResources Include="NVansOptions.dfm"/>
+        <FormResources Include="NVansMain.dfm"/>
+        <FormResources Include="NVansLocalTrains.dfm"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

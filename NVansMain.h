@@ -34,7 +34,7 @@ __published:
 	TLabeledEdit *eRWNum;
 	TButton *btnServerLoad;
 	TButton *btnOptions;
-	TButton *btnServerList;
+	TButton *btnServerTrains;
 	TPanel *PanelLocal;
 	TButton *btnLocalLoad;
 	TPanel *PanelCommon;
@@ -43,6 +43,7 @@ __published:
 	TButton *btnLocalSave;
 	TTimer *TimerResize;
 	TButton *btnCopyDataMass;
+	TButton *btnLocalTrains;
 
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
@@ -59,7 +60,7 @@ __published:
 	void __fastcall sgServerFixedCellClick(TObject *Sender, int ACol, int ARow);
 	void __fastcall btnOptionsClick(TObject *Sender);
 	void __fastcall FormResize(TObject *Sender);
-	void __fastcall btnServerListClick(TObject *Sender);
+	void __fastcall btnServerTrainsClick(TObject *Sender);
 	void __fastcall sgServerKeyDown(TObject *Sender, WORD &Key,
 		TShiftState Shift);
 	void __fastcall btnLocalLoadClick(TObject *Sender);
@@ -69,15 +70,17 @@ __published:
 	void __fastcall btnLocalSaveClick(TObject *Sender);
 	void __fastcall sgServerSelectCell(TObject *Sender, int ACol, int ARow,
 		bool &CanSelect);
-	void __fastcall sgLocalSelectCell(TObject *Sender, int ACol, int ARow, bool &CanSelect);
+	void __fastcall sgLocalSelectCell(TObject *Sender, int ACol, int ARow,
+		bool &CanSelect);
 	void __fastcall TimerResizeTimer(TObject *Sender);
 	void __fastcall sgLocalDblClick(TObject *Sender);
-
+	void __fastcall btnLocalTrainsClick(TObject *Sender);
 
 private:
 	TSettings * FSettings;
 
-	String FTrainNum;
+	String FOracleTrainNum;
+	String FLocalTrainNum;
 
 	TDate FDateLocal;
 
@@ -103,12 +106,16 @@ private:
 	void SetLocalVanChanged(int Index, bool Changed);
 	bool IsLocalVanChanged(int Index);
 
+	void SetLocalVanTare(int Index, bool Tare);
+	bool IsLocalVanTare(int Index);
+
 	void SetLocalChanged(bool Changed);
 
 	TOracleVan * GetServerVan(int Index);
 	TLocalVan * GetLocalVan(int Index);
 
-	void SetTrainNum(String Value);
+	void SetOracleTrainNum(String Value);
+	void SetLocalTrainNum(String Value);
 
 	void SetDateLocal(TDate Value);
 
@@ -149,7 +156,10 @@ public:
 	// -----------------------------------------------------------------------
 	__property TSettings * Settings = {read = FSettings};
 
-	__property String TrainNum = {read = FTrainNum, write = SetTrainNum};
+	__property String OracleTrainNum = {
+		read = FOracleTrainNum, write = SetOracleTrainNum};
+	__property String LocalTrainNum = {
+		read = FLocalTrainNum, write = SetLocalTrainNum};
 
 	__property TDate DateLocal = {read = FDateLocal, write = SetDateLocal};
 

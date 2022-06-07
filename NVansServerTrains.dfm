@@ -1,9 +1,9 @@
-object frmServerList: TfrmServerList
+object frmServerTrains: TfrmServerTrains
   Left = 0
   Top = 0
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSizeToolWin
-  Caption = #1057#1087#1080#1089#1086#1082' '#1087#1086#1077#1079#1076#1086#1074
+  Caption = #1053#1072#1090#1091#1088#1085#1099#1077' '#1083#1080#1089#1090#1099': '#1089#1087#1080#1089#1086#1082' '#1087#1086#1077#1079#1076#1086#1074
   ClientHeight = 208
   ClientWidth = 352
   Color = clBtnFace
@@ -51,7 +51,6 @@ object frmServerList: TfrmServerList
     OnDrawCell = sgListDrawCell
     OnKeyDown = sgListKeyDown
     OnSelectCell = sgListSelectCell
-    ExplicitWidth = 352
   end
   object PanelTop: TPanel
     Left = 0
@@ -64,14 +63,14 @@ object frmServerList: TfrmServerList
     DesignSize = (
       352
       48)
-    object btnServerLoad: TButton
+    object btnUpdate: TButton
       Left = 8
       Top = 8
       Width = 80
       Height = 32
       Caption = #1054#1073#1085#1086#1074#1080#1090#1100
       TabOrder = 0
-      OnClick = btnServerLoadClick
+      OnClick = btnUpdateClick
     end
     object btnClose: TButton
       Left = 264
@@ -92,7 +91,6 @@ object frmServerList: TfrmServerList
     Align = alRight
     BevelOuter = bvNone
     TabOrder = 3
-    ExplicitLeft = 208
     DesignSize = (
       152
       136)
