@@ -95,7 +95,7 @@ public:
 
 	static const COUNT = 3;
 
-	TNVansServerListColumns() {
+	TNVansServerTrainsColumns() {
 		LeftAlign = TIntegerSet() << RWNUM << DATETIME;
 	}
 };
@@ -112,7 +112,7 @@ public:
 
 	static const COUNT = 3;
 
-	TNVansServerListColumns() {
+	TNVansLocalTrainsColumns() {
 		LeftAlign = TIntegerSet() << DATETIME;
 	}
 };
