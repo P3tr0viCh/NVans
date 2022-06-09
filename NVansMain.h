@@ -16,6 +16,8 @@
 
 #include <IntegerPair.h>
 
+#include "NVansColumns.h"
+
 #include "NVansTSettings.h"
 
 #include "NVansTLocalVan.h"
@@ -44,6 +46,7 @@ __published:
 	TTimer *TimerResize;
 	TButton *btnCopyDataMass;
 	TButton *btnLocalTrains;
+	TButton *btnAbout;
 
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
@@ -75,9 +78,13 @@ __published:
 	void __fastcall TimerResizeTimer(TObject *Sender);
 	void __fastcall sgLocalDblClick(TObject *Sender);
 	void __fastcall btnLocalTrainsClick(TObject *Sender);
+	void __fastcall btnAboutClick(TObject *Sender);
 
 private:
 	TSettings * FSettings;
+
+	TNVansServerColumns * ServerColumns;
+	TNVansLocalColumns * LocalColumns;
 
 	String FOracleTrainNum;
 	String FLocalTrainNum;
@@ -93,9 +100,6 @@ private:
 	TLocalVanList * FLocalVanList;
 
 	// -----------------------------------------------------------------------
-	void CreateServerColumns();
-	void CreateLocalColumns();
-
 	void SetControlsEnabled(const bool Enabled);
 
 	void SetUseLocal();
@@ -103,10 +107,6 @@ private:
 	int SetServerVan(int Index, TOracleVan * Van);
 	int SetLocalVan(int Index, TLocalVan * Van);
 
-	void SetLocalVanChanged(int Index, bool Changed);
-	bool IsLocalVanChanged(int Index);
-
-	void SetLocalVanTare(int Index, bool Tare);
 	bool IsLocalVanTare(int Index);
 
 	void SetLocalChanged(bool Changed);

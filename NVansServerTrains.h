@@ -12,6 +12,8 @@
 #include <Vcl.ExtCtrls.hpp>
 #include <Vcl.Grids.hpp>
 
+#include "NVansColumns.h"
+
 #include "NVansTOracleTrain.h"
 #include "NVansTFilterOracleTrains.h"
 
@@ -48,13 +50,13 @@ __published:
 private:
 	int SelectedRow;
 
+	TNVansServerTrainsColumns * Columns;
+
 	TFilterOracleTrains * Filter;
 
 	TOracleTrainList * FTrainList;
 
 	// -----------------------------------------------------------------------
-	void CreateColumns();
-
 	void SetControlsEnabled(const bool Enabled);
 
 	int SetTrain(int Index, TOracleTrain * Train);

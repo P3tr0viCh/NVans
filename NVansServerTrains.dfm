@@ -43,7 +43,6 @@ object frmServerTrains: TfrmServerTrains
     Align = alClient
     ColCount = 2
     DefaultDrawing = False
-    FixedCols = 0
     RowCount = 2
     Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goTabs, goFixedColClick]
     TabOrder = 1

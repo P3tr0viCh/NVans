@@ -12,6 +12,8 @@
 #include <Vcl.ComCtrls.hpp>
 #include <Vcl.Grids.hpp>
 
+#include "NVansColumns.h"
+
 #include "NVansTLocalTrain.h"
 #include "NVansTFilterLocalTrains.h"
 
@@ -38,13 +40,13 @@ __published:
 private:
 	int SelectedRow;
 
+	TNVansLocalTrainsColumns * Columns;
+
 	TFilterLocalTrains * Filter;
 
 	TLocalTrainList * FTrainList;
 
 	// -----------------------------------------------------------------------
-	void CreateColumns();
-
 	void SetControlsEnabled(const bool Enabled);
 
 	int SetTrain(int Index, TLocalTrain * Train);

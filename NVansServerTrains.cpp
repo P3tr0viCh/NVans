@@ -32,35 +32,22 @@
 
 TfrmServerTrains *frmServerTrains;
 
-static TNVansServerTrainsColumns Columns;
-
 // ---------------------------------------------------------------------------
 __fastcall TfrmServerTrains::TfrmServerTrains(TComponent* Owner) : TForm(Owner)
 {
 }
 
 // ---------------------------------------------------------------------------
-void TfrmServerTrains::CreateColumns() {
-	sgList->ColCount = Columns.VISIBLE_COUNT;
-
-	StringGridSetHeader(sgList, Columns.RWNUM, IDS_GRID_HEADER_RWNUM, 80);
-	StringGridSetHeader(sgList, Columns.DATETIME,
-		IDS_GRID_HEADER_DATETIME, 112);
-	StringGridSetHeader(sgList, Columns.VAN_COUNT,
-		IDS_GRID_HEADER_VAN_COUNT, 56);
-}
-
-// ---------------------------------------------------------------------------
 void __fastcall TfrmServerTrains::FormCreate(TObject *Sender) {
 	SelectedRow = -1;
+
+	Columns = new TNVansServerTrainsColumns();
 
 	Filter = new TFilterOracleTrains();
 
 	FTrainList = new TOracleTrainList();
 
-	CreateColumns();
-
-	sgList->DefaultRowHeight = Main->DefaultRowHeight;
+	StringGridInit(sgList, Columns, Main->DefaultRowHeight);
 
 	sgList->Options = sgList->Options << goColSizing;
 
@@ -100,14 +87,15 @@ void __fastcall TfrmServerTrains::FormDestroy(TObject *Sender) {
 
 	FTrainList->Free();
 	Filter->Free();
+	Columns->Free();
 }
 
 // ---------------------------------------------------------------------------
 void __fastcall TfrmServerTrains::sgListDrawCell(TObject *Sender, int ACol,
 	int ARow, TRect &Rect, TGridDrawState State) {
 	StringGridDrawCell(sgList, ACol, ARow, Rect, State, NUSet,
-		Columns.LeftAlign, NUSet, Main->Settings->ColorReadOnly, NUColor, true,
-		false, false, NUColor, false, NUColor);
+		Columns->LeftAlign, NUSet, Main->Settings->ColorReadOnly, NUColor, true,
+		false, NUColor, false, NUColor);
 }
 
 // ---------------------------------------------------------------------------
@@ -142,15 +130,14 @@ void TfrmServerTrains::EndLoad() {
 // ---------------------------------------------------------------------------
 int TfrmServerTrains::SetTrain(int Index, TOracleTrain * Train) {
 	if (Index < 0) {
-		if (!StringGridIsEmpty(sgList)) {
-			sgList->RowCount++;
-		}
-		Index = sgList->RowCount - 1;
+		Index = StringGridAddRow(sgList);
 	}
 
-	sgList->Cells[Columns.RWNUM][Index] = Train->TrainNum;
-	sgList->Cells[Columns.DATETIME][Index] = DTToS(Train->DateTime, false);
-	sgList->Cells[Columns.VAN_COUNT][Index] = IntToStr(Train->VanCount);
+	sgList->Cells[TNVansServerTrainsColumns::RWNUM][Index] = Train->TrainNum;
+	sgList->Cells[TNVansServerTrainsColumns::DATETIME][Index] =
+		DTToS(Train->DateTime, false);
+	sgList->Cells[TNVansServerTrainsColumns::VAN_COUNT][Index] =
+		IntToStr(Train->VanCount);
 
 	return Index;
 }

@@ -5,10 +5,10 @@ object frmLocalTrains: TfrmLocalTrains
   BorderStyle = bsSizeToolWin
   Caption = #1042#1077#1089#1099': c'#1087#1080#1089#1086#1082' '#1087#1086#1077#1079#1076#1086#1074
   ClientHeight = 208
-  ClientWidth = 352
+  ClientWidth = 240
   Color = clBtnFace
   Constraints.MinHeight = 247
-  Constraints.MinWidth = 368
+  Constraints.MinWidth = 256
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -13
@@ -23,13 +23,14 @@ object frmLocalTrains: TfrmLocalTrains
   object PanelTop: TPanel
     Left = 0
     Top = 0
-    Width = 352
+    Width = 240
     Height = 48
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
+    ExplicitWidth = 352
     DesignSize = (
-      352
+      240
       48)
     object btnUpdate: TButton
       Left = 8
@@ -41,7 +42,7 @@ object frmLocalTrains: TfrmLocalTrains
       OnClick = btnUpdateClick
     end
     object btnClose: TButton
-      Left = 264
+      Left = 152
       Top = 8
       Width = 80
       Height = 32
@@ -49,12 +50,13 @@ object frmLocalTrains: TfrmLocalTrains
       Caption = #1047#1072#1082#1088#1099#1090#1100
       TabOrder = 1
       OnClick = btnCloseClick
+      ExplicitLeft = 264
     end
   end
   object StatusBar: TStatusBar
     Left = 0
     Top = 184
-    Width = 352
+    Width = 240
     Height = 24
     Panels = <
       item
@@ -65,22 +67,22 @@ object frmLocalTrains: TfrmLocalTrains
       end>
     ParentFont = True
     UseSystemFont = False
+    ExplicitWidth = 352
   end
   object sgList: TStringGrid
     Left = 0
     Top = 48
-    Width = 352
+    Width = 240
     Height = 136
     Align = alClient
     ColCount = 2
     DefaultDrawing = False
-    FixedCols = 0
     RowCount = 2
     Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goTabs, goFixedColClick]
     TabOrder = 2
     OnDblClick = sgListDblClick
     OnDrawCell = sgListDrawCell
     OnSelectCell = sgListSelectCell
-    ExplicitWidth = 200
+    ExplicitWidth = 352
   end
 end

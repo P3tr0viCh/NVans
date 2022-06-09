@@ -3,10 +3,10 @@ object Main: TMain
   Top = 0
   Caption = 'Main'
   ClientHeight = 368
-  ClientWidth = 704
+  ClientWidth = 712
   Color = clBtnFace
   Constraints.MinHeight = 407
-  Constraints.MinWidth = 720
+  Constraints.MinWidth = 728
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -13
@@ -23,7 +23,7 @@ object Main: TMain
   object Splitter: TSplitter
     Left = 0
     Top = 148
-    Width = 704
+    Width = 712
     Height = 8
     Cursor = crSizeNS
     Align = alTop
@@ -35,7 +35,7 @@ object Main: TMain
   object StatusBar: TStatusBar
     Left = 0
     Top = 344
-    Width = 704
+    Width = 712
     Height = 24
     Panels = <
       item
@@ -47,11 +47,12 @@ object Main: TMain
     ParentFont = True
     SimplePanel = True
     UseSystemFont = False
+    ExplicitWidth = 704
   end
   object sgServer: TStringGrid
     Left = 0
     Top = 48
-    Width = 704
+    Width = 712
     Height = 100
     Align = alTop
     ColCount = 2
@@ -64,11 +65,12 @@ object Main: TMain
     OnFixedCellClick = sgServerFixedCellClick
     OnKeyDown = sgServerKeyDown
     OnSelectCell = sgServerSelectCell
+    ExplicitWidth = 704
   end
   object sgLocal: TStringGrid
     Left = 0
     Top = 196
-    Width = 704
+    Width = 712
     Height = 100
     Align = alClient
     ColCount = 2
@@ -82,27 +84,30 @@ object Main: TMain
     OnFixedCellClick = sgServerFixedCellClick
     OnKeyDown = sgServerKeyDown
     OnSelectCell = sgLocalSelectCell
+    ExplicitWidth = 704
   end
   object PanelServer: TPanel
     Left = 0
     Top = 0
-    Width = 704
+    Width = 712
     Height = 48
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
+    ExplicitWidth = 704
     DesignSize = (
-      704
+      712
       48)
     object btnClose: TButton
-      Left = 616
+      Left = 624
       Top = 8
       Width = 80
       Height = 32
       Anchors = [akTop, akRight]
       Caption = #1047#1072#1082#1088#1099#1090#1100
-      TabOrder = 4
+      TabOrder = 5
       OnClick = btnCloseClick
+      ExplicitLeft = 616
     end
     object eRWNum: TLabeledEdit
       Left = 112
@@ -128,14 +133,15 @@ object Main: TMain
       OnClick = btnServerLoadClick
     end
     object btnOptions: TButton
-      Left = 520
+      Left = 528
       Top = 8
       Width = 80
       Height = 32
       Anchors = [akTop, akRight]
       Caption = #1053#1072#1089#1090#1088#1086#1081#1082#1080
-      TabOrder = 3
+      TabOrder = 4
       OnClick = btnOptionsClick
+      ExplicitLeft = 520
     end
     object btnServerTrains: TButton
       Left = 336
@@ -146,15 +152,27 @@ object Main: TMain
       TabOrder = 2
       OnClick = btnServerTrainsClick
     end
+    object btnAbout: TButton
+      Left = 424
+      Top = 8
+      Width = 96
+      Height = 32
+      Anchors = [akTop, akRight]
+      Caption = #1054' '#1087#1088#1086#1075#1088#1072#1084#1084#1077
+      TabOrder = 3
+      OnClick = btnAboutClick
+      ExplicitLeft = 416
+    end
   end
   object PanelLocal: TPanel
     Left = 0
     Top = 296
-    Width = 704
+    Width = 712
     Height = 48
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 4
+    ExplicitWidth = 704
     object btnLocalLoad: TButton
       Left = 8
       Top = 8
@@ -187,11 +205,12 @@ object Main: TMain
   object PanelCommon: TPanel
     Left = 0
     Top = 156
-    Width = 704
+    Width = 712
     Height = 40
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 2
+    ExplicitWidth = 704
     object btnSaveVanProps: TButton
       Left = 304
       Top = 0

@@ -4,11 +4,11 @@
 #pragma hdrstop
 #include <tchar.h>
 // ---------------------------------------------------------------------------
-USEFORM("NVansServerTrains.cpp", frmServerTrains);
-USEFORM("NVansLogin.cpp", frmLogin);
-USEFORM("NVansOptions.cpp", frmOptions);
 USEFORM("NVansMain.cpp", Main);
+USEFORM("NVansLogin.cpp", frmLogin);
 USEFORM("NVansLocalTrains.cpp", frmLocalTrains);
+USEFORM("NVansServerTrains.cpp", frmServerTrains);
+USEFORM("NVansOptions.cpp", frmOptions);
 //---------------------------------------------------------------------------
 int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int) {
 	try {
