@@ -93,9 +93,9 @@ void __fastcall TfrmServerTrains::FormDestroy(TObject *Sender) {
 // ---------------------------------------------------------------------------
 void __fastcall TfrmServerTrains::sgListDrawCell(TObject *Sender, int ACol,
 	int ARow, TRect &Rect, TGridDrawState State) {
-	StringGridDrawCell(sgList, ACol, ARow, Rect, State, NUSet,
-		Columns->LeftAlign, NUSet, Main->Settings->ColorReadOnly, NUColor, true,
-		false, NUColor, false, NUColor);
+	StringGridDrawCell(sgList, ACol, ARow, Rect, State, TIntegerSet(),
+		Columns->LeftAlign, TIntegerSet(), Main->Settings->ColorReadOnly, clMax,
+		true, false, clMax, Main->Settings->ColorSelected);
 }
 
 // ---------------------------------------------------------------------------
@@ -238,6 +238,8 @@ void __fastcall TfrmServerTrains::sgListDblClick(TObject *Sender) {
 // ---------------------------------------------------------------------------
 void __fastcall TfrmServerTrains::sgListSelectCell(TObject *Sender, int ACol,
 	int ARow, bool &CanSelect) {
+	StringGridInvalidateSelected(sgList);
+
 	if (StringGridIsEmpty(sgList)) {
 		return;
 	}

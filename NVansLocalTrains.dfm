@@ -28,7 +28,6 @@ object frmLocalTrains: TfrmLocalTrains
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitWidth = 352
     DesignSize = (
       240
       48)
@@ -50,7 +49,6 @@ object frmLocalTrains: TfrmLocalTrains
       Caption = #1047#1072#1082#1088#1099#1090#1100
       TabOrder = 1
       OnClick = btnCloseClick
-      ExplicitLeft = 264
     end
   end
   object StatusBar: TStatusBar
@@ -67,7 +65,6 @@ object frmLocalTrains: TfrmLocalTrains
       end>
     ParentFont = True
     UseSystemFont = False
-    ExplicitWidth = 352
   end
   object sgList: TStringGrid
     Left = 0
@@ -83,6 +80,5 @@ object frmLocalTrains: TfrmLocalTrains
     OnDblClick = sgListDblClick
     OnDrawCell = sgListDrawCell
     OnSelectCell = sgListSelectCell
-    ExplicitWidth = 352
   end
 end

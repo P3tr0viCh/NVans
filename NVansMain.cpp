@@ -56,9 +56,6 @@ void __fastcall TMain::FormCreate(TObject *Sender) {
 
 	FOracleTrainNum = "";
 
-	ServerSelectedRow = -1;
-	LocalSelectedRow = -1;
-
 	FServerVanList = new TOracleVanList();
 	FLocalVanList = new TLocalVanList();
 
@@ -188,18 +185,18 @@ void __fastcall TMain::ApplicationEventsException(TObject *Sender, Exception *E)
 // ---------------------------------------------------------------------------
 void __fastcall TMain::sgServerDrawCell(TObject *Sender, int ACol, int ARow,
 	TRect &Rect, TGridDrawState State) {
-	StringGridDrawCell(sgServer, ACol, ARow, Rect, State, NUSet,
-		ServerColumns->LeftAlign, NUSet, Main->Settings->ColorReadOnly, NUColor,
-		true, false, NUColor, true, Main->Settings->ColorSelected);
+	StringGridDrawCell(sgServer, ACol, ARow, Rect, State, TIntegerSet(),
+		ServerColumns->LeftAlign, TIntegerSet(), Main->Settings->ColorReadOnly,
+		clMax, true, false, clMax, Main->Settings->ColorSelected);
 }
 
 // ---------------------------------------------------------------------------
 void __fastcall TMain::sgLocalDrawCell(TObject *Sender, int ACol, int ARow,
 	TRect &Rect, TGridDrawState State) {
 	StringGridDrawCell(sgLocal, ACol, ARow, Rect, State, IsLocalVanTare(ARow) ?
-		LocalColumns->ReadOnlyIfTare : NUSet, LocalColumns->LeftAlign, NUSet,
-		Main->Settings->ColorReadOnly, NUColor, true, false,
-		Main->Settings->ColorChanged, true, Main->Settings->ColorSelected);
+		LocalColumns->ReadOnlyIfTare : TIntegerSet(), LocalColumns->LeftAlign,
+		TIntegerSet(), Main->Settings->ColorReadOnly, clMax, true, false,
+		Main->Settings->ColorChanged, Main->Settings->ColorSelected);
 }
 
 // ---------------------------------------------------------------------------
@@ -211,17 +208,186 @@ void __fastcall TMain::eRWNumKeyDown(TObject *Sender, WORD &Key,
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TMain::sgServerKeyDown(TObject *Sender, WORD &Key,
-	TShiftState Shift) {
-	TStringGrid * S = (TStringGrid*) Sender;
+void TMain::MenuItemAction(TMenuItemAction Action) {
+	if (ActiveControl == NULL) {
+		return;
+	}
+
+	if (!ActiveControl->ClassNameIs("TStringGrid")) {
+		return;
+	}
+
+	TStringGrid * S = (TStringGrid*) ActiveControl;
 
 	if (StringGridIsEmpty(S)) {
 		return;
 	}
 
-	if (Key == 'C' && Shift == (TShiftState() << ssCtrl)) {
-		Clipboard()->AsText = S->Cells[S->Col][S->Row];
+	String Text;
+
+	String S2;
+
+	TGridRect Selection;
+
+	TLocalVan * LocalVan;
+
+	TStringList * SL;
+
+	switch (Action) {
+	case maCopy:
+		for (int R = S->Selection.Top; R <= S->Selection.Bottom; R++) {
+			for (int C = S->Selection.Left; C <= S->Selection.Right - 1; C++) {
+				Text = Text + S->Cells[C][R] + TAB;
+			}
+			Text = Text + S->Cells[S->Selection.Right][R];
+			Text = Text + sLineBreak;
+		}
+
+		Clipboard()->AsText = Text;
+
+		break;
+	case maPaste:
+		SL = new TStringList();
+		try {
+			Text = Clipboard()->AsText;
+
+			while (!Text.IsEmpty()) {
+				SplitStr(Text, sLineBreak, 0, S2, Text);
+				SL->Add(S2);
+			}
+
+			if (SL->Count == 0) {
+				return;
+			}
+
+			for (int i = 0; i < SL->Count; i++) {
+				if (IsEmpty(SL->Strings[i])) {
+					continue;
+				}
+				if (SL->Strings[i].Length() > 8 || !IsInt(SL->Strings[i])) {
+					return;
+				}
+			}
+
+			for (int LocalIndex = sgLocal->Row, i = 0;
+			LocalIndex < sgLocal->RowCount && i < SL->Count; LocalIndex++, i++)
+			{
+				if (!IsEmpty(sgLocal->Cells[TNVansLocalColumns::VANNUM]
+					[LocalIndex])) {
+					if (!MsgBoxYesNo(IDS_QUESTION_DATA_OVERWRITE)) {
+						return;
+					}
+                    break;
+				}
+			}
+
+			for (int LocalIndex = sgLocal->Row, i = 0;
+			LocalIndex < sgLocal->RowCount && i < SL->Count; LocalIndex++, i++)
+			{
+				LocalVan = GetLocalVan(LocalIndex);
+
+				LocalVan->VanNum = SL->Strings[i];
+
+				SetLocalVan(LocalIndex, LocalVan);
+
+				StringGridRowSetChanged(sgLocal, LocalIndex, true);
+			}
+
+			LocalChanged = true;
+		}
+		__finally {
+			SL->Free();
+		}
+		break;
+	case maClear:
+		for (int R = S->Selection.Top; R <= S->Selection.Bottom; R++) {
+			LocalVan = GetLocalVan(R);
+
+			for (int C = S->Selection.Left; C <= S->Selection.Right; C++) {
+				switch (C) {
+				case TNVansLocalColumns::VANNUM:
+					LocalVan->VanNum = "";
+					break;
+				case TNVansLocalColumns::CARGOTYPE:
+					LocalVan->CargoType = "";
+					break;
+				case TNVansLocalColumns::INVOICE_NUM:
+					LocalVan->InvoiceNetto = 0;
+					break;
+				case TNVansLocalColumns::INVOICE_SUPPLIER:
+					LocalVan->InvoiceSupplier = "";
+					break;
+				case TNVansLocalColumns::INVOICE_RECIPIENT:
+					LocalVan->InvoiceRecipient = "";
+					break;
+				case TNVansLocalColumns::DEPART_STATION:
+					LocalVan->DepartStation = "";
+					break;
+				case TNVansLocalColumns::PURPOSE_STATION:
+					LocalVan->PurposeStation = "";
+					break;
+				case TNVansLocalColumns::CARRYING:
+					LocalVan->Carrying = 0;
+					break;
+				case TNVansLocalColumns::INVOICE_NETTO:
+					LocalVan->InvoiceNetto = 0;
+					break;
+				case TNVansLocalColumns::INVOICE_TARE:
+					LocalVan->InvoiceTare = 0;
+					break;
+				}
+			}
+
+			SetLocalVan(R, LocalVan);
+
+			StringGridRowSetChanged(sgLocal, R, true);
+		}
+
+		LocalChanged = true;
+
+		break;
+	case maSelectAll:
+		StringGridInvalidateSelected(S);
+
+		Selection.Left = 1;
+		Selection.Right = S->ColCount - 1;
+
+		Selection.Top = 1;
+		Selection.Bottom = S->RowCount - 1;
+
+		S->Selection = Selection;
+
+		break;
 	}
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TMain::miCopyClick(TObject *Sender) {
+	MenuItemAction(maCopy);
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TMain::miPasteVanNumClick(TObject *Sender) {
+	MenuItemAction(maPaste);
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TMain::miSelectAllClick(TObject *Sender) {
+	MenuItemAction(maSelectAll);
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TMain::miClearClick(TObject *Sender) {
+	MenuItemAction(maClear);
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TMain::PopupMenuPopup(TObject *Sender) {
+	miPasteVanNum->Visible = ActiveControl == sgLocal;
+	miPasteVanNum->Enabled = miPasteVanNum->Visible;
+
+	miClear->Visible = miPasteVanNum->Visible;
+	miClear->Enabled = miPasteVanNum->Visible;
 }
 
 // ---------------------------------------------------------------------------
@@ -283,9 +449,11 @@ void TMain::EndDBOperation() {
 
 	StatusBar->SimpleText = "";
 
-	btnSaveVanProps->Enabled = !StringGridIsEmpty(sgServer);
-	btnCopyDataAll->Enabled = !StringGridIsEmpty(sgServer) && !StringGridIsEmpty
-		(sgLocal);
+	btnReverse->Enabled = ServerVanList->Count > 1;
+
+	btnSaveVanProps->Enabled = ServerVanList->Count > 0;
+	btnCopyDataAll->Enabled =
+		btnSaveVanProps->Enabled && LocalVanList->Count > 0;
 	btnCopyDataMass->Enabled = btnCopyDataAll->Enabled;
 
 	RestoreCursor();
@@ -386,14 +554,7 @@ TLocalVan * TMain::GetLocalVan(int Index) {
 
 // ---------------------------------------------------------------------------
 bool IsRightTrainNum(String Value) {
-	// check int num
-	for (int i = 1; i < Value.Length(); i++) {
-		if (Value[i] < '0' || Value[i] > '9') {
-			return false;
-		}
-	}
-
-	return true;
+	return IsInt(Value);
 }
 
 // ---------------------------------------------------------------------------
@@ -440,8 +601,6 @@ void TMain::SetServerVanList(TOracleVanList * Value) {
 		ServerVanList->Assign(Value);
 	}
 
-	ServerSelectedRow = -1;
-
 	StringGridClear(sgServer);
 
 	ProcMess();
@@ -449,8 +608,6 @@ void TMain::SetServerVanList(TOracleVanList * Value) {
 	for (int i = 0; i < ServerVanList->Count; i++) {
 		SetServerVan(-1, ServerVanList->Items[i]);
 	}
-
-	ServerSelectedRow = StringGridIsEmpty(sgServer) ? -1 : 1;
 }
 
 // ---------------------------------------------------------------------------
@@ -462,8 +619,6 @@ void TMain::SetLocalVanList(TLocalVanList * Value) {
 		LocalVanList->Assign(Value);
 	}
 
-	LocalSelectedRow = -1;
-
 	StringGridClear(sgLocal);
 
 	ProcMess();
@@ -473,8 +628,6 @@ void TMain::SetLocalVanList(TLocalVanList * Value) {
 			SetLocalVan(-1, LocalVanList->Items[i]);
 		}
 	}
-
-	LocalSelectedRow = StringGridIsEmpty(sgLocal) ? -1 : 1;
 }
 
 // ---------------------------------------------------------------------------
@@ -913,15 +1066,8 @@ void TMain::CopyData(bool CopyAll) {
 			Selection.Bottom = MaxInt2;
 		}
 
-		int OldLocalSelectedRow = sgLocal->Row;
-
 		sgLocal->Row = Selection.Top;
 		sgLocal->Selection = Selection;
-
-		LocalSelectedRow = sgLocal->Row;
-
-		StringGridInvalidateCell(sgLocal, 0, OldLocalSelectedRow);
-		StringGridInvalidateCell(sgLocal, 0, LocalSelectedRow);
 
 		if (CopyAll) {
 			if (DataExists(Result)) {
@@ -1001,37 +1147,7 @@ void TMain::CopyData(bool CopyAll) {
 // ---------------------------------------------------------------------------
 void __fastcall TMain::sgServerSelectCell(TObject *Sender, int ACol, int ARow,
 	bool &CanSelect) {
-	if (StringGridIsEmpty(sgServer)) {
-		return;
-	}
-
-	if (ServerSelectedRow == ARow) {
-		return;
-	}
-
-	StringGridInvalidateCell(sgServer, 0, ServerSelectedRow);
-
-	ServerSelectedRow = ARow;
-
-	StringGridInvalidateCell(sgServer, 0, ServerSelectedRow);
-}
-
-// ---------------------------------------------------------------------------
-void __fastcall TMain::sgLocalSelectCell(TObject *Sender, int ACol, int ARow,
-	bool &CanSelect) {
-	if (StringGridIsEmpty(sgLocal)) {
-		return;
-	}
-
-	if (LocalSelectedRow == ARow) {
-		return;
-	}
-
-	StringGridInvalidateCell(sgLocal, 0, LocalSelectedRow);
-
-	LocalSelectedRow = ARow;
-
-	StringGridInvalidateCell(sgLocal, 0, LocalSelectedRow);
+	StringGridInvalidateSelected((TStringGrid*) Sender);
 }
 
 // ---------------------------------------------------------------------------
@@ -1126,8 +1242,8 @@ bool TMain::LocalSaveVans() {
 // ---------------------------------------------------------------------------
 void __fastcall TMain::sgLocalDblClick(TObject *Sender) {
 #ifdef _DEBUG
-	if (LocalSelectedRow > 0) {
-		TLocalVan * Van = GetLocalVan(LocalSelectedRow);
+	if (sgLocal->Row > 0) {
+		TLocalVan * Van = GetLocalVan(sgLocal->Row);
 		MsgBox("VanNum: " + Van->VanNum + sLineBreak + "Brutto: " +
 			Van->Brutto + sLineBreak + "TareT: " + Van->TareT + sLineBreak +
 			"Netto: " + Van->Netto + sLineBreak + "Carrying: " + Van->Carrying +
@@ -1136,4 +1252,23 @@ void __fastcall TMain::sgLocalDblClick(TObject *Sender) {
 #endif
 }
 
+// ---------------------------------------------------------------------------
+void __fastcall TMain::btnReverseClick(TObject *Sender) {
+	TOracleVanList * VanList = new TOracleVanList();
+	try {
+		TOracleVan * Van;
+
+		for (int i = ServerVanList->Count - 1; i >= 0; i--) {
+			Van = new TOracleVan();
+			Van->Assign(ServerVanList->Items[i]);
+
+			VanList->Add(Van);
+		}
+
+		ServerVanList = VanList;
+	}
+	__finally {
+		VanList->Free();
+	}
+}
 // ---------------------------------------------------------------------------

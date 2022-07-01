@@ -3,10 +3,10 @@ object Main: TMain
   Top = 0
   Caption = 'Main'
   ClientHeight = 368
-  ClientWidth = 712
+  ClientWidth = 800
   Color = clBtnFace
   Constraints.MinHeight = 407
-  Constraints.MinWidth = 728
+  Constraints.MinWidth = 816
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -13
@@ -23,7 +23,7 @@ object Main: TMain
   object Splitter: TSplitter
     Left = 0
     Top = 148
-    Width = 712
+    Width = 800
     Height = 8
     Cursor = crSizeNS
     Align = alTop
@@ -35,7 +35,7 @@ object Main: TMain
   object StatusBar: TStatusBar
     Left = 0
     Top = 344
-    Width = 712
+    Width = 800
     Height = 24
     Panels = <
       item
@@ -47,30 +47,30 @@ object Main: TMain
     ParentFont = True
     SimplePanel = True
     UseSystemFont = False
-    ExplicitWidth = 704
+    ExplicitWidth = 712
   end
   object sgServer: TStringGrid
     Left = 0
     Top = 48
-    Width = 712
+    Width = 800
     Height = 100
     Align = alTop
     ColCount = 2
     DefaultColWidth = 32
     DefaultDrawing = False
     RowCount = 2
-    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goTabs, goFixedColClick]
+    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goTabs, goFixedColClick]
+    PopupMenu = PopupMenu
     TabOrder = 1
     OnDrawCell = sgServerDrawCell
     OnFixedCellClick = sgServerFixedCellClick
-    OnKeyDown = sgServerKeyDown
     OnSelectCell = sgServerSelectCell
-    ExplicitWidth = 704
+    ExplicitWidth = 712
   end
   object sgLocal: TStringGrid
     Left = 0
     Top = 196
-    Width = 712
+    Width = 800
     Height = 100
     Align = alClient
     ColCount = 2
@@ -78,36 +78,36 @@ object Main: TMain
     DefaultDrawing = False
     RowCount = 2
     Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goTabs, goFixedColClick]
+    PopupMenu = PopupMenu
     TabOrder = 3
     OnDblClick = sgLocalDblClick
     OnDrawCell = sgLocalDrawCell
     OnFixedCellClick = sgServerFixedCellClick
-    OnKeyDown = sgServerKeyDown
-    OnSelectCell = sgLocalSelectCell
-    ExplicitWidth = 704
+    OnSelectCell = sgServerSelectCell
+    ExplicitWidth = 712
   end
   object PanelServer: TPanel
     Left = 0
     Top = 0
-    Width = 712
+    Width = 800
     Height = 48
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitWidth = 704
+    ExplicitWidth = 712
     DesignSize = (
-      712
+      800
       48)
     object btnClose: TButton
-      Left = 624
+      Left = 712
       Top = 8
       Width = 80
       Height = 32
       Anchors = [akTop, akRight]
       Caption = #1047#1072#1082#1088#1099#1090#1100
-      TabOrder = 5
+      TabOrder = 6
       OnClick = btnCloseClick
-      ExplicitLeft = 616
+      ExplicitLeft = 624
     end
     object eRWNum: TLabeledEdit
       Left = 112
@@ -133,15 +133,15 @@ object Main: TMain
       OnClick = btnServerLoadClick
     end
     object btnOptions: TButton
-      Left = 528
+      Left = 616
       Top = 8
       Width = 80
       Height = 32
       Anchors = [akTop, akRight]
       Caption = #1053#1072#1089#1090#1088#1086#1081#1082#1080
-      TabOrder = 4
+      TabOrder = 5
       OnClick = btnOptionsClick
-      ExplicitLeft = 520
+      ExplicitLeft = 528
     end
     object btnServerTrains: TButton
       Left = 336
@@ -153,26 +153,36 @@ object Main: TMain
       OnClick = btnServerTrainsClick
     end
     object btnAbout: TButton
-      Left = 424
+      Left = 512
       Top = 8
       Width = 96
       Height = 32
       Anchors = [akTop, akRight]
       Caption = #1054' '#1087#1088#1086#1075#1088#1072#1084#1084#1077
-      TabOrder = 3
+      TabOrder = 4
       OnClick = btnAboutClick
-      ExplicitLeft = 416
+      ExplicitLeft = 424
+    end
+    object btnReverse: TButton
+      Left = 424
+      Top = 8
+      Width = 80
+      Height = 32
+      Caption = #1056#1077#1074#1077#1088#1089
+      Enabled = False
+      TabOrder = 3
+      OnClick = btnReverseClick
     end
   end
   object PanelLocal: TPanel
     Left = 0
     Top = 296
-    Width = 712
+    Width = 800
     Height = 48
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 4
-    ExplicitWidth = 704
+    ExplicitWidth = 712
     object btnLocalLoad: TButton
       Left = 8
       Top = 8
@@ -205,12 +215,12 @@ object Main: TMain
   object PanelCommon: TPanel
     Left = 0
     Top = 156
-    Width = 712
+    Width = 800
     Height = 40
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 2
-    ExplicitWidth = 704
+    ExplicitWidth = 712
     object btnSaveVanProps: TButton
       Left = 304
       Top = 0
@@ -254,5 +264,31 @@ object Main: TMain
     OnTimer = TimerResizeTimer
     Left = 504
     Top = 80
+  end
+  object PopupMenu: TPopupMenu
+    AutoHotkeys = maManual
+    OnPopup = PopupMenuPopup
+    Left = 408
+    Top = 88
+    object miCopy: TMenuItem
+      Caption = #1050#1086#1087#1080#1088#1086#1074#1072#1090#1100
+      ShortCut = 16451
+      OnClick = miCopyClick
+    end
+    object miPasteVanNum: TMenuItem
+      Caption = #1042#1089#1090#1072#1074#1080#1090#1100' '#1085#1086#1084#1077#1088#1072' '#1074#1072#1075#1086#1085#1086#1074
+      ShortCut = 16470
+      OnClick = miPasteVanNumClick
+    end
+    object miClear: TMenuItem
+      Caption = #1059#1076#1072#1083#1080#1090#1100
+      ShortCut = 46
+      OnClick = miClearClick
+    end
+    object miSelectAll: TMenuItem
+      Caption = #1042#1099#1076#1077#1083#1080#1090#1100' '#1074#1089#1105
+      ShortCut = 16449
+      OnClick = miSelectAllClick
+    end
   end
 end

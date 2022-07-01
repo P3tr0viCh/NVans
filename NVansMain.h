@@ -47,6 +47,12 @@ __published:
 	TButton *btnCopyDataMass;
 	TButton *btnLocalTrains;
 	TButton *btnAbout;
+	TPopupMenu *PopupMenu;
+	TMenuItem *miSelectAll;
+	TMenuItem *miCopy;
+	TMenuItem *miPasteVanNum;
+	TMenuItem *miClear;
+	TButton *btnReverse;
 
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
@@ -64,8 +70,6 @@ __published:
 	void __fastcall btnOptionsClick(TObject *Sender);
 	void __fastcall FormResize(TObject *Sender);
 	void __fastcall btnServerTrainsClick(TObject *Sender);
-	void __fastcall sgServerKeyDown(TObject *Sender, WORD &Key,
-		TShiftState Shift);
 	void __fastcall btnLocalLoadClick(TObject *Sender);
 	void __fastcall btnSaveVanPropsClick(TObject *Sender);
 	void __fastcall btnCopyDataAllClick(TObject *Sender);
@@ -73,12 +77,16 @@ __published:
 	void __fastcall btnLocalSaveClick(TObject *Sender);
 	void __fastcall sgServerSelectCell(TObject *Sender, int ACol, int ARow,
 		bool &CanSelect);
-	void __fastcall sgLocalSelectCell(TObject *Sender, int ACol, int ARow,
-		bool &CanSelect);
 	void __fastcall TimerResizeTimer(TObject *Sender);
 	void __fastcall sgLocalDblClick(TObject *Sender);
 	void __fastcall btnLocalTrainsClick(TObject *Sender);
 	void __fastcall btnAboutClick(TObject *Sender);
+	void __fastcall miCopyClick(TObject *Sender);
+	void __fastcall miSelectAllClick(TObject *Sender);
+	void __fastcall miPasteVanNumClick(TObject *Sender);
+	void __fastcall PopupMenuPopup(TObject *Sender);
+	void __fastcall miClearClick(TObject *Sender);
+	void __fastcall btnReverseClick(TObject *Sender);
 
 private:
 	TSettings * FSettings;
@@ -92,9 +100,6 @@ private:
 	TDate FDateLocal;
 
 	bool FLocalChanged;
-
-	int ServerSelectedRow;
-	int LocalSelectedRow;
 
 	TOracleVanList * FServerVanList;
 	TLocalVanList * FLocalVanList;
@@ -138,6 +143,12 @@ private:
 	HWND AvitekGetProtFormBtn(TAvitekBtn AvitekBtn);
 	bool AvitekCheckNeedSave();
 	void AvitekUpdateProt();
+
+	enum TMenuItemAction {
+		maCopy, maPaste, maClear, maSelectAll
+	};
+
+	void MenuItemAction(TMenuItemAction Action);
 
 public:
 	__fastcall TMain(TComponent* Owner);

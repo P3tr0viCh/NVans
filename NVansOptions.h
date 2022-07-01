@@ -23,8 +23,6 @@ __published:
 	TPageControl *PageControl;
 	TTabSheet *tsLocalDatabase;
 	TTabSheet *tsServerOracleDatabase;
-	TTabSheet *tsServerMySQLDatabase;
-	TLabel *Label1;
 	TTabSheet *tsProgram;
 	TLabeledEdit *eOracleHost;
 	TLabeledEdit *eOracleService;
