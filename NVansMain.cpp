@@ -277,7 +277,7 @@ void TMain::MenuItemAction(TMenuItemAction Action) {
 					if (!MsgBoxYesNo(IDS_QUESTION_DATA_OVERWRITE)) {
 						return;
 					}
-                    break;
+					break;
 				}
 			}
 
@@ -383,11 +383,23 @@ void __fastcall TMain::miClearClick(TObject *Sender) {
 
 // ---------------------------------------------------------------------------
 void __fastcall TMain::PopupMenuPopup(TObject *Sender) {
-	miPasteVanNum->Visible = ActiveControl == sgLocal;
-	miPasteVanNum->Enabled = miPasteVanNum->Visible;
+	if (ActiveControl == sgLocal) {
+		miCopy->Enabled = LocalVanList->Count > 0;
+
+		miPasteVanNum->Visible = true;
+		miPasteVanNum->Enabled = miCopy->Enabled;
+	}
+	else {
+		miCopy->Enabled = ServerVanList->Count > 0;
+
+		miPasteVanNum->Visible = false;
+		miPasteVanNum->Enabled = false;
+	}
 
 	miClear->Visible = miPasteVanNum->Visible;
-	miClear->Enabled = miPasteVanNum->Visible;
+	miClear->Enabled = miPasteVanNum->Visible && LocalVanList->Count > 0;
+
+	miSelectAll->Enabled = miCopy->Enabled;
 }
 
 // ---------------------------------------------------------------------------
