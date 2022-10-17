@@ -96,7 +96,7 @@ void TfrmOptions::UpdateForm() {
 	eLocalHost->Text = Settings->LocalConnection->Host;
 	eLocalUser->Text = Settings->LocalConnection->User;
 	eLocalPass->Text = Settings->LocalConnection->Password;
-	if (!IsEmpty(Settings->LocalConnection->Driver)) {
+	if (!Settings->LocalConnection->Driver.IsEmpty()) {
 		cboxLocalDriver->ItemIndex =
 			cboxLocalDriver->Items->IndexOf(Settings->LocalConnection->Driver);
 		if (cboxLocalDriver->ItemIndex == -1) {
@@ -109,7 +109,7 @@ void TfrmOptions::UpdateForm() {
 	eOracleService->Text = Settings->ServerOracleConnection->Service;
 	eOracleUser->Text = Settings->ServerOracleConnection->User;
 	eOraclePass->Text = Settings->ServerOracleConnection->Password;
-	if (!IsEmpty(Settings->ServerOracleConnection->Driver)) {
+	if (!Settings->ServerOracleConnection->Driver.IsEmpty()) {
 		cboxOracleDriver->ItemIndex =
 			cboxOracleDriver->Items->IndexOf
 			(Settings->ServerOracleConnection->Driver);

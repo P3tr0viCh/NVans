@@ -7,11 +7,11 @@
 #include <Data.DB.hpp>
 #include <Data.Win.ADODB.hpp>
 
+#include <ConnectionInfo.h>
+
 #include <UtilsMisc.h>
 
 #include "NVansDebug.h"
-
-#include "NVansTConnectionInfo.h"
 
 // ---------------------------------------------------------------------------
 class TDatabaseOperation : public TObject {

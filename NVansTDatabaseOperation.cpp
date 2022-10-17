@@ -45,7 +45,7 @@ bool TDatabaseOperation::Execute() {
 		OperationEndOK();
 	}
 	else {
-		if (IsEmpty(FErrorMessage)) {
+		if (FErrorMessage.IsEmpty()) {
 			FErrorMessage = LoadStr(IDS_ERROR_UNKNOWN);
 		}
 

@@ -452,7 +452,7 @@ void FindMatch(TStringList * Source, TStringList * Dest,
 
 		for (int d = FirstEntry, s = i; d < Dest->Count && s < Source->Count;
 		d++, s++) {
-			if (IsEmpty(Dest->Strings[d]) || AnsiSameStr(Dest->Strings[d],
+			if (Dest->Strings[d].IsEmpty() || AnsiSameStr(Dest->Strings[d],
 				Source->Strings[s])) {
 				IntResult->Add(new TIntegerPair(s, d));
 			}
@@ -464,7 +464,7 @@ void FindMatch(TStringList * Source, TStringList * Dest,
 		IntResult = new TIntegerPairList();
 
 		for (int d = FirstEntry, s = i; d >= 0 && s < Source->Count; d--, s++) {
-			if (IsEmpty(Dest->Strings[d]) || AnsiSameStr(Dest->Strings[d],
+			if (Dest->Strings[d].IsEmpty() || AnsiSameStr(Dest->Strings[d],
 				Source->Strings[s])) {
 				IntResult->Add(new TIntegerPair(s, d));
 			}
@@ -476,7 +476,7 @@ void FindMatch(TStringList * Source, TStringList * Dest,
 		IntResult = new TIntegerPairList();
 
 		for (int d = FirstEntry, s = i; d >= 0 && s >= 0; d--, s--) {
-			if (IsEmpty(Dest->Strings[d]) || AnsiSameStr(Dest->Strings[d],
+			if (Dest->Strings[d].IsEmpty() || AnsiSameStr(Dest->Strings[d],
 				Source->Strings[s])) {
 				IntResult->Add(new TIntegerPair(s, d));
 			}
@@ -488,7 +488,7 @@ void FindMatch(TStringList * Source, TStringList * Dest,
 		IntResult = new TIntegerPairList();
 
 		for (int d = FirstEntry, s = i; d < Dest->Count && s >= 0; d++, s--) {
-			if (IsEmpty(Dest->Strings[d]) || AnsiSameStr(Dest->Strings[d],
+			if (Dest->Strings[d].IsEmpty() || AnsiSameStr(Dest->Strings[d],
 				Source->Strings[s])) {
 				IntResult->Add(new TIntegerPair(s, d));
 			}

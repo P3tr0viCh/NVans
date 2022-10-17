@@ -55,7 +55,7 @@ void TDBLocalLoadVans::Operation() {
 	try {
 		Query->Connection = Connection;
 
-		bool SearchByDate = IsEmpty(TrainNum);
+		bool SearchByDate = TrainNum.IsEmpty();
 
 		String QueryText;
 

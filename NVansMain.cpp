@@ -261,7 +261,7 @@ void TMain::MenuItemAction(TMenuItemAction Action) {
 			}
 
 			for (int i = 0; i < SL->Count; i++) {
-				if (IsEmpty(SL->Strings[i])) {
+				if (SL->Strings[i].IsEmpty()) {
 					continue;
 				}
 				if (SL->Strings[i].Length() > 8 || !IsInt(SL->Strings[i])) {
@@ -272,8 +272,8 @@ void TMain::MenuItemAction(TMenuItemAction Action) {
 			for (int LocalIndex = sgLocal->Row, i = 0;
 			LocalIndex < sgLocal->RowCount && i < SL->Count; LocalIndex++, i++)
 			{
-				if (!IsEmpty(sgLocal->Cells[TNVansLocalColumns::VANNUM]
-					[LocalIndex])) {
+				if (!sgLocal->Cells[TNVansLocalColumns::VANNUM][LocalIndex]
+					.IsEmpty()) {
 					if (!MsgBoxYesNo(IDS_QUESTION_DATA_OVERWRITE)) {
 						return;
 					}
@@ -636,7 +636,7 @@ void TMain::SetLocalVanList(TLocalVanList * Value) {
 	ProcMess();
 
 	for (int i = 0; i < LocalVanList->Count; i++) {
-		if (!IsEmpty(LocalTrainNum) || LocalVanList->Items[i]->IsLoaded) {
+		if (!LocalTrainNum.IsEmpty() || LocalVanList->Items[i]->IsLoaded) {
 			SetLocalVan(-1, LocalVanList->Items[i]);
 		}
 	}
@@ -746,7 +746,7 @@ bool TMain::LocalSaveVanProps() {
 
 // ---------------------------------------------------------------------------
 void __fastcall TMain::btnServerLoadClick(TObject *Sender) {
-	if (IsEmpty(eRWNum->Text)) {
+	if (eRWNum->Text.IsEmpty()) {
 		eRWNum->SetFocus();
 		MsgBoxErr(IDS_ERROR_NEED_RWNUM);
 		return;
@@ -952,7 +952,7 @@ void __fastcall TMain::btnCopyDataAllClick(TObject * Sender) {
 // ---------------------------------------------------------------------------
 bool TMain::CheckField(int LocalColumn, int ServerColumn, int LocalIndex,
 	int ServerIndex) {
-	if (!IsEmpty(sgLocal->Cells[LocalColumn][LocalIndex])) {
+	if (!sgLocal->Cells[LocalColumn][LocalIndex].IsEmpty()) {
 		if (!AnsiSameStr(sgLocal->Cells[LocalColumn][LocalIndex],
 			sgServer->Cells[ServerColumn][ServerIndex])) {
 			return true;

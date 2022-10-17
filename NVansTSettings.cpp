@@ -36,7 +36,7 @@ __fastcall TSettings::TSettings() {
 	FServerMySQLConnection = new TConnectionMySQL();
 	FServerOracleConnection = new TConnectionOracle();
 
-    FLocalConnection->Database = LOCAL_DB_NAME;
+	FLocalConnection->Database = LOCAL_DB_NAME;
 }
 
 // ---------------------------------------------------------------------------
@@ -126,7 +126,7 @@ String TSettings::CRC(String Text) {
 
 // ---------------------------------------------------------------------------
 String TSettings::Encrypt(String Text) {
-	if (IsEmpty(Text)) {
+	if (Text.IsEmpty()) {
 		return "";
 	}
 
@@ -140,7 +140,7 @@ String TSettings::Encrypt(String Text) {
 
 // ---------------------------------------------------------------------------
 String TSettings::Decrypt(String Text) {
-	if (IsEmpty(Text)) {
+	if (Text.IsEmpty()) {
 		return "";
 	}
 
@@ -166,7 +166,7 @@ void TSettings::CheckCRC(String S) {
 	return;
 #endif
 
-	if (IsEmpty(S)) {
+	if (S.IsEmpty()) {
 		throw EEncodingError(IDS_LOG_ERROR_CRC_EMPTY);
 	}
 

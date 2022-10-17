@@ -5,8 +5,8 @@
 
 #include <System.Classes.hpp>
 
-#include "NVansTConnectionMySQL.h"
-#include "NVansTConnectionOracle.h"
+#include <ConnectionMySQL.h>
+#include <ConnectionOracle.h>
 
 #define CFG_EXT ".cfg"
 

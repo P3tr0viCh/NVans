@@ -3,8 +3,9 @@
 #ifndef NVansTDBCheckMySQLH
 #define NVansTDBCheckMySQLH
 
+#include <ConnectionMySQL.h>
+
 #include "NVansTDBCheck.h"
-#include "NVansTConnectionMySQL.h"
 
 // ---------------------------------------------------------------------------
 class TDBCheckMySQL : public TDBCheck {

@@ -288,6 +288,6 @@ void __fastcall TfrmServerTrains::btnFilterClearClick(TObject *Sender) {
 
 // ---------------------------------------------------------------------------
 void __fastcall TfrmServerTrains::eFilterVanNumChange(TObject *Sender) {
-	pckrFilterDate->Enabled = IsEmpty(eFilterVanNum->Text);
+	pckrFilterDate->Enabled = eFilterVanNum->Text.IsEmpty();
 }
 // ---------------------------------------------------------------------------

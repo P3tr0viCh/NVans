@@ -55,7 +55,7 @@ void TDBOracleLoadTrains::Operation() {
 	try {
 		Query->Connection = Connection;
 
-		bool SearchByDate = IsEmpty(Filter->VanNum);
+		bool SearchByDate = Filter->VanNum.IsEmpty();
 
 		String QueryText;
 

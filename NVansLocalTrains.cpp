@@ -208,7 +208,7 @@ void TfrmLocalTrains::UpdateTrains() {
 	StatusBar->Panels->Items[0]->Text =
 		Format(IDS_STATUS_TRAIN_LIST_COUNT, IntToStr(TrainList->Count));
 
-	if (!IsEmpty(TrainNum)) {
+	if (!TrainNum.IsEmpty()) {
 		for (int i = 1; i < sgList->RowCount; i++) {
 			if (AnsiSameStr(sgList->Cells[TNVansLocalTrainsColumns::TRAIN_NUM]
 				[i], TrainNum)) {

@@ -3,8 +3,9 @@
 #ifndef NVansTDBCheckOracleH
 #define NVansTDBCheckOracleH
 
+#include <ConnectionOracle.h>
+
 #include "NVansTDBCheck.h"
-#include "NVansTConnectionOracle.h"
 
 // ---------------------------------------------------------------------------
 class TDBCheckOracle : public TDBCheck {
