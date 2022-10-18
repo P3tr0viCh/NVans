@@ -115,6 +115,10 @@ void TDBLocalLoadVans::Operation() {
 
 			Van->ID = Query->FieldByName("id")->AsInteger;
 
+			Van->ScaleNum = Query->FieldByName("scales")->AsInteger;
+
+			Van->Num = Query->FieldByName("num")->AsInteger;
+
 			Van->DateTime = Query->FieldByName("bdatetime")->AsDateTime;
 
 			Van->VanNum = Query->FieldByName("invnum")->AsString;
@@ -134,15 +138,27 @@ void TDBLocalLoadVans::Operation() {
 				Trim(Query->FieldByName("purpose_station")->AsString);
 
 			Van->Carrying = Query->FieldByName("carrying")->AsInteger;
+
+			Van->Brutto = Query->FieldByName("brutto")->AsInteger;
+
+			Van->Tare = Query->FieldByName("tare")->AsInteger;
 			Van->TareT = Query->FieldByName("tare_t")->AsInteger;
+
+			Van->TareIndex = (TTareIndex)Query->FieldByName("tareindex")
+				->AsInteger;
+
+			Van->TareScaleNum = Query->FieldByName("iscales_tare")->AsInteger;
+			Van->TareDateTime = Query->FieldByName("idatetime_tare")->AsDateTime;
+
+			Van->Netto = Query->FieldByName("netto")->AsInteger;
+
 			Van->InvoiceNetto = Query->FieldByName("invoice_netto")->AsInteger;
 			Van->InvoiceTare = Query->FieldByName("invoice_tare")->AsInteger;
 
 			Van->IsLoaded = Query->FieldByName("status")
 				->AsInteger & BRUTTO_BIT;
 
-			Van->Brutto = Query->FieldByName("brutto")->AsInteger;
-			Van->Netto = Query->FieldByName("netto")->AsInteger;
+			Van->CalcFields = true;
 
 			FVanList->Add(Van);
 

@@ -8,10 +8,20 @@
 
 #include <ObjList.h>
 
+const TDateTime DEFAULT_DATETIME = 0;
+
+enum TTareIndex {
+	tiTrafaret = 0, tiDynamic = 1, tiStatic = 2
+};
+
+const TTareIndex DEFAULT_TARE_INDEX = tiTrafaret;
+
 // ---------------------------------------------------------------------------
 class TLocalVan : public TObject {
 private:
 	int FID;
+
+	int FScaleNum;
 
 	int FNum;
 
@@ -28,28 +38,46 @@ private:
 	String FPurposeStation;
 
 	int FCarrying;
-	int FTareT;
-	int FInvoiceNetto;
-	int FInvoiceTare;
-
-	bool FLoaded;
 
 	int FBrutto;
+
+	int FTare;
+	int FTareT;
+
+	TTareIndex FTareIndex;
+
+	int FTareScaleNum;
+	TDateTime FTareDateTime;
+
 	int FNetto;
+
+	int FInvoiceNetto;
+	int FInvoiceTare;
 
 	int FNettoDiff;
 	int FOverload;
 
+	bool FLoaded;
+
+	bool FCalcFields;
+
 	// -----------------------------------------------------------------------
 	void Init();
 
-	void UpdateCalcValues();
+	void UpdateValues();
 
 	void SetCarrying(int Value);
 
 	void SetInvoiceNetto(int Value);
 
+	void SetBrutto(int Value);
 	void SetNetto(int Value);
+
+	void SetTareT(int Value);
+
+	void SetTareIndex(TTareIndex Value);
+
+	void SetCalcFields(bool Value);
 
 public:
 	__fastcall TLocalVan();
@@ -61,6 +89,8 @@ public:
 
 	// -----------------------------------------------------------------------
 	__property int ID = {read = FID, write = FID};
+
+	__property int ScaleNum = {read = FScaleNum, write = FScaleNum};
 
 	__property int Num = {read = FNum, write = FNum};
 
@@ -83,18 +113,30 @@ public:
 		read = FPurposeStation, write = FPurposeStation};
 
 	__property int Carrying = {read = FCarrying, write = SetCarrying};
-	__property int TareT = {read = FTareT, write = FTareT};
+
+	__property int Brutto = {read = FBrutto, write = SetBrutto};
+
+	__property int Tare = {read = FTare, write = FTare};
+	__property int TareT = {read = FTareT, write = SetTareT};
+
+	__property TTareIndex TareIndex = {read = FTareIndex, write = SetTareIndex};
+
+	__property int TareScaleNum = {read = FTareScaleNum, write = FTareScaleNum};
+	__property TDateTime TareDateTime = {
+		read = FTareDateTime, write = FTareDateTime};
+
+	__property int Netto = {read = FNetto, write = SetNetto};
+
 	__property int InvoiceNetto = {read = FInvoiceNetto, write = SetInvoiceNetto
 	};
 	__property int InvoiceTare = {read = FInvoiceTare, write = FInvoiceTare};
 
-	__property bool IsLoaded = {read = FLoaded, write = FLoaded};
-
-	__property int Brutto = {read = FBrutto, write = FBrutto};
-	__property int Netto = {read = FNetto, write = SetNetto};
-
 	__property int NettoDiff = {read = FNettoDiff};
 	__property int Overload = {read = FOverload};
+
+	__property bool IsLoaded = {read = FLoaded, write = FLoaded};
+
+	__property bool CalcFields = {read = FCalcFields, write = SetCalcFields};
 };
 
 // ---------------------------------------------------------------------------

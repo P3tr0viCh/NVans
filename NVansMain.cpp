@@ -1003,11 +1003,10 @@ bool TMain::DataExists(TIntegerPairList * Result) {
 			return true;
 		}
 
-		// TODO: copy tare, update calc fields
-		// if (CheckField(LocalColumns.TARE_T, ServerColumns.TARE_T,
-		// Result->Items[LocalIndex]->Value, ServerIndex)) {
-		// return true;
-		// }
+		if (CheckField(TNVansLocalColumns::TARE_T, TNVansServerColumns::TARE_T,
+			LocalIndex, ServerIndex)) {
+			return true;
+		}
 
 		if (CheckField(TNVansLocalColumns::INVOICE_NETTO,
 			TNVansServerColumns::INVOICE_NETTO, LocalIndex, ServerIndex)) {
@@ -1103,6 +1102,8 @@ void TMain::CopyData(bool CopyAll) {
 			ServerVan = GetServerVan(ServerIndex);
 			LocalVan = GetLocalVan(LocalIndex);
 
+			LocalVan->CalcFields = false;
+
 			LocalVan->VanNum = ServerVan->VanNum;
 
 			if (CopyAll) {
@@ -1119,26 +1120,18 @@ void TMain::CopyData(bool CopyAll) {
 
 			LocalVan->Carrying = ServerVan->Carrying;
 
-			// TODO: copy tare, update calc fields
-			// sgLocal->Cells[LocalColumns.TARE_T][LocalIndex] = ServerVan->TareT;
-			// if (true) { // TODO: check tare type
-			// if (IsEmpty(sgLocal->Cells[LocalColumns.TARE_T][LocalIndex])) {
-			// sgLocal->Cells[LocalColumns.NETTO][LocalIndex] = " ";
-			// }
-			// else {
-			// Brutto =
-			// StrToInt(sgLocal->Cells[LocalColumns.BRUTTO]
-			// [LocalIndex]);
-			// TareT = StrToInt
-			// (sgLocal->Cells[LocalColumns.TARE_T][LocalIndex]);
-			//
-			// sgLocal->Cells[LocalColumns.NETTO][LocalIndex] =
-			// IntToStr(Brutto - TareT);
-			// }
-			// }
+			LocalVan->TareT = ServerVan->TareT;
+
+			if (LocalVan->TareIndex == tiTrafaret) {
+				LocalVan->Tare = LocalVan->TareT;
+				LocalVan->TareScaleNum = LocalVan->ScaleNum;
+				LocalVan->TareDateTime = Now();
+			}
 
 			LocalVan->InvoiceNetto = ServerVan->InvoiceNetto;
 			LocalVan->InvoiceTare = ServerVan->InvoiceTare;
+
+			LocalVan->CalcFields = true;
 
 			SetLocalVan(LocalIndex, LocalVan);
 
@@ -1256,16 +1249,14 @@ void __fastcall TMain::sgLocalDblClick(TObject *Sender) {
 #ifdef _DEBUG
 	if (sgLocal->Row > 0) {
 		TLocalVan * Van = GetLocalVan(sgLocal->Row);
-		MsgBox("VanNum: " + Van->VanNum + sLineBreak + "Brutto: " +
-			Van->Brutto + sLineBreak + "TareT: " + Van->TareT + sLineBreak +
-			"Netto: " + Van->Netto + sLineBreak + "Carrying: " + Van->Carrying +
-			sLineBreak + "Overload: " + Van->Overload);
+		MsgBox(StringReplace(Van->ToString(), ",", sLineBreak,
+			TReplaceFlags() << rfReplaceAll));
 	}
 #endif
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TMain::btnReverseClick(TObject *Sender) {
+void __fastcall TMain::btnReverseClick(TObject * Sender) {
 	TOracleVanList * VanList = new TOracleVanList();
 	try {
 		TOracleVan * Van;

@@ -36,12 +36,12 @@ IDS_SQL_ORACLE_NVANS_TRAINS_WHERE_VN,   "INVNUM=:INVNUM AND DATE_RECORD>=:DATE_F
 IDS_SQL_ORACLE_NVANS_TRAINS_GROUP,      "RWNUM"
 IDS_SQL_ORACLE_NVANS_TRAINS_ORDER,      "DATETIME DESC"
 
-IDS_SQL_LOCAL_MVANS_SELECT,             "id, bdatetime, invnum, brutto, netto, cargotype, invoice_num, invoice_supplier, invoice_consign, depart_station, purpose_station, carrying, tare_t, invoice_netto, invoice_tare, status"
+IDS_SQL_LOCAL_MVANS_SELECT,             "id, scales, num, bdatetime, invnum, carrying, brutto, tare, tare_t, tareindex, iscales_tare, idatetime_tare, netto, cargotype, invoice_num, invoice_supplier, invoice_consign, depart_station, purpose_station, invoice_netto, invoice_tare, disbalong, disbcross, tol_disbalong, tol_disbcross, status"
 IDS_SQL_LOCAL_MVANS_WHERE_DT            "bdatetime>=:DATE_FROM AND bdatetime<:DATE_TO"
 IDS_SQL_LOCAL_MVANS_WHERE_TRAIN_NUM     "trnum=:TRAIN_NUM"
 IDS_SQL_LOCAL_MVANS_ORDER_DT,           "bdatetime DESC"
 IDS_SQL_LOCAL_MVANS_ORDER_NUM,          "num"
-IDS_SQL_LOCAL_MVANS_UPDATE,             "invnum=:INVNUM, carrying=:CARRYING, loadnorm=:LOADNORM, tare_t=:TARE_T, overload=:OVERLOAD, cargotype=:CARGOTYPE, cargotype_code=:CARGOTYPE_CODE, depart_station=:DEPART_STATION, depart_station_code=:DEPART_STATION_CODE, purpose_station=:PURPOSE_STATION, purpose_station_code=:PURPOSE_STATION_CODE, invoice_num=:INVOICE_NUM, invoice_supplier=:INVOICE_SUPPLIER, invoice_supplier_code=:INVOICE_SUPPLIER_CODE, invoice_consign=:INVOICE_CONSIGN, invoice_consign_code=:INVOICE_CONSIGN_CODE, invoice_netto=:INVOICE_NETTO, invoice_tare=:INVOICE_TARE, data_sent=0"
+IDS_SQL_LOCAL_MVANS_UPDATE,             "invnum=:INVNUM, carrying=:CARRYING, loadnorm=:LOADNORM, tare=:TARE, tare_t=:TARE_T, iscales_tare=:ISCALES_TARE, idatetime_tare=:IDATETIME_TARE, netto=:NETTO, overload=:OVERLOAD, cargotype=:CARGOTYPE, cargotype_code=:CARGOTYPE_CODE, depart_station=:DEPART_STATION, depart_station_code=:DEPART_STATION_CODE, purpose_station=:PURPOSE_STATION, purpose_station_code=:PURPOSE_STATION_CODE, invoice_num=:INVOICE_NUM, invoice_supplier=:INVOICE_SUPPLIER, invoice_supplier_code=:INVOICE_SUPPLIER_CODE, invoice_consign=:INVOICE_CONSIGN, invoice_consign_code=:INVOICE_CONSIGN_CODE, invoice_netto=:INVOICE_NETTO, invoice_tare=:INVOICE_TARE, disbalong=:DISBALONG, disbcross=:DISBCROSS, tol_disbalong=:TOL_DISBALONG, tol_disbcross=:TOL_DISBCROSS, data_sent=0"
 IDS_SQL_LOCAL_MVANS_UPDATE_WHERE,       "id=:ID"
 
 IDS_SQL_LOCAL_MTRAINS_SELECT,           "id, trnum, bdatetime, nvans, status"

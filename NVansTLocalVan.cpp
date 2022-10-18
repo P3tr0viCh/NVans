@@ -1,6 +1,7 @@
 // ---------------------------------------------------------------------------
 
 #pragma hdrstop
+#include "UtilsLog.h"
 
 #include "NVansStrings.h"
 
@@ -18,6 +19,8 @@ __fastcall TLocalVan::TLocalVan() {
 void TLocalVan::Init() {
 	FID = -1;
 
+	FScaleNum = 0;
+
 	FNum = 0;
 
 	FCarrying = 0;
@@ -31,6 +34,13 @@ void TLocalVan::Init() {
 	FNetto = 0;
 
 	FNettoDiff = 0;
+
+	FTareIndex = DEFAULT_TARE_INDEX;
+
+	FTareScaleNum = 0;
+	FTareDateTime = DEFAULT_DATETIME;
+
+	FCalcFields = false;
 }
 
 // ---------------------------------------------------------------------------
@@ -46,25 +56,82 @@ bool __fastcall TLocalVan::Equals(TObject * Obj) {
 
 	TLocalVan * Van = (TLocalVan*) Obj;
 
-	if (ID != Van->ID || Num != Van->Num || DateTime != Van->DateTime ||
-		VanNum != Van->VanNum || CargoType != Van->CargoType ||
-		InvoiceNum != Van->InvoiceNum ||
-		InvoiceSupplier != Van->InvoiceSupplier ||
-		InvoiceRecipient != Van->InvoiceRecipient ||
-		DepartStation != Van->DepartStation ||
-		PurposeStation != Van->PurposeStation || Carrying != Van->Carrying ||
-		TareT != Van->TareT || InvoiceNetto != Van->InvoiceNetto ||
-		InvoiceTare != Van->InvoiceTare || IsLoaded != Van->IsLoaded ||
-		Brutto != Van->Brutto || Netto != Van->Netto) {
+	if (ID != Van->ID)
 		return false;
-	}
+
+	if (ScaleNum != Van->ScaleNum)
+		return false;
+
+	if (Num != Van->Num)
+		return false;
+
+	if (DateTime != Van->DateTime)
+		return false;
+
+	if (VanNum != Van->VanNum)
+		return false;
+
+	if (CargoType != Van->CargoType)
+		return false;
+
+	if (InvoiceNum != Van->InvoiceNum)
+		return false;
+
+	if (InvoiceSupplier != Van->InvoiceSupplier)
+		return false;
+	if (InvoiceRecipient != Van->InvoiceRecipient)
+		return false;
+	if (DepartStation != Van->DepartStation)
+		return false;
+	if (PurposeStation != Van->PurposeStation)
+		return false;
+
+	if (Carrying != Van->Carrying)
+		return false;
+
+	if (Brutto != Van->Brutto)
+		return false;
+
+	if (TareT != Van->TareT)
+		return false;
+
+	if (TareIndex != Van->TareIndex)
+		return false;
+
+	if (TareScaleNum != Van->TareScaleNum)
+		return false;
+	if (TareDateTime != Van->TareDateTime)
+		return false;
+
+	if (Netto != Van->Netto)
+		return false;
+
+	if (InvoiceNetto != Van->InvoiceNetto)
+		return false;
+	if (InvoiceTare != Van->InvoiceTare)
+		return false;
+
+	if (NettoDiff != Van->NettoDiff)
+		return false;
+	if (Overload != Van->Overload)
+		return false;
+
+	if (IsLoaded != Van->IsLoaded)
+		return false;
+
+	if (CalcFields != Van->CalcFields)
+		return false;
 
 	return true;
 }
 
 // ---------------------------------------------------------------------------
 void __fastcall TLocalVan::Assign(TLocalVan * Source) {
+	CalcFields = false;
+
 	ID = Source->ID;
+
+	ScaleNum = Source->ScaleNum;
 
 	Num = Source->Num;
 
@@ -83,14 +150,25 @@ void __fastcall TLocalVan::Assign(TLocalVan * Source) {
 	PurposeStation = Source->PurposeStation;
 
 	Carrying = Source->Carrying;
+
+	Brutto = Source->Brutto;
+
+	Tare = Source->Tare;
 	TareT = Source->TareT;
+
+	TareIndex = Source->TareIndex;
+
+	TareScaleNum = Source->TareScaleNum;
+	TareDateTime = Source->TareDateTime;
+
+	Netto = Source->Netto;
+
 	InvoiceNetto = Source->InvoiceNetto;
 	InvoiceTare = Source->InvoiceTare;
 
 	IsLoaded = Source->IsLoaded;
 
-	Brutto = Source->Brutto;
-	Netto = Source->Netto;
+	CalcFields = Source->CalcFields;
 }
 
 // ---------------------------------------------------------------------------
@@ -99,6 +177,8 @@ String __fastcall TLocalVan::ToString() {
 
 	S = "TLocalVan{";
 	S += "ID=" + IntToStr(ID);
+	S += ",";
+	S += "ScaleNum=" + IntToStr(ScaleNum);
 	S += ",";
 	S += "Num=" + IntToStr(Num);
 	S += ",";
@@ -120,24 +200,52 @@ String __fastcall TLocalVan::ToString() {
 	S += ",";
 	S += "Carrying='" + IntToStr(Carrying) + "'";
 	S += ",";
+	S += "Brutto='" + IntToStr(Brutto) + "'";
+	S += ",";
+	S += "Tare='" + IntToStr(Tare) + "'";
+	S += ",";
 	S += "TareT='" + IntToStr(TareT) + "'";
+	S += ",";
+	S += "TareIndex='" + IntToStr(TareIndex) + "'";
+	S += ",";
+	S += "TareScaleNum='" + IntToStr(TareScaleNum) + "'";
+	S += ",";
+	S += "TareDateTime='" + DateTimeToStr(TareDateTime) + "'";
+	S += ",";
+	S += "Netto='" + IntToStr(Netto) + "'";
 	S += ",";
 	S += "InvoiceNetto='" + IntToStr(InvoiceNetto) + "'";
 	S += ",";
 	S += "InvoiceTare='" + IntToStr(InvoiceTare) + "'";
 	S += ",";
+	S += "NettoDiff='" + IntToStr(NettoDiff) + "'";
+	S += ",";
+	S += "Overload='" + IntToStr(Overload) + "'";
+	S += ",";
 	S += "IsLoaded='" + BoolToStr(IsLoaded, true) + "'";
 	S += ",";
-	S += "Brutto='" + IntToStr(Brutto) + "'";
-	S += ",";
-	S += "Netto='" + IntToStr(Netto) + "'";
+	S += "CalcFields='" + BoolToStr(CalcFields, true) + "'";
 	S += "}";
 
 	return S;
 }
 
 // ---------------------------------------------------------------------------
-void TLocalVan::UpdateCalcValues() {
+void TLocalVan::UpdateValues() {
+	if (!CalcFields) {
+		FOverload = 0;
+		FNettoDiff = 0;
+
+		return;
+	}
+
+	if (FBrutto > 0 && FTare > 0) {
+		FNetto = FBrutto - FTare;
+	}
+	else {
+		FNetto = 0;
+	}
+
 	if (FCarrying > 0 && FNetto > 0) {
 		FOverload = FNetto - FCarrying;
 	}
@@ -161,7 +269,7 @@ void TLocalVan::SetCarrying(int Value) {
 
 	FCarrying = Value;
 
-	UpdateCalcValues();
+	UpdateValues();
 }
 
 // ---------------------------------------------------------------------------
@@ -172,7 +280,18 @@ void TLocalVan::SetInvoiceNetto(int Value) {
 
 	FInvoiceNetto = Value;
 
-	UpdateCalcValues();
+	UpdateValues();
+}
+
+// ---------------------------------------------------------------------------
+void TLocalVan::SetBrutto(int Value) {
+	if (FBrutto == Value) {
+		return;
+	}
+
+	FBrutto = Value;
+
+	UpdateValues();
 }
 
 // ---------------------------------------------------------------------------
@@ -183,7 +302,40 @@ void TLocalVan::SetNetto(int Value) {
 
 	FNetto = Value;
 
-	UpdateCalcValues();
+	UpdateValues();
+}
+
+// ---------------------------------------------------------------------------
+void TLocalVan::SetTareT(int Value) {
+	if (FTareT == Value) {
+		return;
+	}
+
+	FTareT = Value;
+
+	UpdateValues();
+}
+
+// ---------------------------------------------------------------------------
+void TLocalVan::SetTareIndex(TTareIndex Value) {
+	if (FTareIndex == Value) {
+		return;
+	}
+
+	FTareIndex = Value;
+
+	UpdateValues();
+}
+
+// ---------------------------------------------------------------------------
+void TLocalVan::SetCalcFields(bool Value) {
+	if (FCalcFields == Value) {
+		return;
+	}
+
+	FCalcFields = Value;
+
+	UpdateValues();
 }
 
 // ---------------------------------------------------------------------------

@@ -77,7 +77,14 @@ void TDBLocalSaveVan::Operation() {
 		GetParam(QueryUpdate, "CARRYING", ftInteger)->Value = Van->Carrying;
 		GetParam(QueryUpdate, "LOADNORM", ftInteger)->Value = Van->Carrying;
 
+		GetParam(QueryUpdate, "TARE", ftInteger)->Value = Van->Tare;
 		GetParam(QueryUpdate, "TARE_T", ftInteger)->Value = Van->TareT;
+		GetParam(QueryUpdate, "ISCALES_TARE", ftInteger)->Value =
+			Van->TareScaleNum;
+		GetParam(QueryUpdate, "IDATETIME_TARE", ftString)->Value =
+			DTToSQLS(Van->TareDateTime);
+
+		GetParam(QueryUpdate, "NETTO", ftInteger)->Value = Van->Netto;
 
 		GetParam(QueryUpdate, "OVERLOAD", ftInteger)->Value = Van->Overload;
 
@@ -105,6 +112,12 @@ void TDBLocalSaveVan::Operation() {
 			Van->InvoiceNetto;
 		GetParam(QueryUpdate, "INVOICE_TARE", ftInteger)->Value =
 			Van->InvoiceTare;
+
+		// TODO
+		GetParam(QueryUpdate, "DISBALONG", ftInteger)->Value = 0;
+		GetParam(QueryUpdate, "DISBCROSS", ftInteger)->Value = 0;
+		GetParam(QueryUpdate, "TOL_DISBALONG", ftInteger)->Value = 0;
+		GetParam(QueryUpdate, "TOL_DISBCROSS", ftInteger)->Value = 0;
 
 #ifdef SQL_TO_LOG
 		WriteToLog("UPDATE PARAMS: ID = " + IntToStr(Van->ID) + ", " +
