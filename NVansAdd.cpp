@@ -19,50 +19,6 @@
 #pragma package(smart_init)
 
 // ---------------------------------------------------------------------------
-String LoadSQL(NativeUInt Ident) {
-	String Result;
-
-	TStrings * Strings = new TStringList;
-
-	TResourceStream * Stream = new TResourceStream((int)HInstance,
-		LoadStr(Ident), RT_RCDATA);
-
-	try {
-		Strings->LoadFromStream(Stream);
-
-		Result = Strings->Text;
-	}
-	__finally {
-		Stream->Free();
-		Strings->Free();
-	}
-
-	return Result;
-}
-
-// ---------------------------------------------------------------------------
-String SQLMake(String S1, String S2) {
-	return S1 + SPACE + S2;
-}
-
-// ---------------------------------------------------------------------------
-String SQLMake(String S1, NativeUInt Ident) {
-	return S1 + SPACE + LoadStr(Ident);
-}
-
-// ---------------------------------------------------------------------------
-TParameter * GetParam(TADOQuery * Query, String Name, TFieldType DataType) {
-	TParameter * Parameter = Query->Parameters->ParamByName(Name);
-	Parameter->DataType = DataType;
-	return Parameter;
-}
-
-// ---------------------------------------------------------------------------
-String DTToSQLS(TDateTime ADateTime) {
-	return FormatDateTime("yyyyMMddhhnnss", ADateTime);
-}
-
-// ---------------------------------------------------------------------------
 int DTToWTime(TDateTime ADateTime) {
 	// TODO: Magic Number
 	return int(DateTimeToUnix(IncHour(ADateTime, -3)));

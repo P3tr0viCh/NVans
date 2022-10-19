@@ -4,6 +4,7 @@
 
 #include <UtilsLog.h>
 #include <UtilsStr.h>
+#include <UtilsSQL.h>
 
 #include "NVansAdd.h"
 
@@ -100,7 +101,7 @@ void TDBOracleLoadTrain::Operation() {
 		WriteToLog(Query->SQL->Text);
 #endif
 
-		GetParam(Query, "RWNUM", ftFixedWideChar)->Value = TrainNum;
+		SQLGetParam(Query, "RWNUM", ftFixedWideChar)->Value = TrainNum;
 
 #ifdef SQL_TO_LOG
 		WriteToLog("PARAMS: RWNUM = " + TrainNum);

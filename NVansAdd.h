@@ -10,13 +10,6 @@
 #include <Data.Win.ADODB.hpp>
 
 // ---------------------------------------------------------------------------
-String LoadSQL(NativeUInt Ident);
-String SQLMake(String S1, String S2);
-String SQLMake(String S1, NativeUInt Ident);
-TParameter * GetParam(TADOQuery * Query, String Name, TFieldType DataType);
-
-// ---------------------------------------------------------------------------
-String DTToSQLS(TDateTime ADateTime);
 int DTToWTime(TDateTime ADateTime);
 String DTToS(TDateTime ADateTime, bool WithSecs = true);
 

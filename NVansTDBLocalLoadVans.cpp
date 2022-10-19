@@ -4,6 +4,7 @@
 
 #include <UtilsLog.h>
 #include <UtilsStr.h>
+#include <UtilsSQL.h>
 
 #include "NVansAdd.h"
 
@@ -85,8 +86,8 @@ void TDBLocalLoadVans::Operation() {
 #endif
 
 		if (SearchByDate) {
-			GetParam(Query, "DATE_FROM", ftDate)->Value = Date - 1;
-			GetParam(Query, "DATE_TO", ftDate)->Value = Date + 1;
+			SQLGetParam(Query, "DATE_FROM", ftDate)->Value = Date - 1;
+			SQLGetParam(Query, "DATE_TO", ftDate)->Value = Date + 1;
 
 #ifdef SQL_TO_LOG
 			WriteToLog("PARAMS: DATE_FROM = " + DateToStr(Date - 1) + ", " +
@@ -94,7 +95,7 @@ void TDBLocalLoadVans::Operation() {
 #endif
 		}
 		else {
-			GetParam(Query, "TRAIN_NUM", ftInteger)->Value = StrToInt(TrainNum);
+			SQLGetParam(Query, "TRAIN_NUM", ftInteger)->Value = StrToInt(TrainNum);
 
 #ifdef SQL_TO_LOG
 			WriteToLog("PARAMS: TRAIN_NUM = " + StrToInt(TrainNum));

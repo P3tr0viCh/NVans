@@ -4,6 +4,7 @@
 
 #include <UtilsLog.h>
 #include <UtilsStr.h>
+#include <UtilsSQL.h>
 
 #include "NVansAdd.h"
 
@@ -94,8 +95,8 @@ void TDBOracleLoadTrains::Operation() {
 #endif
 
 		if (SearchByDate) {
-			GetParam(Query, "DATE_FROM", ftDate)->Value = Filter->Date;
-			GetParam(Query, "DATE_TO", ftDate)->Value = Filter->Date + 1;
+			SQLGetParam(Query, "DATE_FROM", ftDate)->Value = Filter->Date;
+			SQLGetParam(Query, "DATE_TO", ftDate)->Value = Filter->Date + 1;
 
 #ifdef SQL_TO_LOG
 			WriteToLog("PARAMS: DATE_FROM = " + DateToStr(Filter->Date) + ", " +
@@ -103,8 +104,8 @@ void TDBOracleLoadTrains::Operation() {
 #endif
 		}
 		else {
-			GetParam(Query, "INVNUM", ftFixedWideChar)->Value = Filter->VanNum;
-			GetParam(Query, "DATE_FROM", ftDate)->Value = Filter->Date - 30;
+			SQLGetParam(Query, "INVNUM", ftFixedWideChar)->Value = Filter->VanNum;
+			SQLGetParam(Query, "DATE_FROM", ftDate)->Value = Filter->Date - 30;
 
 #ifdef SQL_TO_LOG
 			WriteToLog("PARAMS: INVNUM = " + Filter->VanNum + ", " +

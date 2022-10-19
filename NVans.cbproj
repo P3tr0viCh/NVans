@@ -211,6 +211,10 @@
             <DependentOn>..\!UtilsAndComps\UtilsMisc.h</DependentOn>
             <BuildOrder>7</BuildOrder>
         </CppCompile>
+        <CppCompile Include="..\!UtilsAndComps\UtilsSQL.cpp">
+            <DependentOn>..\!UtilsAndComps\UtilsSQL.h</DependentOn>
+            <BuildOrder>58</BuildOrder>
+        </CppCompile>
         <CppCompile Include="..\!UtilsAndComps\UtilsStr.cpp">
             <DependentOn>..\!UtilsAndComps\UtilsStr.h</DependentOn>
             <BuildOrder>8</BuildOrder>
@@ -362,11 +366,11 @@
             <DependentOn>NVansTSettings.h</DependentOn>
             <BuildOrder>17</BuildOrder>
         </CppCompile>
-        <FormResources Include="NVansServerTrains.dfm"/>
-        <FormResources Include="NVansLocalTrains.dfm"/>
-        <FormResources Include="NVansOptions.dfm"/>
         <FormResources Include="NVansMain.dfm"/>
         <FormResources Include="NVansLogin.dfm"/>
+        <FormResources Include="NVansLocalTrains.dfm"/>
+        <FormResources Include="NVansOptions.dfm"/>
+        <FormResources Include="NVansServerTrains.dfm"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

@@ -4,6 +4,7 @@
 
 #include <UtilsLog.h>
 #include <UtilsStr.h>
+#include <UtilsSQL.h>
 
 #include "NVansAdd.h"
 
@@ -75,8 +76,8 @@ void TDBLocalLoadTrains::Operation() {
 		WriteToLog(Query->SQL->Text);
 #endif
 
-		GetParam(Query, "DATE_FROM", ftDate)->Value = Filter->Date;
-		GetParam(Query, "DATE_TO", ftDate)->Value = Filter->Date + 1;
+		SQLGetParam(Query, "DATE_FROM", ftDate)->Value = Filter->Date;
+		SQLGetParam(Query, "DATE_TO", ftDate)->Value = Filter->Date + 1;
 
 #ifdef SQL_TO_LOG
 		WriteToLog("PARAMS: DATE_FROM = " + DateToStr(Filter->Date) + ", " +
@@ -107,7 +108,7 @@ void TDBLocalLoadTrains::Operation() {
 				Train->WeightType = wtBrutto;
 			}
 			else {
-                // У Авитека ошибка: после обновления таблицы поездов, все смешанные составы становятся порожними
+				// У Авитека ошибка: после обновления таблицы поездов, все смешанные составы становятся порожними
 				if (TrainStatus & MIXED_BIT) {
 					Train->WeightType = wtMixed;
 				}
