@@ -8,8 +8,6 @@
 
 #include <ObjList.h>
 
-const TDateTime DEFAULT_DATETIME = 0;
-
 enum TTareIndex {
 	tiTrafaret = 0, tiDynamic = 1, tiStatic = 2
 };

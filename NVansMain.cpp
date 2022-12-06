@@ -54,7 +54,7 @@ void __fastcall TMain::FormCreate(TObject *Sender) {
 	ServerColumns = new TNVansServerColumns();
 	LocalColumns = new TNVansLocalColumns();
 
-	FOracleTrainNum = "";
+	FKeyOracleTrain = new TKeyOracleTrain();
 
 	FServerVanList = new TOracleVanList();
 	FLocalVanList = new TLocalVanList();
@@ -87,11 +87,6 @@ void __fastcall TMain::FormCreate(TObject *Sender) {
 		delete FileIni;
 	}
 
-#ifdef _DEBUG
-	eRWNum->Text = "42";
-#else
-#endif
-
 	if (!Settings->Load()) {
 		MsgBoxErr(IDS_ERROR_LOAD_SETTINGS);
 
@@ -100,9 +95,7 @@ void __fastcall TMain::FormCreate(TObject *Sender) {
 		return;
 	}
 
-	if (!Settings->UseLocal) {
-		SetUseLocal();
-	}
+	SettingsChanged();
 
 #ifdef FIND_MATCH_TEST
 	int FindMatchTestResult = FindMatchTest();
@@ -136,6 +129,8 @@ void __fastcall TMain::FormDestroy(TObject *Sender) {
 	FLocalVanList->Free();
 	FServerVanList->Free();
 
+	FKeyOracleTrain->Free();
+
 	LocalColumns->Free();
 	ServerColumns->Free();
 
@@ -151,7 +146,10 @@ void __fastcall TMain::FormShow(TObject *Sender) {
 #endif
 
 #ifdef _DEBUG
-	btnServerLoad->Click();
+	KeyOracleTrain->TrainNum = "42";
+	KeyOracleTrain->DateTime = StrToDate("12.04.2022");
+	KeyOracleTrainChanged();
+
 	btnLocalLoad->Click();
 #endif
 }
@@ -428,6 +426,13 @@ void TMain::SetUseLocal() {
 }
 
 // ---------------------------------------------------------------------------
+void TMain::SettingsChanged() {
+	SetUseLocal();
+
+	btnLocalTrains->Visible = Settings->ScaleTypeDyn;
+}
+
+// ---------------------------------------------------------------------------
 void TMain::StartDBOperation(TDBOperation DBOperation) {
 	ShowWaitCursor();
 
@@ -501,10 +506,14 @@ int TMain::SetServerVan(int Index, TOracleVan * Van) {
 		Van->Carrying);
 	StringGridSetCellInt(sgServer, TNVansServerColumns::TARE_T, Index,
 		Van->TareT);
+
 	StringGridSetCellInt(sgServer, TNVansServerColumns::INVOICE_NETTO, Index,
 		Van->InvoiceNetto);
 	StringGridSetCellInt(sgServer, TNVansServerColumns::INVOICE_TARE, Index,
 		Van->InvoiceTare);
+
+	sgServer->Cells[TNVansServerColumns::INVOICE_DATETIME][Index] =
+		DTToS(Van->InvoiceDateTime);
 
 	return Index;
 }
@@ -570,14 +579,18 @@ bool IsRightTrainNum(String Value) {
 }
 
 // ---------------------------------------------------------------------------
-void TMain::SetOracleTrainNum(String Value) {
-	FOracleTrainNum = Value;
+void TMain::SetKeyOracleTrain(TKeyOracleTrain * Value) {
+	KeyOracleTrain->Assign(Value);
+	KeyOracleTrainChanged();
+}
 
-	eRWNum->Text = OracleTrainNum;
+// ---------------------------------------------------------------------------
+void TMain::KeyOracleTrainChanged() {
+	eRWNum->Text = KeyOracleTrain->TrainNum;
 
-	bool WithJoin = IsRightTrainNum(OracleTrainNum) && !IsShift();
+	bool WithJoin = IsRightTrainNum(KeyOracleTrain->TrainNum) && !IsShift();
 
-	ServerLoadTrain(OracleTrainNum, WithJoin);
+	ServerLoadTrain(WithJoin);
 }
 
 // ---------------------------------------------------------------------------
@@ -643,7 +656,7 @@ void TMain::SetLocalVanList(TLocalVanList * Value) {
 }
 
 // ---------------------------------------------------------------------------
-bool TMain::ServerLoadTrain(String TrainNum, bool WithJoin) {
+bool TMain::ServerLoadTrain(bool WithJoin) {
 	bool Result;
 
 	String ResultMessage;
@@ -653,8 +666,8 @@ bool TMain::ServerLoadTrain(String TrainNum, bool WithJoin) {
 	ServerVanList = NULL;
 
 	TDBOracleLoadTrain * DBOracleLoadTrain =
-		new TDBOracleLoadTrain(Main->Settings->ServerOracleConnection, TrainNum,
-		WithJoin);
+		new TDBOracleLoadTrain(Main->Settings->ServerOracleConnection,
+		KeyOracleTrain, WithJoin);
 	try {
 		Result = DBOracleLoadTrain->Execute();
 
@@ -670,7 +683,7 @@ bool TMain::ServerLoadTrain(String TrainNum, bool WithJoin) {
 
 	if (Result) {
 		if (ServerVanList->Count == 0) {
-			MsgBox(Format(IDS_MSG_RWNUM_NOT_EXISTS, TrainNum));
+			MsgBox(Format(IDS_MSG_RWNUM_NOT_EXISTS, KeyOracleTrain->TrainNum));
 		}
 	}
 	else {
@@ -752,7 +765,8 @@ void __fastcall TMain::btnServerLoadClick(TObject *Sender) {
 		return;
 	}
 
-	OracleTrainNum = eRWNum->Text;
+	KeyOracleTrain->TrainNum = eRWNum->Text;
+	KeyOracleTrainChanged();
 }
 
 // ---------------------------------------------------------------------------
@@ -798,7 +812,7 @@ void __fastcall TMain::btnOptionsClick(TObject *Sender) {
 				Application->Terminate();
 			}
 			else {
-				SetUseLocal();
+				SettingsChanged();
 			}
 		}
 	}

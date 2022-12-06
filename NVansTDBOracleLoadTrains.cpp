@@ -56,7 +56,7 @@ void TDBOracleLoadTrains::Operation() {
 	try {
 		Query->Connection = Connection;
 
-		bool SearchByDate = Filter->VanNum.IsEmpty();
+		bool SearchByDate = Filter->VanNum.IsEmpty() && Filter->InvoiceNum_1.IsEmpty();
 
 		String QueryText;
 
@@ -79,8 +79,10 @@ void TDBOracleLoadTrains::Operation() {
 			QueryText = SQLMake(QueryText, IDS_SQL_FROM);
 			QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TABLE);
 			QueryText = SQLMake(QueryText, IDS_SQL_WHERE);
+
 			QueryText =
 				SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TRAINS_WHERE_VN);
+
 			QueryText = SQLMake(QueryText, ")");
 		}
 		QueryText = SQLMake(QueryText, IDS_SQL_GROUP);
@@ -126,7 +128,7 @@ void TDBOracleLoadTrains::Operation() {
 			Train = new TOracleTrain();
 
 			Train->TrainNum = Trim(Query->FieldByName("RWNUM")->AsString);
-			Train->DateTime = Query->FieldByName("DATETIME")->AsDateTime;
+			Train->DateTime = Query->FieldByName("NDATETIME")->AsDateTime;
 			Train->VanCount = Query->FieldByName("VAN_COUNT")->AsInteger;
 
 			FTrainList->Add(Train);

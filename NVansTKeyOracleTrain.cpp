@@ -2,60 +2,56 @@
 
 #pragma hdrstop
 
-#include "NVansTFilterOracleTrains.h"
+#include "NVansStrings.h"
+
+#include "NVansTKeyOracleTrain.h"
 
 // ---------------------------------------------------------------------------
 #pragma package(smart_init)
 
 // ---------------------------------------------------------------------------
-__fastcall TFilterOracleTrains::TFilterOracleTrains() {
+__fastcall TKeyOracleTrain::TKeyOracleTrain() {
 	Init();
 }
 
 // ---------------------------------------------------------------------------
-void TFilterOracleTrains::Init() {
+void TKeyOracleTrain::Init() {
 }
 
 // ---------------------------------------------------------------------------
-__fastcall TFilterOracleTrains::~TFilterOracleTrains() {
+__fastcall TKeyOracleTrain::~TKeyOracleTrain() {
 }
 
 // ---------------------------------------------------------------------------
-bool __fastcall TFilterOracleTrains::Equals(TObject * Obj) {
+bool __fastcall TKeyOracleTrain::Equals(TObject * Obj) {
 	if (this == Obj)
 		return true;
 	if (Obj == NULL || ClassType() != Obj->ClassType())
 		return false;
 
-	TFilterOracleTrains * FilterOracleTrains = (TFilterOracleTrains*) Obj;
+	TKeyOracleTrain * Train = (TKeyOracleTrain*) Obj;
 
-	if (Date != FilterOracleTrains->Date)
+	if (TrainNum != Train->TrainNum || DateTime != Train->DateTime) {
 		return false;
-	if (VanNum != FilterOracleTrains->VanNum)
-		return false;
-	if (InvoiceNum_1 != FilterOracleTrains->InvoiceNum_1)
-		return false;
+	}
 
 	return true;
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TFilterOracleTrains::Assign(TFilterOracleTrains * Source) {
-	Date = Source->Date;
-	VanNum = Source->VanNum;
-	InvoiceNum_1 = Source->InvoiceNum_1;
+void __fastcall TKeyOracleTrain::Assign(TKeyOracleTrain * Source) {
+	TrainNum = Source->TrainNum;
+	DateTime = Source->DateTime;
 }
 
 // ---------------------------------------------------------------------------
-String __fastcall TFilterOracleTrains::ToString() {
+String __fastcall TKeyOracleTrain::ToString() {
 	String S;
 
-	S = "TFilterOracleTrains{";
-	S += "Date=" + DateToStr(Date);
+	S = "TKeyOracleTrain{";
+	S += "TrainNum=" + TrainNum;
 	S += ",";
-	S += "VanNum='" + VanNum + "'";
-	S += ",";
-	S += "InvoiceNum_1='" + InvoiceNum_1 + "'";
+	S += "DateTime=" + DateTimeToStr(DateTime);
 	S += "}";
 
 	return S;

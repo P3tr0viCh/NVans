@@ -38,7 +38,7 @@ void TLocalVan::Init() {
 	FTareIndex = DEFAULT_TARE_INDEX;
 
 	FTareScaleNum = 0;
-	FTareDateTime = DEFAULT_DATETIME;
+	FTareDateTime = 0;
 
 	FCalcFields = false;
 }

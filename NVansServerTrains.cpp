@@ -206,6 +206,7 @@ bool TfrmServerTrains::LoadTrains() {
 void TfrmServerTrains::UpdateFilter() {
 	Filter->Date = pckrFilterDate->Date;
 	Filter->VanNum = eFilterVanNum->Text;
+	Filter->InvoiceNum_1 = eFilterInvoiceNum_1->Text;
 }
 
 // ---------------------------------------------------------------------------
@@ -232,7 +233,11 @@ void __fastcall TfrmServerTrains::sgListDblClick(TObject *Sender) {
 		return;
 	}
 
-	Main->OracleTrainNum = TrainList->Items[SelectedRow - 1]->TrainNum;
+	Main->KeyOracleTrain->TrainNum =
+		TrainList->Items[SelectedRow - 1]->TrainNum;
+	Main->KeyOracleTrain->DateTime =
+		TrainList->Items[SelectedRow - 1]->DateTime;
+	Main->KeyOracleTrainChanged();
 }
 
 // ---------------------------------------------------------------------------
@@ -283,11 +288,15 @@ void __fastcall TfrmServerTrains::btnFilterClearClick(TObject *Sender) {
 
 	eFilterVanNum->Text = "";
 
+	eFilterInvoiceNum_1->Text = "";
+
 	btnUpdate->Click();
 }
 
 // ---------------------------------------------------------------------------
 void __fastcall TfrmServerTrains::eFilterVanNumChange(TObject *Sender) {
-	pckrFilterDate->Enabled = eFilterVanNum->Text.IsEmpty();
+	pckrFilterDate->Enabled = eFilterVanNum->Text.IsEmpty()
+		&& eFilterInvoiceNum_1->Text.IsEmpty();
 }
+
 // ---------------------------------------------------------------------------

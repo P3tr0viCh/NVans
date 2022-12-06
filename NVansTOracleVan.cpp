@@ -18,6 +18,8 @@ __fastcall TOracleVan::TOracleVan() {
 void TOracleVan::Init() {
 	FNum = 0;
 
+	FInvoiceDateTime = 0;
+
 	FCarrying = 0;
 	FTareT = 0;
 	FInvoiceNetto = 0;
@@ -37,16 +39,40 @@ bool __fastcall TOracleVan::Equals(TObject * Obj) {
 
 	TOracleVan * Van = (TOracleVan*) Obj;
 
-	if (Num != Van->Num || VanNum != Van->VanNum ||
-		CargoType != Van->CargoType || InvoiceNum != Van->InvoiceNum ||
-		InvoiceSupplier != Van->InvoiceSupplier ||
-		InvoiceRecipient != Van->InvoiceRecipient ||
-		DepartStation != Van->DepartStation ||
-		PurposeStation != Van->PurposeStation || Carrying != Van->Carrying ||
-		TareT != Van->TareT || InvoiceNetto != Van->InvoiceNetto ||
-		InvoiceTare != Van->InvoiceTare) {
+	if (Num != Van->Num)
 		return false;
-	}
+
+	if (InvoiceDateTime != Van->InvoiceDateTime)
+		return false;
+
+	if (VanNum != Van->VanNum)
+		return false;
+
+	if (CargoType != Van->CargoType)
+		return false;
+
+	if (InvoiceNum != Van->InvoiceNum)
+		return false;
+
+	if (InvoiceSupplier != Van->InvoiceSupplier)
+		return false;
+	if (InvoiceRecipient != Van->InvoiceRecipient)
+		return false;
+
+	if (DepartStation != Van->DepartStation)
+		return false;
+	if (PurposeStation != Van->PurposeStation)
+		return false;
+
+	if (Carrying != Van->Carrying)
+		return false;
+	if (TareT != Van->TareT)
+		return false;
+
+	if (InvoiceNetto != Van->InvoiceNetto)
+		return false;
+	if (InvoiceTare != Van->InvoiceTare)
+		return false;
 
 	return true;
 }
@@ -54,6 +80,8 @@ bool __fastcall TOracleVan::Equals(TObject * Obj) {
 // ---------------------------------------------------------------------------
 void __fastcall TOracleVan::Assign(TOracleVan * Source) {
 	Num = Source->Num;
+
+	InvoiceDateTime = Source->InvoiceDateTime;
 
 	VanNum = Source->VanNum;
 
@@ -69,6 +97,7 @@ void __fastcall TOracleVan::Assign(TOracleVan * Source) {
 
 	Carrying = Source->Carrying;
 	TareT = Source->TareT;
+
 	InvoiceNetto = Source->InvoiceNetto;
 	InvoiceTare = Source->InvoiceTare;
 }
@@ -79,6 +108,8 @@ String __fastcall TOracleVan::ToString() {
 
 	S = "TOracleVan{";
 	S += "Num=" + IntToStr(Num);
+	S += ",";
+	S += "InvoiceDateTime=" + DateTimeToStr(FInvoiceDateTime);
 	S += ",";
 	S += "VanNum=" + VanNum;
 	S += ",";

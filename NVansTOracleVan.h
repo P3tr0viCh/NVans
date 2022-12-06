@@ -13,6 +13,8 @@ class TOracleVan : public TObject {
 private:
 	int FNum;
 
+	TDateTime FInvoiceDateTime;
+
 	String FVanNum;
 
 	String FCargoType;
@@ -25,6 +27,7 @@ private:
 
 	int FCarrying;
 	int FTareT;
+
 	int FInvoiceNetto;
 	int FInvoiceTare;
 
@@ -41,6 +44,9 @@ public:
 
 	// -----------------------------------------------------------------------
 	__property int Num = {read = FNum, write = FNum};
+
+	__property TDateTime InvoiceDateTime = {
+		read = FInvoiceDateTime, write = FInvoiceDateTime};
 
 	__property String VanNum = {read = FVanNum, write = FVanNum};
 
@@ -60,6 +66,7 @@ public:
 
 	__property int Carrying = {read = FCarrying, write = FCarrying};
 	__property int TareT = {read = FTareT, write = FTareT};
+
 	__property int InvoiceNetto = {read = FInvoiceNetto, write = FInvoiceNetto};
 	__property int InvoiceTare = {read = FInvoiceTare, write = FInvoiceTare};
 };

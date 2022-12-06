@@ -18,4 +18,5 @@ IDS_GRID_HEADER_TARE_T,                 "Тара Т"
 IDS_GRID_HEADER_INVOICE_NETTO,          "Нетто Н"
 IDS_GRID_HEADER_INVOICE_TARE,           "Тара Н"
 IDS_GRID_HEADER_NETTO_DIFF,             "Нетто ±"
+IDS_GRID_HEADER_NDATETIME,              "Дата отгрузки"
 END

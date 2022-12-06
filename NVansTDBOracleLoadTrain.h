@@ -5,19 +5,22 @@
 
 #include "NVansTOracleVan.h"
 
+#include "NVansTKeyOracleTrain.h"
+
 #include "NVansTDatabaseOperation.h"
 
 // ---------------------------------------------------------------------------
 class TDBOracleLoadTrain : public TDatabaseOperation {
 private:
-	String FTrainNum;
+	TKeyOracleTrain * FKeyOracleTrain;
 
 	bool FWithJoin;
 
 	TOracleVanList * FVanList;
 
 public:
-	__fastcall TDBOracleLoadTrain(TConnectionInfo * ConnectionInfo, String TrainNum, bool WithJoin);
+	__fastcall TDBOracleLoadTrain(TConnectionInfo * ConnectionInfo,
+		TKeyOracleTrain * KeyOracleTrain, bool WithJoin);
 	__fastcall ~TDBOracleLoadTrain();
 
 	void OperationStart();
@@ -27,7 +30,7 @@ public:
 	void Operation();
 
 	// -----------------------------------------------------------------------
-	__property String TrainNum = {read = FTrainNum};
+	__property TKeyOracleTrain * KeyOracleTrain = {read = FKeyOracleTrain};
 
 	__property bool WithJoin = {read = FWithJoin};
 

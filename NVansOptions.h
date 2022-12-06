@@ -41,6 +41,7 @@ __published:
 	TLabeledEdit *eOptionsPass;
 	TLabeledEdit *eOptionsPass2;
 	TCheckBox *cboxUseLocal;
+	TRadioGroup *rgScaleType;
 
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);

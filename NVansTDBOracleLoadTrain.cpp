@@ -18,17 +18,20 @@
 
 // ---------------------------------------------------------------------------
 __fastcall TDBOracleLoadTrain::TDBOracleLoadTrain
-	(TConnectionInfo * ConnectionInfo, String TrainNum, bool WithJoin)
-	: TDatabaseOperation(ConnectionInfo) {
+	(TConnectionInfo * ConnectionInfo, TKeyOracleTrain * KeyOracleTrain,
+	bool WithJoin) : TDatabaseOperation(ConnectionInfo) {
 	FVanList = new TOracleVanList();
 
-	FTrainNum = TrainNum;
+	FKeyOracleTrain = new TKeyOracleTrain();
+
+	FKeyOracleTrain->Assign(KeyOracleTrain);
 
 	FWithJoin = WithJoin;
 }
 
 // ---------------------------------------------------------------------------
 __fastcall TDBOracleLoadTrain::~TDBOracleLoadTrain() {
+	FKeyOracleTrain->Free();
 	FVanList->Free();
 }
 
@@ -101,10 +104,14 @@ void TDBOracleLoadTrain::Operation() {
 		WriteToLog(Query->SQL->Text);
 #endif
 
-		SQLGetParam(Query, "RWNUM", ftFixedWideChar)->Value = TrainNum;
+		SQLGetParam(Query, "RWNUM", ftFixedWideChar)->Value =
+			KeyOracleTrain->TrainNum;
+		SQLGetParam(Query, "NDATETIME", ftDateTime)->Value =
+			KeyOracleTrain->DateTime;
 
 #ifdef SQL_TO_LOG
-		WriteToLog("PARAMS: RWNUM = " + TrainNum);
+		WriteToLog("PARAMS: RWNUM = " + KeyOracleTrain->TrainNum + ", " +
+			"DATETIME = " + DateToStr(KeyOracleTrain->DateTime));
 #endif
 
 		Query->Open();
@@ -120,6 +127,8 @@ void TDBOracleLoadTrain::Operation() {
 			Van = new TOracleVan();
 
 			Van->Num = Query->FieldByName("NUM")->AsInteger;
+
+			Van->InvoiceDateTime = Query->FieldByName("NDATETIME")->AsDateTime;
 
 			Van->VanNum = Trim(Query->FieldByName("INVNUM")->AsString);
 
@@ -139,6 +148,7 @@ void TDBOracleLoadTrain::Operation() {
 
 			Van->Carrying = Query->FieldByName("CARRYING")->AsInteger * 1000;
 			Van->TareT = Query->FieldByName("TARE_T")->AsInteger * 100;
+
 			Van->InvoiceNetto = Query->FieldByName("INVOICE_NETTO")->AsInteger;
 			Van->InvoiceTare = Query->FieldByName("INVOICE_TARE")
 				->AsInteger * 100;

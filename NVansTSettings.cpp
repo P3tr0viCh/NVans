@@ -32,6 +32,8 @@ __fastcall TSettings::TSettings() {
 
 	FUseLocal = false;
 
+	FScaleTypeDyn = true;
+
 	FLocalConnection = new TConnectionMySQL();
 	FServerMySQLConnection = new TConnectionMySQL();
 	FServerOracleConnection = new TConnectionOracle();
@@ -64,6 +66,9 @@ bool __fastcall TSettings::Equals(TObject * Obj) {
 	if (Settings->UseLocal != UseLocal)
 		return false;
 
+	if (Settings->ScaleTypeDyn != ScaleTypeDyn)
+		return false;
+
 	if (!Settings->LocalConnection->Equals(LocalConnection))
 		return false;
 	if (!Settings->ServerMySQLConnection->Equals(ServerMySQLConnection))
@@ -82,6 +87,8 @@ void __fastcall TSettings::Assign(TSettings * Source) {
 
 	FUseLocal = Source->UseLocal;
 
+	FScaleTypeDyn = Source->ScaleTypeDyn;
+
 	FLocalConnection->Assign(Source->LocalConnection);
 	FServerMySQLConnection->Assign(Source->ServerMySQLConnection);
 	FServerOracleConnection->Assign(Source->ServerOracleConnection);
@@ -97,6 +104,8 @@ String __fastcall TSettings::ToString() {
 	S += "ColorReadOnly='" + ColorToString(ColorReadOnly) + "'";
 	S += ",";
 	S += "UseLocal='" + BoolToStr(UseLocal) + "'";
+	S += ",";
+	S += "ScaleTypeDyn='" + BoolToStr(ScaleTypeDyn) + "'";
 	S += ",";
 	S += "LocalConnection=" + LocalConnection->ToString();
 	S += ",";
@@ -193,6 +202,7 @@ void TSettings::LoadSettings() {
 		ColorReadOnly = TColor(IniFile->ReadInteger(Section, "ColorReadOnly",
 			ColorReadOnly));
 		UseLocal = IniFile->ReadBool(Section, "UseLocal", UseLocal);
+		ScaleTypeDyn = IniFile->ReadBool(Section, "ScaleTypeDyn", ScaleTypeDyn);
 
 		Section = "LocalConnection";
 		LocalConnection->Host = IniFile->ReadString(Section, "Host",
@@ -247,6 +257,7 @@ void TSettings::SaveSettings() {
 		IniFile->WriteString(Section, "OptionsPass", Encrypt(OptionsPass));
 		IniFile->WriteInteger(Section, "ColorReadOnly", ColorReadOnly);
 		IniFile->WriteBool(Section, "UseLocal", UseLocal);
+		IniFile->WriteBool(Section, "ScaleTypeDyn", ScaleTypeDyn);
 
 		Section = "LocalConnection";
 		IniFile->WriteString(Section, "Host", LocalConnection->Host);

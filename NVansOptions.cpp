@@ -93,6 +93,13 @@ void TfrmOptions::UpdateForm() {
 
 	cboxUseLocal->Checked = Settings->UseLocal;
 
+	if (Settings->ScaleTypeDyn) {
+		rgScaleType->ItemIndex = 0;
+	}
+	else {
+		rgScaleType->ItemIndex = 1;
+	}
+
 	eLocalHost->Text = Settings->LocalConnection->Host;
 	eLocalUser->Text = Settings->LocalConnection->User;
 	eLocalPass->Text = Settings->LocalConnection->Password;
@@ -126,6 +133,8 @@ void TfrmOptions::UpdateSettings() {
 	Settings->OptionsPass = eOptionsPass->Text;
 
 	Settings->UseLocal = cboxUseLocal->Checked;
+
+	Settings->ScaleTypeDyn = rgScaleType->ItemIndex == 0;
 
 	Settings->LocalConnection->Host = eLocalHost->Text;
 	Settings->LocalConnection->User = eLocalUser->Text;
@@ -202,7 +211,8 @@ void __fastcall TfrmOptions::btnOracleCheckClick(TObject *Sender) {
 
 	ShowWaitCursor();
 	try {
-		TConnectionType ConnectionType = (TConnectionType)((TButton*)Sender)->Tag;
+		TConnectionType ConnectionType =
+			(TConnectionType)((TButton*)Sender)->Tag;
 
 		ConnectionInfo = GetConnectionInfo(ConnectionType);
 

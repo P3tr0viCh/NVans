@@ -23,6 +23,8 @@
 #include "NVansTLocalVan.h"
 #include "NVansTOracleVan.h"
 
+#include "NVansTKeyOracleTrain.h"
+
 // ---------------------------------------------------------------------------
 class TMain : public TForm {
 __published:
@@ -94,7 +96,7 @@ private:
 	TNVansServerColumns * ServerColumns;
 	TNVansLocalColumns * LocalColumns;
 
-	String FOracleTrainNum;
+	TKeyOracleTrain * FKeyOracleTrain;
 	String FLocalTrainNum;
 
 	TDate FDateLocal;
@@ -109,6 +111,8 @@ private:
 
 	void SetUseLocal();
 
+	void SettingsChanged();
+
 	int SetServerVan(int Index, TOracleVan * Van);
 	int SetLocalVan(int Index, TLocalVan * Van);
 
@@ -119,7 +123,7 @@ private:
 	TOracleVan * GetServerVan(int Index);
 	TLocalVan * GetLocalVan(int Index);
 
-	void SetOracleTrainNum(String Value);
+	void SetKeyOracleTrain(TKeyOracleTrain * Value);
 	void SetLocalTrainNum(String Value);
 
 	void SetDateLocal(TDate Value);
@@ -127,7 +131,7 @@ private:
 	void SetServerVanList(TOracleVanList * Value);
 	void SetLocalVanList(TLocalVanList * Value);
 
-	bool ServerLoadTrain(String TrainNum, bool WithJoin);
+	bool ServerLoadTrain(bool WithJoin);
 	bool LocalLoadVans();
 	bool LocalSaveVanProps();
 	bool LocalSaveVans();
@@ -164,11 +168,13 @@ public:
 
 	void EndDBOperation();
 
+	void KeyOracleTrainChanged();
+
 	// -----------------------------------------------------------------------
 	__property TSettings * Settings = {read = FSettings};
 
-	__property String OracleTrainNum = {
-		read = FOracleTrainNum, write = SetOracleTrainNum};
+	__property TKeyOracleTrain * KeyOracleTrain = {
+		read = FKeyOracleTrain, write = SetKeyOracleTrain};
 	__property String LocalTrainNum = {
 		read = FLocalTrainNum, write = SetLocalTrainNum};
 

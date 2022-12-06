@@ -19,6 +19,7 @@
 #define IDS_GRID_HEADER_INVOICE_NETTO       5013
 #define IDS_GRID_HEADER_INVOICE_TARE        5014
 #define IDS_GRID_HEADER_NETTO_DIFF     		5015
+#define IDS_GRID_HEADER_INVOICE_DATETIME    5016
 
 // ---------------------------------------------------------------------------
 #endif

@@ -9,7 +9,10 @@
 class TFilterOracleTrains : public TObject {
 private:
 	TDate FDate;
+
 	String FVanNum;
+
+	String FInvoiceNum_1;
 
 	// -----------------------------------------------------------------------
 	void Init();
@@ -24,7 +27,10 @@ public:
 
 	// -----------------------------------------------------------------------
 	__property TDate Date = {read = FDate, write = FDate};
+
 	__property String VanNum = {read = FVanNum, write = FVanNum};
+
+	__property String InvoiceNum_1 = {read = FInvoiceNum_1, write = FInvoiceNum_1};
 };
 
 // ---------------------------------------------------------------------------

@@ -25,8 +25,9 @@ public:
 	static const TARE_T = CARRYING + 1;
 	static const INVOICE_NETTO = TARE_T + 1;
 	static const INVOICE_TARE = INVOICE_NETTO + 1;
+	static const INVOICE_DATETIME = INVOICE_TARE + 1;
 
-	static const COUNT = INVOICE_TARE + 1;
+	static const COUNT = INVOICE_DATETIME + 1;
 
 	static const VAN_OBJECT = INVOICE_TARE + 1;
 
@@ -34,7 +35,7 @@ public:
 		LeftAlign =
 			TIntegerSet() << VANNUM << CARGOTYPE << INVOICE_NUM <<
 			INVOICE_SUPPLIER << INVOICE_RECIPIENT << DEPART_STATION <<
-			PURPOSE_STATION;
+			PURPOSE_STATION << INVOICE_DATETIME;
 	}
 
 	// ---------------------------------------------------------------------------
@@ -64,10 +65,14 @@ public:
 
 		StringGridSetHeader(Grid, CARRYING, IDS_GRID_HEADER_CARRYING, 64);
 		StringGridSetHeader(Grid, TARE_T, IDS_GRID_HEADER_TARE_T, 64);
+
 		StringGridSetHeader(Grid, INVOICE_NETTO,
 			IDS_GRID_HEADER_INVOICE_NETTO, 64);
 		StringGridSetHeader(Grid, INVOICE_TARE,
 			IDS_GRID_HEADER_INVOICE_TARE, 64);
+
+		StringGridSetHeader(Grid, INVOICE_DATETIME,
+			IDS_GRID_HEADER_INVOICE_DATETIME, 160);
 	}
 };
 
@@ -131,6 +136,7 @@ public:
 
 		StringGridSetHeader(Grid, CARRYING, IDS_GRID_HEADER_CARRYING, 64);
 		StringGridSetHeader(Grid, TARE_T, IDS_GRID_HEADER_TARE_T, 64);
+
 		StringGridSetHeader(Grid, INVOICE_NETTO,
 			IDS_GRID_HEADER_INVOICE_NETTO, 64);
 		StringGridSetHeader(Grid, INVOICE_TARE,
@@ -161,7 +167,8 @@ public:
 	// ---------------------------------------------------------------------------
 	void SetStringGridHeader(TStringGrid * Grid) {
 		StringGridSetHeader(Grid, RWNUM, IDS_GRID_HEADER_RWNUM, 80);
-		StringGridSetHeader(Grid, DATETIME, IDS_GRID_HEADER_DATETIME, 112);
+		StringGridSetHeader(Grid, DATETIME,
+			IDS_GRID_HEADER_INVOICE_DATETIME, 112);
 		StringGridSetHeader(Grid, VAN_COUNT, IDS_GRID_HEADER_VAN_COUNT, 56);
 	}
 };

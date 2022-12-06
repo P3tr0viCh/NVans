@@ -27,6 +27,8 @@ private:
 
 	bool FUseLocal;
 
+	bool FScaleTypeDyn;
+
 	TConnectionMySQL * FLocalConnection;
 	TConnectionMySQL * FServerMySQLConnection;
 	TConnectionOracle * FServerOracleConnection;
@@ -69,6 +71,9 @@ public:
 		read = FColorSelected, write = FColorSelected};
 
 	__property bool UseLocal = {read = FUseLocal, write = FUseLocal};
+
+	__property bool ScaleTypeDyn = {read = FScaleTypeDyn, write = FScaleTypeDyn
+	};
 
 	__property TConnectionMySQL * LocalConnection = {read = FLocalConnection};
 	__property TConnectionMySQL * ServerMySQLConnection = {

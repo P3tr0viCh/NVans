@@ -29,6 +29,8 @@ __published:
 	TDateTimePicker *pckrFilterDate;
 	TButton *btnFilterClear;
 	TLabeledEdit *eFilterVanNum;
+	TLabeledEdit *eFilterInvoiceNum_1;
+	TLabel *lblFilterDate;
 
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
