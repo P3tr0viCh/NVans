@@ -106,12 +106,12 @@ void TDBOracleLoadTrain::Operation() {
 
 		SQLGetParam(Query, "RWNUM", ftFixedWideChar)->Value =
 			KeyOracleTrain->TrainNum;
-		SQLGetParam(Query, "NDATETIME", ftDateTime)->Value =
-			KeyOracleTrain->DateTime;
+		SQLGetParam(Query, "NDATETIME", ftFixedWideChar)->Value =
+			DateTimeToSQLStr(KeyOracleTrain->DateTime);
 
 #ifdef SQL_TO_LOG
 		WriteToLog("PARAMS: RWNUM = " + KeyOracleTrain->TrainNum + ", " +
-			"DATETIME = " + DateToStr(KeyOracleTrain->DateTime));
+			"DATETIME = " + DateTimeToStr(KeyOracleTrain->DateTime));
 #endif
 
 		Query->Open();
@@ -130,7 +130,8 @@ void TDBOracleLoadTrain::Operation() {
 
 			Van->InvoiceDateTime = Query->FieldByName("NDATETIME")->AsDateTime;
 
-			Van->VanNum = Trim(Query->FieldByName("INVNUM")->AsString);
+			Van->VanNum =
+				NormalizeVanNumView(Trim(Query->FieldByName("INVNUM")->AsString));
 
 			Van->CargoType = Trim(Query->FieldByName("CARGOTYPE")->AsString);
 

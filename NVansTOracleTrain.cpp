@@ -2,6 +2,8 @@
 
 #pragma hdrstop
 
+#include <UtilsSQL.h>
+
 #include "NVansStrings.h"
 
 #include "NVansTOracleTrain.h"
@@ -16,6 +18,7 @@ __fastcall TOracleTrain::TOracleTrain() {
 
 // ---------------------------------------------------------------------------
 void TOracleTrain::Init() {
+    FDateTime = DEFAULT_DATETIME;
 }
 
 // ---------------------------------------------------------------------------

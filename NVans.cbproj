@@ -334,6 +334,10 @@
             <DependentOn>NVansTDBOracleLoadTrain.h</DependentOn>
             <BuildOrder>35</BuildOrder>
         </CppCompile>
+        <CppCompile Include="NVansTDBOracleLoadTrainDateTime.cpp">
+            <DependentOn>NVansTDBOracleLoadTrainDateTime.h</DependentOn>
+            <BuildOrder>60</BuildOrder>
+        </CppCompile>
         <CppCompile Include="NVansTDBOracleLoadTrains.cpp">
             <DependentOn>NVansTDBOracleLoadTrains.h</DependentOn>
             <BuildOrder>39</BuildOrder>
@@ -370,11 +374,16 @@
             <DependentOn>NVansTSettings.h</DependentOn>
             <BuildOrder>17</BuildOrder>
         </CppCompile>
+        <RcItem Include="sql\oracle_nvans_trains_by_vn.sql">
+            <ContainerId>ResourceItem</ContainerId>
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>ORACLE_NVANS_TRAINS_BY_VN</ResourceId>
+        </RcItem>
+        <FormResources Include="NVansOptions.dfm"/>
         <FormResources Include="NVansMain.dfm"/>
         <FormResources Include="NVansLogin.dfm"/>
-        <FormResources Include="NVansLocalTrains.dfm"/>
-        <FormResources Include="NVansOptions.dfm"/>
         <FormResources Include="NVansServerTrains.dfm"/>
+        <FormResources Include="NVansLocalTrains.dfm"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -451,8 +460,9 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile Condition="'$(DynamicRTL)'=='true' And '$(Multithreaded)'!='true'" LocalName="$(BDS)\bin\cc32250.dll" Class="DependencyModule">
+                <DeployFile LocalName="sql\oracle_nvans_trains_by_vn.sql" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -463,6 +473,11 @@
                 </DeployFile>
                 <DeployFile Condition="'$(DynamicRTL)'=='true' And '$(Multithreaded)'=='true'" LocalName="$(BDS)\bin64\cc64250mt.dll" Class="DependencyModule">
                     <Platform Name="Win64">
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile Condition="'$(DynamicRTL)'=='true' And '$(Multithreaded)'!='true'" LocalName="$(BDS)\bin\cc32250.dll" Class="DependencyModule">
+                    <Platform Name="Win32">
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

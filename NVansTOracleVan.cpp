@@ -1,6 +1,8 @@
 // ---------------------------------------------------------------------------
-
+
 #pragma hdrstop
+
+#include <UtilsSQL.h>
 
 #include "NVansStrings.h"
 
@@ -18,7 +20,7 @@ __fastcall TOracleVan::TOracleVan() {
 void TOracleVan::Init() {
 	FNum = 0;
 
-	FInvoiceDateTime = 0;
+	FInvoiceDateTime = DEFAULT_DATETIME;
 
 	FCarrying = 0;
 	FTareT = 0;
@@ -138,3 +140,4 @@ String __fastcall TOracleVan::ToString() {
 }
 
 // ---------------------------------------------------------------------------
+

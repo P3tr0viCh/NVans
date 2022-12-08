@@ -24,6 +24,7 @@
 #include "NVansFindMatch.h"
 
 #include "NVansTDBOracleLoadTrain.h"
+#include "NVansTDBOracleLoadTrainDateTime.h"
 #include "NVansTDBLocalLoadVans.h"
 #include "NVansTDBLocalSaveVanProps.h"
 #include "NVansTDBLocalSaveVan.h"
@@ -147,7 +148,6 @@ void __fastcall TMain::FormShow(TObject *Sender) {
 
 #ifdef _DEBUG
 	KeyOracleTrain->TrainNum = "42";
-	KeyOracleTrain->DateTime = StrToDate("12.04.2022");
 	KeyOracleTrainChanged();
 
 	btnLocalLoad->Click();
@@ -512,9 +512,6 @@ int TMain::SetServerVan(int Index, TOracleVan * Van) {
 	StringGridSetCellInt(sgServer, TNVansServerColumns::INVOICE_TARE, Index,
 		Van->InvoiceTare);
 
-	sgServer->Cells[TNVansServerColumns::INVOICE_DATETIME][Index] =
-		DTToS(Van->InvoiceDateTime);
-
 	return Index;
 }
 
@@ -586,11 +583,34 @@ void TMain::SetKeyOracleTrain(TKeyOracleTrain * Value) {
 
 // ---------------------------------------------------------------------------
 void TMain::KeyOracleTrainChanged() {
+	eRWNum->Tag = true;
 	eRWNum->Text = KeyOracleTrain->TrainNum;
+	eRWNum->Tag = false;
+
+	if (KeyOracleTrain->DateTime == DEFAULT_DATETIME) {
+		bool Result = ServerLoadTrainDateTime(KeyOracleTrain);
+
+		if (!Result || KeyOracleTrain->DateTime == DEFAULT_DATETIME) {
+			eDateTime->Text = "";
+			return;
+		}
+	}
+
+	eDateTime->Text = DTToS(KeyOracleTrain->DateTime, false);
 
 	bool WithJoin = IsRightTrainNum(KeyOracleTrain->TrainNum) && !IsShift();
 
 	ServerLoadTrain(WithJoin);
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TMain::eRWNumChange(TObject *Sender) {
+	if (eRWNum->Tag) {
+		return;
+	}
+
+	KeyOracleTrain->DateTime = DEFAULT_DATETIME;
+	eDateTime->Text = "";
 }
 
 // ---------------------------------------------------------------------------
@@ -688,6 +708,49 @@ bool TMain::ServerLoadTrain(bool WithJoin) {
 	}
 	else {
 		MsgBoxErr(Format(IDS_ERROR_ORACLE_TRAIN_LOAD, ResultMessage));
+	}
+
+	return Result;
+}
+
+// ---------------------------------------------------------------------------
+bool TMain::ServerLoadTrainDateTime(TKeyOracleTrain * KeyOracleTrain) {
+	bool Result;
+
+	String ResultMessage;
+
+	StartDBOperation(dboLoad);
+
+	TDBOracleLoadTrainDateTime * DBOracleLoadTrainDateTime =
+		new TDBOracleLoadTrainDateTime(Main->Settings->ServerOracleConnection,
+		KeyOracleTrain);
+	try {
+		Result = DBOracleLoadTrainDateTime->Execute();
+
+		ResultMessage = DBOracleLoadTrainDateTime->ErrorMessage;
+
+		if (DBOracleLoadTrainDateTime->KeyOracleTrainList->Count != 0) {
+			KeyOracleTrain->DateTime =
+				DBOracleLoadTrainDateTime->KeyOracleTrainList->Items[0]
+				->DateTime;
+		}
+		else {
+			KeyOracleTrain->DateTime = DEFAULT_DATETIME;
+		}
+	}
+	__finally {
+		DBOracleLoadTrainDateTime->Free();
+
+		EndDBOperation();
+	}
+
+	if (Result) {
+		if (KeyOracleTrain->DateTime == DEFAULT_DATETIME) {
+			MsgBox(Format(IDS_MSG_RWNUM_NOT_EXISTS, KeyOracleTrain->TrainNum));
+		}
+	}
+	else {
+		MsgBoxErr(Format(IDS_ERROR_ORACLE_TRAIN_DATETIME_LOAD, ResultMessage));
 	}
 
 	return Result;
@@ -1288,4 +1351,5 @@ void __fastcall TMain::btnReverseClick(TObject * Sender) {
 		VanList->Free();
 	}
 }
+
 // ---------------------------------------------------------------------------

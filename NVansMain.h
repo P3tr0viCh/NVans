@@ -35,7 +35,6 @@ __published:
 	TPanel *PanelServer;
 	TButton *btnClose;
 	TSplitter *Splitter;
-	TLabeledEdit *eRWNum;
 	TButton *btnServerLoad;
 	TButton *btnOptions;
 	TButton *btnServerTrains;
@@ -55,6 +54,10 @@ __published:
 	TMenuItem *miPasteVanNum;
 	TMenuItem *miClear;
 	TButton *btnReverse;
+	TLabel *lblRWNum;
+	TEdit *eRWNum;
+	TLabel *Label1;
+	TEdit *eDateTime;
 
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
@@ -89,6 +92,7 @@ __published:
 	void __fastcall PopupMenuPopup(TObject *Sender);
 	void __fastcall miClearClick(TObject *Sender);
 	void __fastcall btnReverseClick(TObject *Sender);
+	void __fastcall eRWNumChange(TObject *Sender);
 
 private:
 	TSettings * FSettings;
@@ -132,6 +136,7 @@ private:
 	void SetLocalVanList(TLocalVanList * Value);
 
 	bool ServerLoadTrain(bool WithJoin);
+	bool ServerLoadTrainDateTime(TKeyOracleTrain * KeyOracleTrain);
 	bool LocalLoadVans();
 	bool LocalSaveVanProps();
 	bool LocalSaveVans();

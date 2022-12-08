@@ -2,6 +2,8 @@
 
 #pragma hdrstop
 
+#include <UtilsSQL.h>
+
 #include "NVansStrings.h"
 
 #include "NVansTKeyOracleTrain.h"
@@ -16,6 +18,7 @@ __fastcall TKeyOracleTrain::TKeyOracleTrain() {
 
 // ---------------------------------------------------------------------------
 void TKeyOracleTrain::Init() {
+    FDateTime = DEFAULT_DATETIME;
 }
 
 // ---------------------------------------------------------------------------
@@ -29,9 +32,9 @@ bool __fastcall TKeyOracleTrain::Equals(TObject * Obj) {
 	if (Obj == NULL || ClassType() != Obj->ClassType())
 		return false;
 
-	TKeyOracleTrain * Train = (TKeyOracleTrain*) Obj;
+	TKeyOracleTrain * Key = (TKeyOracleTrain*) Obj;
 
-	if (TrainNum != Train->TrainNum || DateTime != Train->DateTime) {
+	if (TrainNum != Key->TrainNum || DateTime != Key->DateTime) {
 		return false;
 	}
 

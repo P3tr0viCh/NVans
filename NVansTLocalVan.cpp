@@ -1,7 +1,9 @@
 // ---------------------------------------------------------------------------
 
 #pragma hdrstop
-#include "UtilsLog.h"
+
+#include <UtilsLog.h>
+#include <UtilsSQL.h>
 
 #include "NVansStrings.h"
 
@@ -23,6 +25,8 @@ void TLocalVan::Init() {
 
 	FNum = 0;
 
+	FDateTime = DEFAULT_DATETIME;
+
 	FCarrying = 0;
 	FTareT = 0;
 	FInvoiceNetto = 0;
@@ -38,7 +42,7 @@ void TLocalVan::Init() {
 	FTareIndex = DEFAULT_TARE_INDEX;
 
 	FTareScaleNum = 0;
-	FTareDateTime = 0;
+	FTareDateTime = DEFAULT_DATETIME;
 
 	FCalcFields = false;
 }

@@ -27,10 +27,10 @@ __published:
 	TButton *btnClose;
 	TPanel *PanelFilter;
 	TDateTimePicker *pckrFilterDate;
-	TButton *btnFilterClear;
 	TLabeledEdit *eFilterVanNum;
 	TLabeledEdit *eFilterInvoiceNum_1;
 	TLabel *lblFilterDate;
+	TButton *btnClear;
 
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
@@ -46,7 +46,7 @@ __published:
 		TShiftState Shift);
 	void __fastcall pckrFilterDateKeyDown(TObject *Sender, WORD &Key,
 		TShiftState Shift);
-	void __fastcall btnFilterClearClick(TObject *Sender);
+	void __fastcall btnClearClick(TObject *Sender);
 	void __fastcall eFilterVanNumChange(TObject *Sender);
 
 private:

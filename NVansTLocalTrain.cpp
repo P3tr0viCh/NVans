@@ -2,6 +2,8 @@
 
 #pragma hdrstop
 
+#include <UtilsSQL.h>
+
 #include "NVansStrings.h"
 
 #include "NVansTLocalTrain.h"
@@ -16,6 +18,7 @@ __fastcall TLocalTrain::TLocalTrain() {
 
 // ---------------------------------------------------------------------------
 void TLocalTrain::Init() {
+	FDateTime = DEFAULT_DATETIME;
 	FWeightType = wtBrutto;
 }
 

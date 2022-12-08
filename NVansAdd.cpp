@@ -76,3 +76,35 @@ bool CheckIntValue(String Value) {
 }
 
 // ---------------------------------------------------------------------------
+String NormalizeVanNumView(String Value) {
+	for (int i = 0, L = 8 - Value.Length(); i < L; i++) {
+		Value = "0" + Value;
+	}
+
+	return Value;
+}
+
+// ---------------------------------------------------------------------------
+String NormalizeVanNumSQL(String Value) {
+	if (Value.Pos('%') > 0) {
+		return Value;
+	}
+
+	int nz = 0;
+
+	for (int i = 1, L = Value.Length(); i <= L; i++) {
+		if (Value[i] != '0') {
+			nz = i;
+			break;
+		}
+	}
+
+	if (nz) {
+		return Value.SubString(nz, MaxInt);
+	}
+	else {
+		return  "";
+	}
+}
+
+// ---------------------------------------------------------------------------

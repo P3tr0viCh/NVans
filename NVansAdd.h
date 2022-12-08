@@ -19,4 +19,8 @@ bool CheckDateTimeValue(String Value);
 bool CheckIntValue(String Value);
 
 // ---------------------------------------------------------------------------
+String NormalizeVanNumView(String Value);
+String NormalizeVanNumSQL(String Value);
+
+// ---------------------------------------------------------------------------
 #endif

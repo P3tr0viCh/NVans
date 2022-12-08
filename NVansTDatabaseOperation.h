@@ -11,6 +11,8 @@
 
 #include <UtilsMisc.h>
 
+#include <UtilsSQL.h>
+
 #include "NVansDebug.h"
 
 // ---------------------------------------------------------------------------

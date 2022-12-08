@@ -111,6 +111,7 @@ void __fastcall TfrmServerTrains::btnCloseClick(TObject *Sender) {
 // ---------------------------------------------------------------------------
 void TfrmServerTrains::SetControlsEnabled(const bool Enabled) {
 	btnUpdate->Enabled = Enabled;
+	btnClear->Enabled = Enabled;
 
 	sgList->Enabled = Enabled;
 
@@ -205,7 +206,7 @@ bool TfrmServerTrains::LoadTrains() {
 // ---------------------------------------------------------------------------
 void TfrmServerTrains::UpdateFilter() {
 	Filter->Date = pckrFilterDate->Date;
-	Filter->VanNum = eFilterVanNum->Text;
+	Filter->VanNum = NormalizeVanNumSQL(eFilterVanNum->Text);
 	Filter->InvoiceNum_1 = eFilterInvoiceNum_1->Text;
 }
 
@@ -279,7 +280,7 @@ void __fastcall TfrmServerTrains::pckrFilterDateKeyDown(TObject *Sender,
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TfrmServerTrains::btnFilterClearClick(TObject *Sender) {
+void __fastcall TfrmServerTrains::btnClearClick(TObject *Sender) {
 #ifdef _DEBUG
 	pckrFilterDate->Date = StrToDate("12.04.2022");
 #else
