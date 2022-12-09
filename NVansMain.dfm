@@ -47,7 +47,6 @@ object Main: TMain
     ParentFont = True
     SimplePanel = True
     UseSystemFont = False
-    ExplicitWidth = 800
   end
   object sgServer: TStringGrid
     Left = 0
@@ -65,7 +64,6 @@ object Main: TMain
     OnDrawCell = sgServerDrawCell
     OnFixedCellClick = sgServerFixedCellClick
     OnSelectCell = sgServerSelectCell
-    ExplicitWidth = 800
   end
   object sgLocal: TStringGrid
     Left = 0
@@ -84,7 +82,6 @@ object Main: TMain
     OnDrawCell = sgLocalDrawCell
     OnFixedCellClick = sgServerFixedCellClick
     OnSelectCell = sgServerSelectCell
-    ExplicitWidth = 800
   end
   object PanelServer: TPanel
     Left = 0
@@ -94,14 +91,13 @@ object Main: TMain
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitWidth = 800
     DesignSize = (
       960
       48)
     object lblRWNum: TLabel
       Left = 8
       Top = 8
-      Width = 46
+      Width = 45
       Height = 34
       Caption = #1053#1086#1084#1077#1088' '#1087#1086#1077#1079#1076#1072
       FocusControl = eRWNum
@@ -110,7 +106,7 @@ object Main: TMain
     object Label1: TLabel
       Left = 200
       Top = 7
-      Width = 52
+      Width = 51
       Height = 34
       Caption = #1044#1072#1090#1072' '#1086#1090#1075#1088#1091#1079#1082#1080
       FocusControl = eDateTime
@@ -125,7 +121,6 @@ object Main: TMain
       Caption = #1047#1072#1082#1088#1099#1090#1100
       TabOrder = 7
       OnClick = btnCloseClick
-      ExplicitLeft = 712
     end
     object btnServerLoad: TButton
       Left = 384
@@ -145,7 +140,6 @@ object Main: TMain
       Caption = #1053#1072#1089#1090#1088#1086#1081#1082#1080
       TabOrder = 6
       OnClick = btnOptionsClick
-      ExplicitLeft = 616
     end
     object btnServerTrains: TButton
       Left = 472
@@ -165,7 +159,6 @@ object Main: TMain
       Caption = #1054' '#1087#1088#1086#1075#1088#1072#1084#1084#1077
       TabOrder = 5
       OnClick = btnAboutClick
-      ExplicitLeft = 512
     end
     object btnReverse: TButton
       Left = 560
@@ -205,7 +198,6 @@ object Main: TMain
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 4
-    ExplicitWidth = 800
     object btnLocalLoad: TButton
       Left = 8
       Top = 8
@@ -243,7 +235,6 @@ object Main: TMain
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 2
-    ExplicitWidth = 800
     object btnSaveVanProps: TButton
       Left = 304
       Top = 0

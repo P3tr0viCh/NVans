@@ -59,26 +59,12 @@ void TDBOracleLoadTrains::Operation() {
 		bool SearchByDate =
 			Filter->VanNum.IsEmpty() && Filter->InvoiceNum_1.IsEmpty();
 
-		String QueryText;
-
-		QueryText = SQLMake(QueryText, IDS_SQL_SELECT);
-		QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TRAINS_SELECT);
-		QueryText = SQLMake(QueryText, IDS_SQL_FROM);
-		QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TABLE);
-		QueryText = SQLMake(QueryText, IDS_SQL_WHERE);
 		if (SearchByDate) {
-			QueryText =
-				SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TRAINS_WHERE_DT);
-			QueryText = SQLMake(QueryText, IDS_SQL_GROUP);
-			QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TRAINS_GROUP);
-			QueryText = SQLMake(QueryText, IDS_SQL_ORDER);
-			QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TRAINS_ORDER);
+			Query->SQL->Text = SQLLoad(IDS_SQL_ORACLE_NVANS_TRAINS_BY_DT);
 		}
 		else {
-			QueryText = SQLLoad(IDS_SQL_ORACLE_NVANS_TRAINS_BY_VN);
+			Query->SQL->Text = SQLLoad(IDS_SQL_ORACLE_NVANS_TRAINS_BY_VN);
 		}
-
-		Query->SQL->Text = QueryText;
 
 #ifdef SQL_TO_LOG
 		WriteToLog(Query->SQL->Text);
@@ -96,7 +82,6 @@ void TDBOracleLoadTrains::Operation() {
 		else {
 			SQLGetParam(Query, "INVNUM", ftFixedWideChar)->Value =
 				Filter->VanNum;
-//			SQLGetParam(Query, "DATE_FROM", ftDate)->Value = Filter->Date - 30;
 
 #ifdef SQL_TO_LOG
 			WriteToLog("PARAMS: INVNUM = " + Filter->VanNum + ", " +

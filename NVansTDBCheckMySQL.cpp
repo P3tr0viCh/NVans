@@ -16,7 +16,7 @@
 // ---------------------------------------------------------------------------
 __fastcall TDBCheckMySQL::TDBCheckMySQL(TConnectionMySQL * Connection)
 	: TDBCheck(Connection) {
-	FQuery = LoadStr(IDS_SQL_MYSQL_VERSION);
+	FQuery = SQLLoad(IDS_SQL_MYSQL_VERSION);
 }
 
 // ---------------------------------------------------------------------------

@@ -16,7 +16,7 @@
 // ---------------------------------------------------------------------------
 __fastcall TDBCheckOracle::TDBCheckOracle(TConnectionOracle * Connection)
 	: TDBCheck(Connection) {
-	FQuery = LoadStr(IDS_SQL_ORACLE_VERSION);
+	FQuery = SQLLoad(IDS_SQL_ORACLE_VERSION);
 }
 
 // ---------------------------------------------------------------------------

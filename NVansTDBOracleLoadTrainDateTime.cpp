@@ -56,24 +56,7 @@ void TDBOracleLoadTrainDateTime::Operation() {
 	try {
 		Query->Connection = Connection;
 
-		String QueryText;
-
-		QueryText = SQLMake(QueryText, IDS_SQL_SELECT);
-		QueryText = SQLMake(QueryText,
-			IDS_SQL_ORACLE_NVANS_TRAIN_DATETIME_SELECT);
-		QueryText = SQLMake(QueryText, IDS_SQL_FROM);
-		QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TABLE);
-		QueryText = SQLMake(QueryText, IDS_SQL_WHERE);
-		QueryText = SQLMake(QueryText,
-			IDS_SQL_ORACLE_NVANS_TRAIN_DATETIME_WHERE);
-		QueryText = SQLMake(QueryText, IDS_SQL_GROUP);
-		QueryText = SQLMake(QueryText,
-			IDS_SQL_ORACLE_NVANS_TRAIN_DATETIME_GROUP);
-		QueryText = SQLMake(QueryText, IDS_SQL_ORDER);
-		QueryText = SQLMake(QueryText,
-			IDS_SQL_ORACLE_NVANS_TRAIN_DATETIME_ORDER);
-
-		Query->SQL->Text = QueryText;
+		Query->SQL->Text = SQLLoad(IDS_SQL_ORACLE_NVANS_TRAIN_DATETIME);
 
 #ifdef SQL_TO_LOG
 		WriteToLog(Query->SQL->Text);

@@ -58,47 +58,12 @@ void TDBOracleLoadTrain::Operation() {
 	try {
 		Query->Connection = Connection;
 
-		String QueryText;
-
 		if (WithJoin) {
-			QueryText = SQLMake(QueryText, IDS_SQL_SELECT);
-			QueryText =
-				SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TRAIN_JOIN_SELECT);
-			QueryText = SQLMake(QueryText, IDS_SQL_FROM);
-			QueryText = SQLMake(QueryText, "(");
-			QueryText = SQLMake(QueryText, "(");
-			QueryText = SQLMake(QueryText, IDS_SQL_SELECT);
-			QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TRAIN_SELECT);
-			QueryText = SQLMake(QueryText, IDS_SQL_FROM);
-			QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TABLE);
-			QueryText = SQLMake(QueryText, IDS_SQL_WHERE);
-			QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TRAIN_WHERE);
-			QueryText = SQLMake(QueryText, ") A");
-			QueryText = SQLMake(QueryText, IDS_SQL_JOIN);
-			QueryText = SQLMake(QueryText, "(");
-			QueryText = SQLMake(QueryText, IDS_SQL_SELECT);
-			QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TRAIN_SELECT);
-			QueryText = SQLMake(QueryText, IDS_SQL_FROM);
-			QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TABLE);
-			QueryText = SQLMake(QueryText, ") B");
-			QueryText =
-				SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TRAIN_JOIN_JOIN);
-			QueryText = SQLMake(QueryText, ")");
-			QueryText = SQLMake(QueryText, IDS_SQL_ORDER);
-			QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TRAIN_ORDER);
+			Query->SQL->Text = SQLLoad(IDS_SQL_ORACLE_NVANS_TRAIN_JOIN);
 		}
 		else {
-			QueryText = SQLMake(QueryText, IDS_SQL_SELECT);
-			QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TRAIN_SELECT);
-			QueryText = SQLMake(QueryText, IDS_SQL_FROM);
-			QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TABLE);
-			QueryText = SQLMake(QueryText, IDS_SQL_WHERE);
-			QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TRAIN_WHERE);
-			QueryText = SQLMake(QueryText, IDS_SQL_ORDER);
-			QueryText = SQLMake(QueryText, IDS_SQL_ORACLE_NVANS_TRAIN_ORDER);
+			Query->SQL->Text = SQLLoad(IDS_SQL_ORACLE_NVANS_TRAIN);
 		}
-
-		Query->SQL->Text = QueryText;
 
 #ifdef SQL_TO_LOG
 		WriteToLog(Query->SQL->Text);
@@ -131,7 +96,8 @@ void TDBOracleLoadTrain::Operation() {
 			Van->InvoiceDateTime = Query->FieldByName("NDATETIME")->AsDateTime;
 
 			Van->VanNum =
-				NormalizeVanNumView(Trim(Query->FieldByName("INVNUM")->AsString));
+				NormalizeVanNumView(Trim(Query->FieldByName("INVNUM")
+				->AsString));
 
 			Van->CargoType = Trim(Query->FieldByName("CARGOTYPE")->AsString);
 

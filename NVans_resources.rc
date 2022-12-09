@@ -1,1 +1,7 @@
+MYSQL_VERSION RCDATA "sql\\mysql_version.sql"
+ORACLE_NVANS_TRAIN RCDATA "sql\\oracle_nvans_train.sql"
+ORACLE_NVANS_TRAINS_BY_DT RCDATA "sql\\oracle_nvans_trains_by_dt.sql"
 ORACLE_NVANS_TRAINS_BY_VN RCDATA "sql\\oracle_nvans_trains_by_vn.sql"
+ORACLE_NVANS_TRAIN_DATETIME RCDATA "sql\\oracle_nvans_train_datetime.sql"
+ORACLE_NVANS_TRAIN_JOIN RCDATA "sql\\oracle_nvans_train_join.sql"
+ORACLE_VERSION RCDATA "sql\\oracle_version.sql"
