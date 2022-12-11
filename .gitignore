@@ -2,6 +2,7 @@ NVansEncKey.h
 
 __astcache
 __history
+__recovery
 *.~*
 *.local
 *.stat
