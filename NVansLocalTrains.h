@@ -14,8 +14,8 @@
 
 #include "NVansColumns.h"
 
-#include "NVansTLocalTrain.h"
-#include "NVansTFilterLocalTrains.h"
+#include "NVansLocalTrain.h"
+#include "NVansFilterLocalTrains.h"
 
 // ---------------------------------------------------------------------------
 class TfrmLocalTrains : public TForm {
@@ -53,7 +53,8 @@ private:
 
 	void SetTrainList(TLocalTrainList * Value);
 
-	bool LoadTrains();
+	void LoadTrains();
+
 	void UpdateTrains();
 
 public:

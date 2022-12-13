@@ -11,7 +11,9 @@
 #include <Vcl.ComCtrls.hpp>
 #include <Vcl.ExtCtrls.hpp>
 
-#include "NVansTSettings.h"
+#include <DBConnection.h>
+
+#include "NVansSettings.h"
 
 // ---------------------------------------------------------------------------
 class TfrmOptions : public TForm {
@@ -61,7 +63,7 @@ private:
 		ctLocal, ctServerOracle
 	};
 
-	TConnectionInfo * GetConnectionInfo(TConnectionType Type);
+	TDBConnection * GetConnectionInfo(TConnectionType Type);
 
 public:
 	__fastcall TfrmOptions(TComponent* Owner);

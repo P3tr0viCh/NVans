@@ -9,25 +9,34 @@
 
 #include <UtilsLog.h>
 #include <UtilsStr.h>
+#include <UtilsSQL.h>
 #include <UtilsMisc.h>
 #include <UtilsKAndM.h>
 #include <UtilsFiles.h>
 #include <UtilsFileIni.h>
 #include <UtilsStringGrid.h>
 
-#include "NVansDebug.h"
+#include <DBOperation.h>
+#include <DBOperationEvent.h>
+#include <DBOperationCheck.h>
 
 #include "NVansAdd.h"
+
 #include "NVansStrings.h"
 #include "NVansStringsGridHeader.h"
 
 #include "NVansFindMatch.h"
 
-#include "NVansTDBOracleLoadTrain.h"
-#include "NVansTDBOracleLoadTrainDateTime.h"
-#include "NVansTDBLocalLoadVans.h"
-#include "NVansTDBLocalSaveVanProps.h"
-#include "NVansTDBLocalSaveVan.h"
+#include "NVansDBOperationTags.h"
+
+#include "NVansDBOracleLoadTrain.h"
+#include "NVansDBOracleLoadTrainDateTime.h"
+#include "NVansDBOracleLoadTrains.h"
+
+#include "NVansDBLocalLoadTrains.h"
+#include "NVansDBLocalLoadVans.h"
+#include "NVansDBLocalSaveVan.h"
+#include "NVansDBLocalSaveVanProps.h"
 
 #include "NVansLogin.h"
 #include "NVansOptions.h"
@@ -433,16 +442,16 @@ void TMain::SettingsChanged() {
 }
 
 // ---------------------------------------------------------------------------
-void TMain::StartDBOperation(TDBOperation DBOperation) {
+void TMain::StartOperation(TOperation Operation) {
 	ShowWaitCursor();
 
 	NativeUInt Ident = 0;
 
-	switch (DBOperation) {
-	case dboLoad:
+	switch (Operation) {
+	case oLoad:
 		Ident = IDS_STATUS_TRAIN_LOAD;
 		break;
-	case dboSave:
+	case oSave:
 		Ident = IDS_STATUS_TRAIN_SAVE;
 		break;
 	}
@@ -458,7 +467,7 @@ void TMain::StartDBOperation(TDBOperation DBOperation) {
 }
 
 // ---------------------------------------------------------------------------
-void TMain::EndDBOperation() {
+void TMain::EndOperation() {
 	frmLocalTrains->EndLoad();
 	frmServerTrains->EndLoad();
 
@@ -588,9 +597,9 @@ void TMain::KeyOracleTrainChanged() {
 	eRWNum->Tag = false;
 
 	if (KeyOracleTrain->DateTime == DEFAULT_DATETIME) {
-		bool Result = ServerLoadTrainDateTime(KeyOracleTrain);
+		ServerLoadTrainDateTime(KeyOracleTrain);
 
-		if (!Result || KeyOracleTrain->DateTime == DEFAULT_DATETIME) {
+		if (KeyOracleTrain->DateTime == DEFAULT_DATETIME) {
 			eDateTime->Text = "";
 			return;
 		}
@@ -676,148 +685,140 @@ void TMain::SetLocalVanList(TLocalVanList * Value) {
 }
 
 // ---------------------------------------------------------------------------
-bool TMain::ServerLoadTrain(bool WithJoin) {
-	bool Result;
-
-	String ResultMessage;
-
-	StartDBOperation(dboLoad);
+void TMain::ServerLoadTrain(bool WithJoin) {
+	StartOperation(oLoad);
 
 	ServerVanList = NULL;
 
 	TDBOracleLoadTrain * DBOracleLoadTrain =
-		new TDBOracleLoadTrain(Main->Settings->ServerOracleConnection,
+		new TDBOracleLoadTrain(Main->Settings->ServerOracleConnection, this,
 		KeyOracleTrain, WithJoin);
 	try {
-		Result = DBOracleLoadTrain->Execute();
+		DBOracleLoadTrain->Tag = DB_OPERATION_ORACLE_LOAD_TRAIN;
 
-		ResultMessage = DBOracleLoadTrain->ErrorMessage;
+		DBOracleLoadTrain->Execute();
 
 		ServerVanList = DBOracleLoadTrain->VanList;
 	}
 	__finally {
 		DBOracleLoadTrain->Free();
 
-		EndDBOperation();
+		EndOperation();
 	}
-
-	if (Result) {
-		if (ServerVanList->Count == 0) {
-			MsgBox(Format(IDS_MSG_RWNUM_NOT_EXISTS, KeyOracleTrain->TrainNum));
-		}
-	}
-	else {
-		MsgBoxErr(Format(IDS_ERROR_ORACLE_TRAIN_LOAD, ResultMessage));
-	}
-
-	return Result;
 }
 
 // ---------------------------------------------------------------------------
-bool TMain::ServerLoadTrainDateTime(TKeyOracleTrain * KeyOracleTrain) {
-	bool Result;
-
-	String ResultMessage;
-
-	StartDBOperation(dboLoad);
+void TMain::ServerLoadTrainDateTime(TKeyOracleTrain * KeyOracleTrain) {
+	StartOperation(oLoad);
 
 	TDBOracleLoadTrainDateTime * DBOracleLoadTrainDateTime =
 		new TDBOracleLoadTrainDateTime(Main->Settings->ServerOracleConnection,
-		KeyOracleTrain);
+		this, KeyOracleTrain);
 	try {
-		Result = DBOracleLoadTrainDateTime->Execute();
+		DBOracleLoadTrainDateTime->Tag =
+			DB_OPERATION_ORACLE_LOAD_TRAIN_DATETIME;
 
-		ResultMessage = DBOracleLoadTrainDateTime->ErrorMessage;
-
-		if (DBOracleLoadTrainDateTime->KeyOracleTrainList->Count != 0) {
-			KeyOracleTrain->DateTime =
-				DBOracleLoadTrainDateTime->KeyOracleTrainList->Items[0]
-				->DateTime;
-		}
-		else {
-			KeyOracleTrain->DateTime = DEFAULT_DATETIME;
-		}
+		DBOracleLoadTrainDateTime->Execute();
 	}
 	__finally {
 		DBOracleLoadTrainDateTime->Free();
 
-		EndDBOperation();
+		EndOperation();
 	}
-
-	if (Result) {
-		if (KeyOracleTrain->DateTime == DEFAULT_DATETIME) {
-			MsgBox(Format(IDS_MSG_RWNUM_NOT_EXISTS, KeyOracleTrain->TrainNum));
-		}
-	}
-	else {
-		MsgBoxErr(Format(IDS_ERROR_ORACLE_TRAIN_DATETIME_LOAD, ResultMessage));
-	}
-
-	return Result;
 }
 
 // ---------------------------------------------------------------------------
-bool TMain::LocalLoadVans() {
-	bool Result;
-
-	String ResultMessage;
-
-	StartDBOperation(dboLoad);
+void TMain::LocalLoadVans() {
+	StartOperation(oLoad);
 
 	LocalVanList = NULL;
 
 	LocalChanged = false;
 
 	TDBLocalLoadVans * DBLocalLoadVans =
-		new TDBLocalLoadVans(Main->Settings->LocalConnection, DateLocal,
+		new TDBLocalLoadVans(Main->Settings->LocalConnection, this, DateLocal,
 		LocalTrainNum);
 	try {
-		Result = DBLocalLoadVans->Execute();
+		DBLocalLoadVans->Tag = DB_OPERATION_LOCAL_LOAD_VANS;
 
-		ResultMessage = DBLocalLoadVans->ErrorMessage;
+		DBLocalLoadVans->Execute();
 
 		LocalVanList = DBLocalLoadVans->VanList;
 	}
 	__finally {
 		DBLocalLoadVans->Free();
 
-		EndDBOperation();
+		EndOperation();
 	}
-
-	if (!Result) {
-		MsgBoxErr(Format(IDS_ERROR_LOCAL_LOAD_VANS, ResultMessage));
-	}
-
-	return Result;
 }
 
 // ---------------------------------------------------------------------------
-bool TMain::LocalSaveVanProps() {
-	bool Result;
+bool TMain::LocalSaveVans() {
+	bool Result = false;
 
-	String ResultMessage;
+	int SaveCount = 0;
 
-	StartDBOperation(dboSave);
+	StartOperation(oSave);
+
+	TDBLocalSaveVan * DBLocalSaveVan =
+		new TDBLocalSaveVan(Main->Settings->LocalConnection, this);
+	try {
+		DBLocalSaveVan->Tag = DB_OPERATION_LOCAL_SAVE_VAN;
+
+		for (int i = 1; i < sgLocal->RowCount; i++) {
+			if (!StringGridRowIsChanged(sgLocal, i)) {
+				continue;
+			}
+
+			DBLocalSaveVan->Van = GetLocalVan(i);
+
+			Result = DBLocalSaveVan->Execute();
+
+			if (Result) {
+				SaveCount++;
+
+				StringGridRowSetChanged(sgLocal, i, false);
+			}
+			else {
+				break;
+			}
+		}
+
+		if (Result) {
+			LocalChanged = false;
+		}
+	}
+	__finally {
+		DBLocalSaveVan->Free();
+
+		EndOperation();
+
+		if (SaveCount > 0) {
+			WriteToLog(Format(IDS_LOG_LOCAL_SAVE_VANS_OK,
+				ARRAYOFCONST((SaveCount))));
+		}
+	}
+
+    return Result;
+}
+
+// ---------------------------------------------------------------------------
+void TMain::LocalSaveVanProps() {
+	StartOperation(oSave);
 
 	TDBLocalSaveVanProps * DBLocalSaveVanProps =
-		new TDBLocalSaveVanProps(Main->Settings->LocalConnection,
+		new TDBLocalSaveVanProps(Main->Settings->LocalConnection, this,
 		ServerVanList);
 	try {
-		Result = DBLocalSaveVanProps->Execute();
+		DBLocalSaveVanProps->Tag = DB_OPERATION_LOCAL_SAVE_VAN_PROPS;
 
-		ResultMessage = DBLocalSaveVanProps->ErrorMessage;
+		DBLocalSaveVanProps->Execute();
 	}
 	__finally {
 		DBLocalSaveVanProps->Free();
 
-		EndDBOperation();
+		EndOperation();
 	}
-
-	if (!Result) {
-		MsgBoxErr(Format(IDS_ERROR_LOCAL_SAVE_VANPROPS, ResultMessage));
-	}
-
-	return Result;
 }
 
 // ---------------------------------------------------------------------------
@@ -1266,62 +1267,6 @@ void __fastcall TMain::btnLocalSaveClick(TObject * Sender) {
 }
 
 // ---------------------------------------------------------------------------
-bool TMain::LocalSaveVans() {
-	bool Result = false;
-
-	String ResultMessage;
-
-	int SaveCount = 0;
-
-	StartDBOperation(dboSave);
-
-	TDBLocalSaveVan * DBLocalSaveVan =
-		new TDBLocalSaveVan(Main->Settings->LocalConnection);
-	try {
-		for (int i = 1; i < sgLocal->RowCount; i++) {
-			if (!StringGridRowIsChanged(sgLocal, i)) {
-				continue;
-			}
-
-			DBLocalSaveVan->Van = GetLocalVan(i);
-
-			Result = DBLocalSaveVan->Execute();
-
-			ResultMessage = DBLocalSaveVan->ErrorMessage;
-
-			if (Result) {
-				SaveCount++;
-
-				StringGridRowSetChanged(sgLocal, i, false);
-			}
-			else {
-				break;
-			}
-		}
-
-		if (Result) {
-			LocalChanged = false;
-		}
-	}
-	__finally {
-		DBLocalSaveVan->Free();
-
-		EndDBOperation();
-
-		if (SaveCount > 0) {
-			WriteToLog(Format(IDS_LOG_LOCAL_SAVE_VANS_OK,
-				ARRAYOFCONST((SaveCount))));
-		}
-	}
-
-	if (!Result) {
-		MsgBoxErr(Format(IDS_ERROR_LOCAL_SAVE_VANS, ResultMessage));
-	}
-
-	return Result;
-}
-
-// ---------------------------------------------------------------------------
 void __fastcall TMain::sgLocalDblClick(TObject *Sender) {
 #ifdef _DEBUG
 	if (sgLocal->Row > 0) {
@@ -1350,6 +1295,173 @@ void __fastcall TMain::btnReverseClick(TObject * Sender) {
 	__finally {
 		VanList->Free();
 	}
+}
+
+// ---------------------------------------------------------------------------
+void TMain::DBOperationEventStart(TObject * Sender) {
+	String Log;
+
+	switch (((TDBOperation*)Sender)->Tag) {
+	case DB_OPERATION_CHECK:
+		Log = Format(IDS_LOG_DATABASE_CONNECT,
+			ARRAYOFCONST((((TDBConnectionServer*)((TDBOperationCheck*)Sender)
+			->DBConnection)->User,
+			((TDBConnectionServer*)((TDBOperationCheck*)Sender)->DBConnection)
+			->Host, ((TDBConnectionServer*)((TDBOperationCheck*)Sender)
+			->DBConnection)->Port,
+			((TDBConnectionServer*)((TDBOperationCheck*)Sender)->DBConnection)
+			->Database)));
+		break;
+	case DB_OPERATION_ORACLE_LOAD_TRAIN:
+	case DB_OPERATION_ORACLE_LOAD_TRAIN_DATETIME:
+	case DB_OPERATION_ORACLE_LOAD_TRAINS:
+	case DB_OPERATION_LOCAL_LOAD_TRAINS:
+	case DB_OPERATION_LOCAL_LOAD_VANS:
+	case DB_OPERATION_LOCAL_SAVE_VAN:
+	case DB_OPERATION_LOCAL_SAVE_VAN_PROPS:
+		break;
+	default:
+		throw Exception("unknown dboperation start: " + Sender->ClassName());
+	}
+
+	if (!Log.IsEmpty()) {
+		WriteToLog(Log);
+	}
+}
+
+// ---------------------------------------------------------------------------
+void TMain::DBOperationEventEndOK(TObject * Sender) {
+	String Log;
+	String Message;
+
+	switch (((TDBOperation*)Sender)->Tag) {
+	case DB_OPERATION_CHECK:
+		Log = Format(IDS_LOG_DATABASE_CONNECT_OK,
+			((TDBOperationCheck*)Sender)->DBVersion);
+
+		Message = Format(IDS_MSG_DATABASE_CONNECT_OK,
+			((TDBOperationCheck*)Sender)->DBVersion);
+
+		break;
+	case DB_OPERATION_ORACLE_LOAD_TRAIN:
+		Log = Format(IDS_LOG_ORACLE_LOAD_TRAIN_OK,
+			ARRAYOFCONST((((TDBOracleLoadTrain*)Sender)->VanList->Count)));
+
+		if (((TDBOracleLoadTrain*)Sender)->VanList->Count == 0) {
+			Message = Format(IDS_MSG_RWNUM_NOT_EXISTS,
+			KeyOracleTrain->TrainNum);
+		}
+
+		break;
+	case DB_OPERATION_ORACLE_LOAD_TRAIN_DATETIME:
+		Log = Format(IDS_LOG_ORACLE_LOAD_TRAIN_DATETIME_OK,
+			ARRAYOFCONST((((TDBOracleLoadTrainDateTime*)Sender)
+			->KeyOracleTrainList->Count)));
+
+		if (((TDBOracleLoadTrainDateTime*)Sender)
+			->KeyOracleTrainList->Count != 0) {
+			KeyOracleTrain->DateTime = ((TDBOracleLoadTrainDateTime*)Sender)
+				->KeyOracleTrainList->Items[0]->DateTime;
+		}
+		else {
+			KeyOracleTrain->DateTime = DEFAULT_DATETIME;
+		}
+
+		if (KeyOracleTrain->DateTime == DEFAULT_DATETIME) {
+			Message = Format(IDS_MSG_RWNUM_NOT_EXISTS,
+			KeyOracleTrain->TrainNum);
+		}
+
+		break;
+	case DB_OPERATION_ORACLE_LOAD_TRAINS:
+		Log = Format(IDS_LOG_ORACLE_LOAD_TRAINS_OK,
+			ARRAYOFCONST((((TDBOracleLoadTrains*)Sender)->TrainList->Count)));
+
+		break;
+	case DB_OPERATION_LOCAL_LOAD_TRAINS:
+		Log = Format(IDS_LOG_LOCAL_LOAD_TRAINS_OK,
+			ARRAYOFCONST((((TDBLocalLoadTrains*)Sender)->TrainList->Count)));
+
+		break;
+	case DB_OPERATION_LOCAL_LOAD_VANS:
+		Log = Format(IDS_LOG_LOCAL_LOAD_VANS_OK,
+			ARRAYOFCONST((((TDBLocalLoadVans*)Sender)->VanList->Count)));
+
+		break;
+	case DB_OPERATION_LOCAL_SAVE_VAN:
+		break;
+	case DB_OPERATION_LOCAL_SAVE_VAN_PROPS:
+		Log = Format(IDS_LOG_LOCAL_SAVE_VAN_PROPS_OK,
+			ARRAYOFCONST((((TDBLocalSaveVanProps*)Sender)->InsertCount,
+			((TDBLocalSaveVanProps*)Sender)->UpdateCount)));
+
+		break;
+	default:
+		throw Exception("unknown dboperation end ok: " + Sender->ClassName());
+	}
+
+	if (!Log.IsEmpty()) {
+		WriteToLog(Log);
+	}
+
+	if (!Message.IsEmpty()) {
+		MsgBox(Message);
+	};
+}
+
+// ---------------------------------------------------------------------------
+void TMain::DBOperationEventEndFail(TObject * Sender) {
+	NativeUInt LogId;
+	NativeUInt MessageId;
+
+	switch (((TDBOperation*)Sender)->Tag) {
+	case DB_OPERATION_CHECK:
+		LogId = IDS_LOG_DATABASE_CONNECT_FAIL;
+		MessageId = IDS_MSG_DATABASE_CONNECT_FAIL;
+
+		break;
+	case DB_OPERATION_ORACLE_LOAD_TRAIN:
+		LogId = IDS_LOG_ORACLE_LOAD_TRAIN_FAIL;
+		MessageId = IDS_ERROR_ORACLE_LOAD_TRAINS;
+
+		break;
+	case DB_OPERATION_ORACLE_LOAD_TRAIN_DATETIME:
+		LogId = IDS_LOG_ORACLE_LOAD_TRAIN_DATETIME_FAIL;
+		MessageId = IDS_ERROR_ORACLE_LOAD_TRAIN_DATETIME;
+
+		break;
+	case DB_OPERATION_ORACLE_LOAD_TRAINS:
+		LogId = IDS_LOG_ORACLE_LOAD_TRAINS_FAIL;
+		MessageId = IDS_ERROR_ORACLE_LOAD_TRAINS;
+
+		break;
+	case DB_OPERATION_LOCAL_LOAD_TRAINS:
+		LogId = IDS_LOG_LOCAL_LOAD_TRAINS_FAIL;
+		MessageId = IDS_ERROR_LOCAL_LOAD_TRAINS;
+
+		break;
+	case DB_OPERATION_LOCAL_LOAD_VANS:
+		LogId = IDS_LOG_LOCAL_LOAD_VANS_FAIL;
+		MessageId = IDS_ERROR_LOCAL_LOAD_VANS;
+
+		break;
+	case DB_OPERATION_LOCAL_SAVE_VAN:
+		LogId = IDS_LOG_LOCAL_SAVE_VANS_FAIL;
+		MessageId = IDS_ERROR_LOCAL_SAVE_VANS;
+
+		break;
+	case DB_OPERATION_LOCAL_SAVE_VAN_PROPS:
+		LogId = IDS_LOG_LOCAL_SAVE_VAN_PROPS_FAIL;
+		MessageId = IDS_ERROR_LOCAL_SAVE_VAN_PROPS;
+
+		break;
+	default:
+		throw Exception("unknown dboperation end fail: " + Sender->ClassName());
+	}
+
+	WriteToLog(Format(LogId, ((TDBOperation*)Sender)->ErrorMessage));
+
+	MsgBoxErr(Format(MessageId, ((TDBOperation*)Sender)->ErrorMessage));
 }
 
 // ---------------------------------------------------------------------------

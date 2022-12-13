@@ -18,13 +18,15 @@ IDS_ERROR_SAVE_SETTINGS,                "Не удалось сохранить настройки."
 IDS_ERROR_NEED_RWNUM,                   "Не указан номер поезда."
 IDS_ERROR_PASS_WRONG,                   "Неправильный пароль.\n\nПопробуйте ещё раз."
 IDS_ERROR_CHECK_PASS,                   "Введённые пароли не совпадают. Повторите ввод нового пароля и его подверждения.";
-IDS_ERROR_ORACLE_TRAIN_LOAD,            "Во время загрузки состава произошла ошибка:\n\n%s."
-IDS_ERROR_ORACLE_TRAINS_LOAD,           "Во время загрузки списка составов произошла ошибка:\n\n%s."
-IDS_ERROR_ORACLE_TRAIN_DATETIME_LOAD,   "Во время поиска даты отгрузки по номеру состава произошла ошибка:\n\n%s."
+
+IDS_ERROR_ORACLE_LOAD_TRAIN,            "Во время загрузки состава произошла ошибка:\n\n%s."
+IDS_ERROR_ORACLE_LOAD_TRAINS,           "Во время загрузки списка составов произошла ошибка:\n\n%s."
+IDS_ERROR_ORACLE_LOAD_TRAIN_DATETIME,   "Во время поиска даты отгрузки по номеру состава произошла ошибка:\n\n%s."
 IDS_ERROR_LOCAL_LOAD_VANS,              "Во время загрузки вагонов произошла ошибка:\n\n%s."
-IDS_ERROR_LOCAL_SAVE_VANPROPS,          "Во время сохранения характеристик вагонов произошла ошибка:\n\n%s."
 IDS_ERROR_LOCAL_SAVE_VANS,              "Во время сохранения вагонов произошла ошибка:\n\n%s."
-IDS_ERROR_LOCAL_TRAINS_LOAD,            "Во время загрузки состава произошла ошибка:\n\n%s."
+IDS_ERROR_LOCAL_SAVE_VAN_PROPS,         "Во время сохранения характеристик вагонов произошла ошибка:\n\n%s."
+IDS_ERROR_LOCAL_LOAD_TRAINS,            "Во время загрузки состава произошла ошибка:\n\n%s."
+
 IDS_ERROR_AVITEK_NEED_SAVE,             "В результах взвешивания ПО «Авитек» имеются не сохранённые данные. Необходимо сохранить записи, либо отменить изменения.\n\nПереключиться на весовую программу?"
 
 IDS_MSG_DATABASE_CONNECT_OK,            "Соединение с базой данных выполнено.\n\nВерсия сервера:\n%s."
@@ -36,8 +38,6 @@ IDS_STATUS_TRAIN_LIST_COUNT,            "Количество: %s"
 IDS_STATUS_TRAIN_LOAD,                  "Загрузка..."
 IDS_STATUS_TRAIN_SAVE,                  "Сохранение..."
 
-IDS_CONNECTION_MYSQL,                   "DRIVER={%s};SERVER=%s;PORT=%s;DATABASE=%s;USER=%s;PASSWORD=%s;OPTION=3;"
-IDS_CONNECTION_ORACLE,                  "DRIVER={%s};DBQ=%s:%s/%s;UID=%s;PWD=%s;"
 IDS_CONNECTION_MYSQL_DRIVER_0,          "MySQL ODBC 3.51 Driver"
 IDS_CONNECTION_MYSQL_DRIVER_1,          "MySQL ODBC 8.0 ANSI Driver"
 IDS_CONNECTION_ORACLE_DRIVER_0,         "Oracle in instantclient_12_1"
@@ -59,6 +59,7 @@ IDS_LOG_ERROR_TERMINATED_IN_WORK_PROGRESS,      "app terminated in work progress
 IDS_LOG_ERROR_AVITEK_NEED_SAVE,                 "error: avitek prot_form opened, need save"
 IDS_LOG_ERROR_AVITEK_SAVE_BTN_NOT_FOUND,        "error: avitek prot_form opened, but save_btn not found"
 IDS_LOG_ERROR_AVITEK_UPD_BTN_NOT_FOUND,         "error: avitek prot_form opened, but update_btn not found"
+
 IDS_LOG_DATABASE_CONNECT,                       "try database connect: %s@%s:%s/%s"
 IDS_LOG_DATABASE_CONNECT_OK,                    "database connected, version: %s"
 IDS_LOG_DATABASE_CONNECT_FAIL,                  "database connect fail: %s"
@@ -72,14 +73,15 @@ IDS_LOG_ORACLE_LOAD_TRAIN_DATETIME_FAIL,        "server load train datetime fail
 
 IDS_LOG_LOCAL_LOAD_VANS_OK,                     "local load vans, count=%d"
 IDS_LOG_LOCAL_LOAD_VANS_FAIL,                   "local load vans fail: %s"
-IDS_LOG_LOCAL_SAVE_VANPROPS_OK,                 "local save vanprops, count=i:%d|u:%d"
-IDS_LOG_LOCAL_SAVE_VANPROPS_FAIL,               "local save vanprops fail: %s"
 IDS_LOG_LOCAL_SAVE_VANS_OK,                     "local save vans, count=%d"
 IDS_LOG_LOCAL_SAVE_VANS_FAIL,                   "local save vans fail: %s"
+IDS_LOG_LOCAL_SAVE_VAN_PROPS_OK,                "local save vanprops, count=i:%d|u:%d"
+IDS_LOG_LOCAL_SAVE_VAN_PROPS_FAIL,              "local save vanprops fail: %s"
 IDS_LOG_LOCAL_LOAD_TRAINS_OK,                   "local load trains, count=%d"
 IDS_LOG_LOCAL_LOAD_TRAINS_FAIL,                 "local load trains fail: %s"
 
 IDS_LOG_COPY_DATA,                              "copy data, count=%d"
 IDS_LOG_COPY_DATA_NOT_FOUND,                    "copy data: not found"
 IDS_LOG_COPY_DATA_OVERWRITE_CANCEL,             "copy data: overwrite cancel"
+
 END

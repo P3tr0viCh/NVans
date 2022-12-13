@@ -9,6 +9,8 @@
 #include <Data.DB.hpp>
 #include <Data.Win.ADODB.hpp>
 
+#include "NVansDebug.h"
+
 // ---------------------------------------------------------------------------
 int DTToWTime(TDateTime ADateTime);
 String DTToS(TDateTime ADateTime, bool WithSecs = true);

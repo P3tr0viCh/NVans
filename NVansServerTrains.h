@@ -14,8 +14,8 @@
 
 #include "NVansColumns.h"
 
-#include "NVansTOracleTrain.h"
-#include "NVansTFilterOracleTrains.h"
+#include "NVansOracleTrain.h"
+#include "NVansFilterOracleTrains.h"
 
 // ---------------------------------------------------------------------------
 class TfrmServerTrains : public TForm {
@@ -67,7 +67,8 @@ private:
 
 	void UpdateFilter();
 
-	bool LoadTrains();
+	void LoadTrains();
+
 	void UpdateTrains();
 
 public:

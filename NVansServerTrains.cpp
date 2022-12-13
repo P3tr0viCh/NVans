@@ -13,14 +13,15 @@
 #include <UtilsFileIni.h>
 #include <UtilsStringGrid.h>
 
-#include "NVansDebug.h"
-
 #include "NVansAdd.h"
+
 #include "NVansColumns.h"
 #include "NVansStrings.h"
 #include "NVansStringsGridHeader.h"
 
-#include "NVansTDBOracleLoadTrains.h"
+#include "NVansDBOperationTags.h"
+
+#include "NVansDBOracleLoadTrains.h"
 
 #include "NVansMain.h"
 
@@ -166,41 +167,32 @@ void TfrmServerTrains::SetTrainList(TOracleTrainList * Value) {
 }
 
 // ---------------------------------------------------------------------------
-bool TfrmServerTrains::LoadTrains() {
-	bool Result;
-
-	String ResultMessage;
-
+void TfrmServerTrains::LoadTrains() {
 	ShowWaitCursor();
 
-	Main->StartDBOperation(Main->dboLoad);
+	Main->StartOperation(Main->oLoad);
 
 	TrainList = NULL;
 
 	ProcMess();
 
 	TDBOracleLoadTrains * DBOracleLoadTrains =
-		new TDBOracleLoadTrains(Main->Settings->ServerOracleConnection, Filter);
+		new TDBOracleLoadTrains(Main->Settings->ServerOracleConnection, Main,
+		Filter);
 	try {
-		Result = DBOracleLoadTrains->Execute();
+		DBOracleLoadTrains->Tag = DB_OPERATION_ORACLE_LOAD_TRAINS;
 
-		ResultMessage = DBOracleLoadTrains->ErrorMessage;
+		DBOracleLoadTrains->Execute();
 
 		TrainList = DBOracleLoadTrains->TrainList;
 	}
 	__finally {
 		DBOracleLoadTrains->Free();
 
-		Main->EndDBOperation();
+		Main->EndOperation();
 
 		RestoreCursor();
 	}
-
-	if (!Result) {
-		MsgBoxErr(Format(IDS_ERROR_ORACLE_TRAINS_LOAD, ResultMessage));
-	}
-
-	return Result;
 }
 
 // ---------------------------------------------------------------------------

@@ -16,17 +16,19 @@
 
 #include <IntegerPair.h>
 
+#include <DBOperationEvent.h>
+
 #include "NVansColumns.h"
 
-#include "NVansTSettings.h"
+#include "NVansSettings.h"
 
-#include "NVansTLocalVan.h"
-#include "NVansTOracleVan.h"
+#include "NVansLocalVan.h"
+#include "NVansOracleVan.h"
 
-#include "NVansTKeyOracleTrain.h"
+#include "NVansKeyOracleTrain.h"
 
 // ---------------------------------------------------------------------------
-class TMain : public TForm {
+class TMain : public TForm, public IDBOperationEvent {
 __published:
 	TStatusBar *StatusBar;
 	TStringGrid *sgServer;
@@ -135,11 +137,12 @@ private:
 	void SetServerVanList(TOracleVanList * Value);
 	void SetLocalVanList(TLocalVanList * Value);
 
-	bool ServerLoadTrain(bool WithJoin);
-	bool ServerLoadTrainDateTime(TKeyOracleTrain * KeyOracleTrain);
-	bool LocalLoadVans();
-	bool LocalSaveVanProps();
+	void ServerLoadTrain(bool WithJoin);
+	void ServerLoadTrainDateTime(TKeyOracleTrain * KeyOracleTrain);
+
+	void LocalLoadVans();
 	bool LocalSaveVans();
+	void LocalSaveVanProps();
 
 	bool CheckField(int Column1, int Column2, int Index1, int Index2);
 	bool DataExists(TIntegerPairList * Result);
@@ -159,19 +162,23 @@ private:
 
 	void MenuItemAction(TMenuItemAction Action);
 
+	void DBOperationEventStart(TObject * Sender);
+	void DBOperationEventEndOK(TObject * Sender);
+	void DBOperationEventEndFail(TObject * Sender);
+
 public:
 	__fastcall TMain(TComponent* Owner);
 
 	int DefaultRowHeight;
 
-	enum TDBOperation {
-		dboLoad, dboSave
+	enum TOperation {
+		oLoad, oSave
 	};
 
 	// -----------------------------------------------------------------------
-	void StartDBOperation(TDBOperation DBOperation);
+	void StartOperation(TOperation Operation);
 
-	void EndDBOperation();
+	void EndOperation();
 
 	void KeyOracleTrainChanged();
 

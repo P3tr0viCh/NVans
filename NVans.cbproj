@@ -66,8 +66,8 @@
         <SanitizedProjectName>NVans</SanitizedProjectName>
         <VerInfo_Locale>1049</VerInfo_Locale>
         <VerInfo_Keys>CompanyName=П3тр0виЧъ;FileDescription=Натурный лист;FileVersion=0.0.0.0;InternalName=NVans;LegalCopyright=© П3тр0виЧъ;LegalTrademarks=П3тр0виЧъ™;OriginalFilename=NVans.exe;ProgramID=ru.p3tr0vich.$(MSBuildProjectName);ProductName=Натурный лист;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
-        <IncludePath>..\!UtilsAndComps\;..\CryptoPP\cryptopp700;$(IncludePath)</IncludePath>
-        <ILINK_LibraryPath>..\!UtilsAndComps\;..\CryptoPP;$(ILINK_LibraryPath)</ILINK_LibraryPath>
+        <IncludePath>db_ops\;models\;..\!UtilsAndComps\;..\CryptoPP\cryptopp700;$(IncludePath)</IncludePath>
+        <ILINK_LibraryPath>db_ops\;models\;..\!UtilsAndComps\;..\CryptoPP;$(ILINK_LibraryPath)</ILINK_LibraryPath>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <PackageImports>adortl;appanalytics;bcbie;bcbsmp;bindcomp;bindcompdbx;bindcompfmx;bindcompvcl;bindengine;CustomIPTransport;DataSnapClient;DataSnapCommon;DataSnapConnectors;DatasnapConnectorsFreePascal;DataSnapIndy10ServerTransport;DataSnapNativeClient;DataSnapProviderClient;DataSnapServer;DataSnapServerMidas;dbexpress;dbrtl;dbxcds;DbxClientDriver;DbxCommonDriver;DBXDb2Driver;DBXFirebirdDriver;DBXInformixDriver;DBXInterBaseDriver;DBXMSSQLDriver;DBXMySQLDriver;DBXOdbcDriver;DBXOracleDriver;DBXSqliteDriver;DBXSybaseASADriver;DBXSybaseASEDriver;dsnap;dsnapcon;dsnapxml;emsedge;emshosting;FireDACADSDriver;FireDACASADriver;FireDACCommonODBC;FireDACDb2Driver;FireDACDBXDriver;FireDACDSDriver;FireDACInfxDriver;FireDACMongoDBDriver;FireDACMSAccDriver;FireDACMSSQLDriver;FireDACMySQLDriver;FireDACODBCDriver;FireDACOracleDriver;FireDACPgDriver;FireDACTDataDriver;fmx;fmxase;fmxdae;fmxFireDAC;fmxobj;FMXTee;FmxTeeUI;ibmonitor;ibxbindings;ibxpress;IndyCore;IndyIPClient;IndyIPCommon;IndyIPServer;IndyProtocols;IndySystem;inetdb;inetdbxpress;Intraweb;rtl;svn;Tee;TeeDB;TeeUI;tethering;vcl;vclactnband;vcldb;vcldsnap;vclFireDAC;vclib;vclie;vclimg;VCLRESTComponents;VclSmp;vcltouch;vclwinx;vclx;xmlrtl;$(PackageImports)</PackageImports>
@@ -110,8 +110,8 @@
         <LinkPackageStatics>rtl.lib;vcl.lib;dbrtl.lib;adortl.lib</LinkPackageStatics>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Icon_MainIcon>NVans_Icon.ico</Icon_MainIcon>
-        <VerInfo_MinorVer>17</VerInfo_MinorVer>
-        <VerInfo_Keys>CompanyName=П3тр0виЧъ;FileDescription=Натурный лист;FileVersion=0.17.0.0;InternalName=NVans;LegalCopyright=© П3тр0виЧъ;LegalTrademarks=П3тр0виЧъ™;OriginalFilename=NVans.exe;ProgramID=ru.p3tr0vich.$(MSBuildProjectName);ProductName=Натурный лист;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_MinorVer>18</VerInfo_MinorVer>
+        <VerInfo_Keys>CompanyName=П3тр0виЧъ;FileDescription=Натурный лист;FileVersion=0.18.0.0;InternalName=NVans;LegalCopyright=© П3тр0виЧъ;LegalTrademarks=П3тр0виЧъ™;OriginalFilename=NVans.exe;ProgramID=ru.p3tr0vich.$(MSBuildProjectName);ProductName=Натурный лист;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Debug>true</VerInfo_Debug>
     </PropertyGroup>
@@ -125,8 +125,8 @@
         <LinkPackageStatics>rtl.lib;vcl.lib;dbrtl.lib;adortl.lib</LinkPackageStatics>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Icon_MainIcon>NVans_Icon.ico</Icon_MainIcon>
-        <VerInfo_MinorVer>17</VerInfo_MinorVer>
-        <VerInfo_Keys>CompanyName=П3тр0виЧъ;FileDescription=Натурный лист;FileVersion=0.17.0.0;InternalName=NVans;LegalCopyright=© П3тр0виЧъ;LegalTrademarks=П3тр0виЧъ™;OriginalFilename=NVans.exe;ProgramID=ru.p3tr0vich.$(MSBuildProjectName);ProductName=Натурный лист;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_MinorVer>18</VerInfo_MinorVer>
+        <VerInfo_Keys>CompanyName=П3тр0виЧъ;FileDescription=Натурный лист;FileVersion=0.18.0.0;InternalName=NVans;LegalCopyright=© П3тр0виЧъ;LegalTrademarks=П3тр0виЧъ™;OriginalFilename=NVans.exe;ProgramID=ru.p3tr0vich.$(MSBuildProjectName);ProductName=Натурный лист;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
     </PropertyGroup>
     <ItemGroup>
@@ -141,22 +141,41 @@
             <Form>AboutFrmStr.res</Form>
             <BuildOrder>57</BuildOrder>
         </ResourceCompile>
-        <CppCompile Include="..\!UtilsAndComps\ConnectionInfo.cpp">
-            <DependentOn>..\!UtilsAndComps\ConnectionInfo.h</DependentOn>
-            <BuildOrder>54</BuildOrder>
+        <CppCompile Include="..\!UtilsAndComps\DBConnection.cpp">
+            <DependentOn>..\!UtilsAndComps\DBConnection.h</DependentOn>
+            <BuildOrder>66</BuildOrder>
         </CppCompile>
-        <CppCompile Include="..\!UtilsAndComps\ConnectionMySQL.cpp">
-            <DependentOn>..\!UtilsAndComps\ConnectionMySQL.h</DependentOn>
-            <BuildOrder>55</BuildOrder>
+        <CppCompile Include="..\!UtilsAndComps\DBConnectionMySQL.cpp">
+            <DependentOn>..\!UtilsAndComps\DBConnectionMySQL.h</DependentOn>
+            <BuildOrder>64</BuildOrder>
         </CppCompile>
-        <CppCompile Include="..\!UtilsAndComps\ConnectionOracle.cpp">
-            <DependentOn>..\!UtilsAndComps\ConnectionOracle.h</DependentOn>
-            <BuildOrder>56</BuildOrder>
+        <CppCompile Include="..\!UtilsAndComps\DBConnectionOracle.cpp">
+            <DependentOn>..\!UtilsAndComps\DBConnectionOracle.h</DependentOn>
+            <BuildOrder>65</BuildOrder>
         </CppCompile>
-        <CppCompile Include="..\!UtilsAndComps\ConnectionServer.cpp">
-            <DependentOn>..\!UtilsAndComps\ConnectionServer.h</DependentOn>
-            <BuildOrder>57</BuildOrder>
+        <CppCompile Include="..\!UtilsAndComps\DBConnectionServer.cpp">
+            <DependentOn>..\!UtilsAndComps\DBConnectionServer.h</DependentOn>
+            <BuildOrder>67</BuildOrder>
         </CppCompile>
+        <CppCompile Include="..\!UtilsAndComps\DBOperation.cpp">
+            <DependentOn>..\!UtilsAndComps\DBOperation.h</DependentOn>
+            <BuildOrder>68</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\!UtilsAndComps\DBOperationCheck.cpp">
+            <DependentOn>..\!UtilsAndComps\DBOperationCheck.h</DependentOn>
+            <BuildOrder>69</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\!UtilsAndComps\DBOperationCheckMySQL.cpp">
+            <DependentOn>..\!UtilsAndComps\DBOperationCheckMySQL.h</DependentOn>
+            <BuildOrder>70</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="..\!UtilsAndComps\DBOperationCheckOracle.cpp">
+            <DependentOn>..\!UtilsAndComps\DBOperationCheckOracle.h</DependentOn>
+            <BuildOrder>71</BuildOrder>
+        </CppCompile>
+        <None Include="..\!UtilsAndComps\DBOperationEvent.h">
+            <BuildOrder>72</BuildOrder>
+        </None>
         <CppCompile Include="..\!UtilsAndComps\GradientPanel.cpp">
             <DependentOn>..\!UtilsAndComps\GradientPanel.h</DependentOn>
             <BuildOrder>54</BuildOrder>
@@ -222,6 +241,69 @@
         <CppCompile Include="..\!UtilsAndComps\UtilsStringGrid.cpp">
             <DependentOn>..\!UtilsAndComps\UtilsStringGrid.h</DependentOn>
             <BuildOrder>22</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="db_ops\NVansDBLocalLoadTrains.cpp">
+            <DependentOn>db_ops\NVansDBLocalLoadTrains.h</DependentOn>
+            <BuildOrder>68</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="db_ops\NVansDBLocalLoadVans.cpp">
+            <DependentOn>db_ops\NVansDBLocalLoadVans.h</DependentOn>
+            <BuildOrder>69</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="db_ops\NVansDBLocalSaveVan.cpp">
+            <DependentOn>db_ops\NVansDBLocalSaveVan.h</DependentOn>
+            <BuildOrder>71</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="db_ops\NVansDBLocalSaveVanProps.cpp">
+            <DependentOn>db_ops\NVansDBLocalSaveVanProps.h</DependentOn>
+            <BuildOrder>72</BuildOrder>
+        </CppCompile>
+        <None Include="db_ops\NVansDBOperationTags.h">
+            <BuildOrder>57</BuildOrder>
+        </None>
+        <CppCompile Include="db_ops\NVansDBOracleLoadTrain.cpp">
+            <DependentOn>db_ops\NVansDBOracleLoadTrain.h</DependentOn>
+            <BuildOrder>58</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="db_ops\NVansDBOracleLoadTrainDateTime.cpp">
+            <DependentOn>db_ops\NVansDBOracleLoadTrainDateTime.h</DependentOn>
+            <BuildOrder>59</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="db_ops\NVansDBOracleLoadTrains.cpp">
+            <DependentOn>db_ops\NVansDBOracleLoadTrains.h</DependentOn>
+            <BuildOrder>60</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="models\NVansFilterLocalTrains.cpp">
+            <DependentOn>models\NVansFilterLocalTrains.h</DependentOn>
+            <BuildOrder>61</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="models\NVansFilterOracleTrains.cpp">
+            <DependentOn>models\NVansFilterOracleTrains.h</DependentOn>
+            <BuildOrder>62</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="models\NVansKeyOracleTrain.cpp">
+            <DependentOn>models\NVansKeyOracleTrain.h</DependentOn>
+            <BuildOrder>63</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="models\NVansLocalTrain.cpp">
+            <DependentOn>models\NVansLocalTrain.h</DependentOn>
+            <BuildOrder>64</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="models\NVansLocalVan.cpp">
+            <DependentOn>models\NVansLocalVan.h</DependentOn>
+            <BuildOrder>65</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="models\NVansOracleTrain.cpp">
+            <DependentOn>models\NVansOracleTrain.h</DependentOn>
+            <BuildOrder>66</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="models\NVansOracleVan.cpp">
+            <DependentOn>models\NVansOracleVan.h</DependentOn>
+            <BuildOrder>67</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="models\NVansSettings.cpp">
+            <DependentOn>models\NVansSettings.h</DependentOn>
+            <BuildOrder>68</BuildOrder>
         </CppCompile>
         <CppCompile Include="NVans.cpp">
             <BuildOrder>0</BuildOrder>
@@ -298,86 +380,40 @@
             <Form>NVansStringsQuery.res</Form>
             <BuildOrder>34</BuildOrder>
         </ResourceCompile>
-        <CppCompile Include="NVansTDatabaseOperation.cpp">
-            <DependentOn>NVansTDatabaseOperation.h</DependentOn>
-            <BuildOrder>30</BuildOrder>
-        </CppCompile>
-        <CppCompile Include="NVansTDBCheck.cpp">
-            <DependentOn>NVansTDBCheck.h</DependentOn>
-            <BuildOrder>31</BuildOrder>
-        </CppCompile>
-        <CppCompile Include="NVansTDBCheckMySQL.cpp">
-            <DependentOn>NVansTDBCheckMySQL.h</DependentOn>
-            <BuildOrder>41</BuildOrder>
-        </CppCompile>
-        <CppCompile Include="NVansTDBCheckOracle.cpp">
-            <DependentOn>NVansTDBCheckOracle.h</DependentOn>
-            <BuildOrder>32</BuildOrder>
-        </CppCompile>
-        <CppCompile Include="NVansTDBLocalLoadTrains.cpp">
-            <DependentOn>NVansTDBLocalLoadTrains.h</DependentOn>
-            <BuildOrder>51</BuildOrder>
-        </CppCompile>
-        <CppCompile Include="NVansTDBLocalLoadVans.cpp">
-            <DependentOn>NVansTDBLocalLoadVans.h</DependentOn>
-            <BuildOrder>42</BuildOrder>
-        </CppCompile>
-        <CppCompile Include="NVansTDBLocalSaveVan.cpp">
-            <DependentOn>NVansTDBLocalSaveVan.h</DependentOn>
-            <BuildOrder>45</BuildOrder>
-        </CppCompile>
-        <CppCompile Include="NVansTDBLocalSaveVanProps.cpp">
-            <DependentOn>NVansTDBLocalSaveVanProps.h</DependentOn>
-            <BuildOrder>43</BuildOrder>
-        </CppCompile>
-        <CppCompile Include="NVansTDBOracleLoadTrain.cpp">
-            <DependentOn>NVansTDBOracleLoadTrain.h</DependentOn>
-            <BuildOrder>35</BuildOrder>
-        </CppCompile>
-        <CppCompile Include="NVansTDBOracleLoadTrainDateTime.cpp">
-            <DependentOn>NVansTDBOracleLoadTrainDateTime.h</DependentOn>
-            <BuildOrder>60</BuildOrder>
-        </CppCompile>
-        <CppCompile Include="NVansTDBOracleLoadTrains.cpp">
-            <DependentOn>NVansTDBOracleLoadTrains.h</DependentOn>
-            <BuildOrder>39</BuildOrder>
-        </CppCompile>
-        <CppCompile Include="NVansTFilterLocalTrains.cpp">
-            <DependentOn>NVansTFilterLocalTrains.h</DependentOn>
-            <BuildOrder>52</BuildOrder>
-        </CppCompile>
-        <CppCompile Include="NVansTFilterOracleTrains.cpp">
-            <DependentOn>NVansTFilterOracleTrains.h</DependentOn>
-            <BuildOrder>47</BuildOrder>
-        </CppCompile>
-        <CppCompile Include="NVansTKeyOracleTrain.cpp">
-            <DependentOn>NVansTKeyOracleTrain.h</DependentOn>
-            <BuildOrder>59</BuildOrder>
-        </CppCompile>
-        <CppCompile Include="NVansTLocalTrain.cpp">
-            <DependentOn>NVansTLocalTrain.h</DependentOn>
-            <BuildOrder>50</BuildOrder>
-        </CppCompile>
-        <CppCompile Include="NVansTLocalVan.cpp">
-            <DependentOn>NVansTLocalVan.h</DependentOn>
-            <BuildOrder>40</BuildOrder>
-        </CppCompile>
-        <CppCompile Include="NVansTOracleTrain.cpp">
-            <DependentOn>NVansTOracleTrain.h</DependentOn>
-            <BuildOrder>38</BuildOrder>
-        </CppCompile>
-        <CppCompile Include="NVansTOracleVan.cpp">
-            <DependentOn>NVansTOracleVan.h</DependentOn>
-            <BuildOrder>46</BuildOrder>
-        </CppCompile>
-        <CppCompile Include="NVansTSettings.cpp">
-            <DependentOn>NVansTSettings.h</DependentOn>
-            <BuildOrder>17</BuildOrder>
-        </CppCompile>
-        <RcItem Include="sql\mysql_version.sql">
+        <RcItem Include="sql\local_mtrains_select.sql">
             <ContainerId>ResourceItem</ContainerId>
             <ResourceType>RCDATA</ResourceType>
-            <ResourceId>MYSQL_VERSION</ResourceId>
+            <ResourceId>LOCAL_MTRAINS_SELECT</ResourceId>
+        </RcItem>
+        <RcItem Include="sql\local_mvans_select_by_dt.sql">
+            <ContainerId>ResourceItem</ContainerId>
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>LOCAL_MVANS_SELECT_BY_DT</ResourceId>
+        </RcItem>
+        <RcItem Include="sql\local_mvans_select_by_tn.sql">
+            <ContainerId>ResourceItem</ContainerId>
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>LOCAL_MVANS_SELECT_BY_TN</ResourceId>
+        </RcItem>
+        <RcItem Include="sql\local_mvans_update.sql">
+            <ContainerId>ResourceItem</ContainerId>
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>LOCAL_MVANS_UPDATE</ResourceId>
+        </RcItem>
+        <RcItem Include="sql\local_pvans_insert.sql">
+            <ContainerId>ResourceItem</ContainerId>
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>LOCAL_PVANS_INSERT</ResourceId>
+        </RcItem>
+        <RcItem Include="sql\local_pvans_select.sql">
+            <ContainerId>ResourceItem</ContainerId>
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>LOCAL_PVANS_SELECT</ResourceId>
+        </RcItem>
+        <RcItem Include="sql\local_pvans_update.sql">
+            <ContainerId>ResourceItem</ContainerId>
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>LOCAL_PVANS_UPDATE</ResourceId>
         </RcItem>
         <RcItem Include="sql\oracle_nvans_train.sql">
             <ContainerId>ResourceItem</ContainerId>
@@ -404,15 +440,10 @@
             <ResourceType>RCDATA</ResourceType>
             <ResourceId>ORACLE_NVANS_TRAIN_JOIN</ResourceId>
         </RcItem>
-        <RcItem Include="sql\oracle_version.sql">
-            <ContainerId>ResourceItem</ContainerId>
-            <ResourceType>RCDATA</ResourceType>
-            <ResourceId>ORACLE_VERSION</ResourceId>
-        </RcItem>
+        <FormResources Include="NVansServerTrains.dfm"/>
         <FormResources Include="NVansOptions.dfm"/>
         <FormResources Include="NVansMain.dfm"/>
         <FormResources Include="NVansLogin.dfm"/>
-        <FormResources Include="NVansServerTrains.dfm"/>
         <FormResources Include="NVansLocalTrains.dfm"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
@@ -448,6 +479,12 @@
                 </Excluded_Packages>
             </CPlusPlusBuilder.Personality>
             <Deployment Version="3">
+                <DeployFile LocalName="sql\local_mvans_select_by_dt.sql" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="..\..\..\Projects.exe\NVans\Win32\Debug\NVans.tds" Configuration="Debug" Class="DebugSymbols">
                     <Platform Name="Win32">
                         <RemoteName>NVans.tds</RemoteName>
@@ -508,6 +545,12 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="sql\local_mvans_select_by_tn.sql" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile Condition="'$(DynamicRTL)'=='true' And '$(Multithreaded)'=='true'" LocalName="$(BDS)\bin\cc32250mt.dll" Class="DependencyModule">
                     <Platform Name="Win32">
                         <Overwrite>true</Overwrite>
@@ -518,7 +561,31 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="sql\oracle_version.sql" Configuration="Debug" Class="ProjectFile">
+                <DeployFile LocalName="sql\local_pvans_select.sql" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="sql\local_pvans_insert.sql" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="sql\local_mvans_update.sql" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="sql\local_pvans_update.sql" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="sql\local_mtrains_select.sql" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
@@ -526,12 +593,6 @@
                 </DeployFile>
                 <DeployFile Condition="'$(DynamicRTL)'=='true' And '$(Multithreaded)'!='true'" LocalName="$(BDS)\bin\cc32250.dll" Class="DependencyModule">
                     <Platform Name="Win32">
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="sql\mysql_version.sql" Configuration="Debug" Class="ProjectFile">
-                    <Platform Name="Win32">
-                        <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

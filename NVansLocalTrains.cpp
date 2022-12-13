@@ -13,14 +13,15 @@
 #include <UtilsFileIni.h>
 #include <UtilsStringGrid.h>
 
-#include "NVansDebug.h"
-
 #include "NVansAdd.h"
+
 #include "NVansColumns.h"
 #include "NVansStrings.h"
 #include "NVansStringsGridHeader.h"
 
-#include "NVansTDBLocalLoadTrains.h"
+#include "NVansDBOperationTags.h"
+
+#include "NVansDBLocalLoadTrains.h"
 
 #include "NVansMain.h"
 
@@ -153,41 +154,31 @@ void TfrmLocalTrains::SetTrainList(TLocalTrainList * Value) {
 }
 
 // ---------------------------------------------------------------------------
-bool TfrmLocalTrains::LoadTrains() {
-	bool Result;
-
-	String ResultMessage;
-
+void TfrmLocalTrains::LoadTrains() {
 	ShowWaitCursor();
 
-	Main->StartDBOperation(Main->dboLoad);
+	Main->StartOperation(Main->oLoad);
 
 	TrainList = NULL;
 
 	ProcMess();
 
 	TDBLocalLoadTrains * DBLocalLoadTrains =
-		new TDBLocalLoadTrains(Main->Settings->LocalConnection, Filter);
+		new TDBLocalLoadTrains(Main->Settings->LocalConnection, Main, Filter);
 	try {
-		Result = DBLocalLoadTrains->Execute();
+		DBLocalLoadTrains->Tag = DB_OPERATION_LOCAL_LOAD_TRAINS;
 
-		ResultMessage = DBLocalLoadTrains->ErrorMessage;
+		DBLocalLoadTrains->Execute();
 
 		TrainList = DBLocalLoadTrains->TrainList;
 	}
 	__finally {
 		DBLocalLoadTrains->Free();
 
-		Main->EndDBOperation();
+		Main->EndOperation();
 
 		RestoreCursor();
 	}
-
-	if (!Result) {
-		MsgBoxErr(Format(IDS_ERROR_LOCAL_TRAINS_LOAD, ResultMessage));
-	}
-
-	return Result;
 }
 
 // ---------------------------------------------------------------------------

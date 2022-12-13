@@ -2,24 +2,6 @@
 
 STRINGTABLE
 BEGIN
-IDS_SQL_SELECT,                 "SELECT"
-IDS_SQL_INSERT,                 "INSERT INTO"
-IDS_SQL_UPDATE,                 "UPDATE"
-IDS_SQL_SET,                    "SET"
-IDS_SQL_FROM,                   "FROM"
-IDS_SQL_WHERE,                  "WHERE"
-IDS_SQL_GROUP,                  "GROUP BY"
-IDS_SQL_ORDER,                  "ORDER BY"
-IDS_SQL_JOIN,                   "LEFT JOIN"
-IDS_SQL_VALUES,                 "VALUES"
-
-IDS_SQL_MYSQL_VERSION,          "MYSQL_VERSION"
-IDS_SQL_ORACLE_VERSION,         "ORACLE_VERSION"
-
-IDS_SQL_LOCAL_MVANS_TABLE,      "mvans"
-IDS_SQL_LOCAL_MTRAINS_TABLE,    "mtrains"
-IDS_SQL_LOCAL_PVANS_TABLE,      "pvans"
-
 IDS_SQL_ORACLE_NVANS_TRAIN,             "ORACLE_NVANS_TRAIN"
 IDS_SQL_ORACLE_NVANS_TRAIN_JOIN,        "ORACLE_NVANS_TRAIN_JOIN"
 
@@ -28,21 +10,15 @@ IDS_SQL_ORACLE_NVANS_TRAINS_BY_VN,      "ORACLE_NVANS_TRAINS_BY_VN"
 
 IDS_SQL_ORACLE_NVANS_TRAIN_DATETIME,    "ORACLE_NVANS_TRAIN_DATETIME"
 
-IDS_SQL_LOCAL_MVANS_SELECT,             "id, scales, num, bdatetime, invnum, carrying, brutto, tare, tare_t, tareindex, iscales_tare, idatetime_tare, netto, cargotype, invoice_num, invoice_supplier, invoice_consign, depart_station, purpose_station, invoice_netto, invoice_tare, disbalong, disbcross, tol_disbalong, tol_disbcross, status"
-IDS_SQL_LOCAL_MVANS_WHERE_DT            "bdatetime>=:DATE_FROM AND bdatetime<:DATE_TO"
-IDS_SQL_LOCAL_MVANS_WHERE_TRAIN_NUM     "trnum=:TRAIN_NUM"
-IDS_SQL_LOCAL_MVANS_ORDER_DT,           "bdatetime DESC"
-IDS_SQL_LOCAL_MVANS_ORDER_NUM,          "num"
-IDS_SQL_LOCAL_MVANS_UPDATE,             "invnum=:INVNUM, carrying=:CARRYING, loadnorm=:LOADNORM, tare=:TARE, tare_t=:TARE_T, iscales_tare=:ISCALES_TARE, idatetime_tare=:IDATETIME_TARE, netto=:NETTO, overload=:OVERLOAD, cargotype=:CARGOTYPE, cargotype_code=:CARGOTYPE_CODE, depart_station=:DEPART_STATION, depart_station_code=:DEPART_STATION_CODE, purpose_station=:PURPOSE_STATION, purpose_station_code=:PURPOSE_STATION_CODE, invoice_num=:INVOICE_NUM, invoice_supplier=:INVOICE_SUPPLIER, invoice_supplier_code=:INVOICE_SUPPLIER_CODE, invoice_consign=:INVOICE_CONSIGN, invoice_consign_code=:INVOICE_CONSIGN_CODE, invoice_netto=:INVOICE_NETTO, invoice_tare=:INVOICE_TARE, disbalong=:DISBALONG, disbcross=:DISBCROSS, tol_disbalong=:TOL_DISBALONG, tol_disbcross=:TOL_DISBCROSS, data_sent=0"
-IDS_SQL_LOCAL_MVANS_UPDATE_WHERE,       "id=:ID"
+IDS_SQL_LOCAL_MTRAINS_SELECT,           "LOCAL_MTRAINS_SELECT"
 
-IDS_SQL_LOCAL_MTRAINS_SELECT,           "id, trnum, bdatetime, nvans, status"
-IDS_SQL_LOCAL_MTRAINS_WHERE,            "bdatetime>=:DATE_FROM AND bdatetime<:DATE_TO"
-IDS_SQL_LOCAL_MTRAINS_ORDER,            "bdatetime DESC"
+IDS_SQL_LOCAL_MVANS_SELECT_BY_DT,       "LOCAL_MVANS_SELECT_BY_DT"
+IDS_SQL_LOCAL_MVANS_SELECT_BY_TN,       "LOCAL_MVANS_SELECT_BY_TN"
 
-IDS_SQL_LOCAL_PVANS_SELECT,             "invnum"
-IDS_SQL_LOCAL_PVANS_WHERE,              "invnum=:INVNUM"
-IDS_SQL_LOCAL_PVANS_UPDATE,             "carrying=:CARRYING, iscales_carrying=:ISCALES_CARRYING, idatetime_carrying=:IDATETIME_CARRYING, loadnorm=:LOADNORM, iscales_loadnorm=:ISCALES_LOADNORM, idatetime_loadnorm=:IDATETIME_LOADNORM, tare_t=:TARE_T, iscales_tare_t=:ISCALES_TARE_T, idatetime_tare_t=:IDATETIME_TARE_T"
-IDS_SQL_LOCAL_PVANS_INSERT_FIELDS,      "(invnum, carrying, iscales_carrying, idatetime_carrying, loadnorm, iscales_loadnorm, idatetime_loadnorm, tare_t, iscales_tare_t, idatetime_tare_t)"
-IDS_SQL_LOCAL_PVANS_INSERT_VALUES,      "(:INVNUM, :CARRYING, :ISCALES_CARRYING, :IDATETIME_CARRYING, :LOADNORM, :ISCALES_LOADNORM, :IDATETIME_LOADNORM, :TARE_T, :ISCALES_TARE_T, :IDATETIME_TARE_T)"
+IDS_SQL_LOCAL_MVANS_UPDATE,             "LOCAL_MVANS_UPDATE"
+
+IDS_SQL_LOCAL_PVANS_SELECT,             "LOCAL_PVANS_SELECT"
+IDS_SQL_LOCAL_PVANS_UPDATE,             "LOCAL_PVANS_UPDATE"
+IDS_SQL_LOCAL_PVANS_INSERT,             "LOCAL_PVANS_INSERT"
+
 END
