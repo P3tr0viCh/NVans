@@ -50,7 +50,7 @@ String __fastcall TFilterLocalTrains::ToString() {
 	S = "TFilterLocalTrains{";
 	S += "Date=" + DateToStr(Date);
 	S += ",";
-	S += "VanNum='" + VanNum + "'";
+	S += "VanNum=" + VanNum;
 	S += "}";
 
 	return S;

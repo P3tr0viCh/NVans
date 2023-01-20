@@ -14,6 +14,7 @@ object frmServerTrains: TfrmServerTrains
   Font.Height = -13
   Font.Name = 'Segoe UI'
   Font.Style = []
+  FormStyle = fsStayOnTop
   OldCreateOrder = False
   OnCreate = FormCreate
   OnDestroy = FormDestroy
@@ -34,7 +35,6 @@ object frmServerTrains: TfrmServerTrains
       end>
     ParentFont = True
     UseSystemFont = False
-    ExplicitWidth = 352
   end
   object sgList: TStringGrid
     Left = 0
@@ -51,7 +51,6 @@ object frmServerTrains: TfrmServerTrains
     OnDrawCell = sgListDrawCell
     OnKeyDown = sgListKeyDown
     OnSelectCell = sgListSelectCell
-    ExplicitWidth = 200
   end
   object PanelTop: TPanel
     Left = 0
@@ -61,7 +60,6 @@ object frmServerTrains: TfrmServerTrains
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitWidth = 352
     DesignSize = (
       448
       48)
@@ -83,7 +81,6 @@ object frmServerTrains: TfrmServerTrains
       Caption = #1047#1072#1082#1088#1099#1090#1100
       TabOrder = 2
       OnClick = btnCloseClick
-      ExplicitLeft = 264
     end
     object btnClear: TButton
       Left = 96
@@ -103,7 +100,6 @@ object frmServerTrains: TfrmServerTrains
     Align = alRight
     BevelOuter = bvNone
     TabOrder = 2
-    ExplicitLeft = 168
     object lblFilterDate: TLabel
       Left = 8
       Top = 0

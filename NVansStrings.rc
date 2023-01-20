@@ -35,8 +35,8 @@ IDS_MSG_RWNUM_NOT_EXISTS,               "Поезд с номером «%s» в базе данных отсу
 IDS_MSG_MATCH_NOT_FOUND,                "Не удалось найти соответствие между натурным листом и вагонами в базе данных весов."
 
 IDS_STATUS_TRAIN_LIST_COUNT,            "Количество: %s"
-IDS_STATUS_TRAIN_LOAD,                  "Загрузка..."
-IDS_STATUS_TRAIN_SAVE,                  "Сохранение..."
+IDS_STATUS_DATA_LOAD,                   "Загрузка..."
+IDS_STATUS_DATA_SAVE,                   "Сохранение..."
 
 IDS_CONNECTION_MYSQL_DRIVER_0,          "MySQL ODBC 3.51 Driver"
 IDS_CONNECTION_MYSQL_DRIVER_1,          "MySQL ODBC 8.0 ANSI Driver"
@@ -49,8 +49,6 @@ IDS_LOG_OPTIONS_SAVE,                   "options: save"
 IDS_LOG_OPTIONS_CANCEL,                 "options: cancel"
 
 IDS_LOG_ERROR_EXCEPTION,                        "exception: %s"
-IDS_LOG_ERROR_CRC_EMPTY,                        "CRC empty"
-IDS_LOG_ERROR_CRC_WRONG,                        "CRC wrong"
 IDS_LOG_ERROR_LOAD_SETTINGS,                    "read settings fail: %s"
 IDS_LOG_ERROR_SAVE_SETTINGS,                    "write settings fail: %s"
 IDS_LOG_ERROR_CHECK_SETTINGS,                   "check settings for %s"

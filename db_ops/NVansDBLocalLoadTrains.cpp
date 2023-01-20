@@ -44,19 +44,18 @@ void TDBLocalLoadTrains::Operation() {
 	try {
 		Query->Connection = Connection;
 
-		Query->SQL->Text = SQLLoad(IDS_SQL_LOCAL_MTRAINS_SELECT);
+		SQLSetText(Query, IDS_SQL_LOCAL_MTRAINS_SELECT);
 
-#ifdef SQL_TO_LOG
-		WriteToLog(Query->SQL->Text);
-#endif
+		if (SQLToLog) {
+			WriteToLog(Query->SQL->Text);
+		}
 
 		SQLGetParam(Query, "DATE_FROM", ftDate)->Value = Filter->Date;
 		SQLGetParam(Query, "DATE_TO", ftDate)->Value = Filter->Date + 1;
 
-#ifdef SQL_TO_LOG
-		WriteToLog("PARAMS: DATE_FROM = " + DateToStr(Filter->Date) + ", " +
-			"DATE_TO = " + DateToStr(Filter->Date + 1));
-#endif
+		if (SQLToLog) {
+			WriteToLog(SQLParamsToStr(Query));
+		}
 
 		Query->Open();
 

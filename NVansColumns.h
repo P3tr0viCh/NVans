@@ -11,7 +11,7 @@
 #include "NVansStringsGridHeader.h"
 
 // ---------------------------------------------------------------------------
-class TNVansServerColumns : public TStringGridBaseColumns {
+class TServerColumns : public TStringGridBaseColumns {
 public:
 	static const NUM = SERVICE + 1;
 	static const VANNUM = NUM + 1;
@@ -30,7 +30,7 @@ public:
 
 	static const VAN_OBJECT = INVOICE_TARE + 1;
 
-	TNVansServerColumns() {
+	TServerColumns() {
 		LeftAlign =
 			TIntegerSet() << VANNUM << CARGOTYPE << INVOICE_NUM <<
 			INVOICE_SUPPLIER << INVOICE_RECIPIENT << DEPART_STATION <<
@@ -73,7 +73,7 @@ public:
 };
 
 // ---------------------------------------------------------------------------
-class TNVansLocalColumns : public TStringGridBaseColumns {
+class TLocalColumns : public TStringGridBaseColumns {
 public:
 	static const NUM = SERVICE + 1;
 	static const DATETIME = NUM + 1;
@@ -96,7 +96,7 @@ public:
 
 	TIntegerSet ReadOnlyIfTare;
 
-	TNVansLocalColumns() {
+	TLocalColumns() {
 		LeftAlign =
 			TIntegerSet() << DATETIME << VANNUM << CARGOTYPE << INVOICE_NUM <<
 			INVOICE_SUPPLIER << INVOICE_RECIPIENT << DEPART_STATION <<
@@ -143,7 +143,7 @@ public:
 };
 
 // ---------------------------------------------------------------------------
-class TNVansServerTrainsColumns : public TStringGridBaseColumns {
+class TServerTrainsColumns : public TStringGridBaseColumns {
 public:
 	static const RWNUM = SERVICE + 1;
 	static const DATETIME = RWNUM + 1;
@@ -151,7 +151,7 @@ public:
 
 	static const COUNT = VAN_COUNT + 1;
 
-	TNVansServerTrainsColumns() {
+	TServerTrainsColumns() {
 		LeftAlign = TIntegerSet() << RWNUM << DATETIME;
 	}
 
@@ -170,7 +170,7 @@ public:
 };
 
 // ---------------------------------------------------------------------------
-class TNVansLocalTrainsColumns : public TStringGridBaseColumns {
+class TLocalTrainsColumns : public TStringGridBaseColumns {
 public:
 	static const DATETIME = SERVICE + 1;
 	static const VAN_COUNT = DATETIME + 1;
@@ -179,7 +179,7 @@ public:
 
 	static const TRAIN_NUM = VAN_COUNT + 1;
 
-	TNVansLocalTrainsColumns() {
+	TLocalTrainsColumns() {
 		LeftAlign = TIntegerSet() << DATETIME;
 	}
 

@@ -45,32 +45,31 @@ void TDBLocalLoadVans::Operation() {
 		bool SearchByDate = TrainNum.IsEmpty();
 
 		if (SearchByDate) {
-			Query->SQL->Text = SQLLoad(IDS_SQL_LOCAL_MVANS_SELECT_BY_DT);
+			SQLSetText(Query, IDS_SQL_LOCAL_MVANS_SELECT_BY_DT);
 		}
 		else {
-			Query->SQL->Text = SQLLoad(IDS_SQL_LOCAL_MVANS_SELECT_BY_TN);
+			SQLSetText(Query, IDS_SQL_LOCAL_MVANS_SELECT_BY_TN);
 		}
 
-#ifdef SQL_TO_LOG
-		WriteToLog(Query->SQL->Text);
-#endif
+		if (SQLToLog) {
+			WriteToLog(Query->SQL->Text);
+		}
 
 		if (SearchByDate) {
 			SQLGetParam(Query, "DATE_FROM", ftDate)->Value = Date - 1;
 			SQLGetParam(Query, "DATE_TO", ftDate)->Value = Date + 1;
 
-#ifdef SQL_TO_LOG
-			WriteToLog("PARAMS: DATE_FROM = " + DateToStr(Date - 1) + ", " +
-				"DATE_TO = " + DateToStr(Date + 1));
-#endif
+			if (SQLToLog) {
+				WriteToLog(SQLParamsToStr(Query));
+			}
 		}
 		else {
 			SQLGetParam(Query, "TRAIN_NUM", ftInteger)->Value =
 				StrToInt(TrainNum);
 
-#ifdef SQL_TO_LOG
-			WriteToLog("PARAMS: TRAIN_NUM = " + TrainNum);
-#endif
+			if (SQLToLog) {
+				WriteToLog(SQLParamsToStr(Query));
+			}
 		}
 
 		Query->Open();

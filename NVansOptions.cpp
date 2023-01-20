@@ -94,14 +94,9 @@ void TfrmOptions::UpdateForm() {
 	eOptionsPass->Text = Settings->OptionsPass;
 	eOptionsPass2->Text = Settings->OptionsPass;
 
-	cboxUseLocal->Checked = Settings->UseLocal;
+	cboxSQLToLog->Checked = Settings->SQLToLog;
 
-	if (Settings->ScaleTypeDyn) {
-		rgScaleType->ItemIndex = 0;
-	}
-	else {
-		rgScaleType->ItemIndex = 1;
-	}
+	rgScaleType->ItemIndex = Settings->ScaleType;
 
 	eLocalHost->Text = Settings->LocalConnection->Host;
 	eLocalUser->Text = Settings->LocalConnection->User;
@@ -135,9 +130,9 @@ void TfrmOptions::UpdateForm() {
 void TfrmOptions::UpdateSettings() {
 	Settings->OptionsPass = eOptionsPass->Text;
 
-	Settings->UseLocal = cboxUseLocal->Checked;
+	Settings->SQLToLog = cboxSQLToLog->Checked;
 
-	Settings->ScaleTypeDyn = rgScaleType->ItemIndex == 0;
+	Settings->ScaleType = rgScaleType->ItemIndex;
 
 	Settings->LocalConnection->Host = eLocalHost->Text;
 	Settings->LocalConnection->User = eLocalUser->Text;

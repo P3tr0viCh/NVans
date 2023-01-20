@@ -2,7 +2,6 @@
 
 #pragma hdrstop
 
-#include <UtilsLog.h>
 #include <UtilsSQL.h>
 
 #include "NVansStrings.h"
@@ -190,45 +189,45 @@ String __fastcall TLocalVan::ToString() {
 	S += ",";
 	S += "VanNum=" + VanNum;
 	S += ",";
-	S += "CargoType='" + CargoType + "'";
+	S += "CargoType=" + CargoType;
 	S += ",";
-	S += "InvoiceNum='" + InvoiceNum + "'";
+	S += "InvoiceNum=" + InvoiceNum;
 	S += ",";
-	S += "InvoiceSupplier='" + InvoiceSupplier + "'";
+	S += "InvoiceSupplier=" + InvoiceSupplier;
 	S += ",";
-	S += "InvoiceRecipient='" + InvoiceRecipient + "'";
+	S += "InvoiceRecipient=" + InvoiceRecipient;
 	S += ",";
-	S += "DepartStation='" + DepartStation + "'";
+	S += "DepartStation=" + DepartStation;
 	S += ",";
-	S += "PurposeStation='" + PurposeStation + "'";
+	S += "PurposeStation=" + PurposeStation;
 	S += ",";
-	S += "Carrying='" + IntToStr(Carrying) + "'";
+	S += "Carrying=" + IntToStr(Carrying);
 	S += ",";
-	S += "Brutto='" + IntToStr(Brutto) + "'";
+	S += "Brutto=" + IntToStr(Brutto);
 	S += ",";
-	S += "Tare='" + IntToStr(Tare) + "'";
+	S += "Tare=" + IntToStr(Tare);
 	S += ",";
-	S += "TareT='" + IntToStr(TareT) + "'";
+	S += "TareT=" + IntToStr(TareT);
 	S += ",";
-	S += "TareIndex='" + IntToStr(TareIndex) + "'";
+	S += "TareIndex=" + IntToStr(TareIndex);
 	S += ",";
-	S += "TareScaleNum='" + IntToStr(TareScaleNum) + "'";
+	S += "TareScaleNum=" + IntToStr(TareScaleNum);
 	S += ",";
-	S += "TareDateTime='" + DateTimeToStr(TareDateTime) + "'";
+	S += "TareDateTime=" + DateTimeToStr(TareDateTime);
 	S += ",";
-	S += "Netto='" + IntToStr(Netto) + "'";
+	S += "Netto=" + IntToStr(Netto);
 	S += ",";
-	S += "InvoiceNetto='" + IntToStr(InvoiceNetto) + "'";
+	S += "InvoiceNetto=" + IntToStr(InvoiceNetto);
 	S += ",";
-	S += "InvoiceTare='" + IntToStr(InvoiceTare) + "'";
+	S += "InvoiceTare=" + IntToStr(InvoiceTare);
 	S += ",";
-	S += "NettoDiff='" + IntToStr(NettoDiff) + "'";
+	S += "NettoDiff=" + IntToStr(NettoDiff);
 	S += ",";
-	S += "Overload='" + IntToStr(Overload) + "'";
+	S += "Overload=" + IntToStr(Overload);
 	S += ",";
-	S += "IsLoaded='" + BoolToStr(IsLoaded, true) + "'";
+	S += "IsLoaded=" + BoolToStr(IsLoaded);
 	S += ",";
-	S += "CalcFields='" + BoolToStr(CalcFields, true) + "'";
+	S += "CalcFields=" + BoolToStr(CalcFields);
 	S += "}";
 
 	return S;

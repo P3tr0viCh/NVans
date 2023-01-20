@@ -42,18 +42,18 @@ void TDBOracleLoadTrainDateTime::Operation() {
 	try {
 		Query->Connection = Connection;
 
-		Query->SQL->Text = SQLLoad(IDS_SQL_ORACLE_NVANS_TRAIN_DATETIME);
+		SQLSetText(Query, IDS_SQL_ORACLE_NVANS_TRAIN_DATETIME);
 
-#ifdef SQL_TO_LOG
-		WriteToLog(Query->SQL->Text);
-#endif
+		if (SQLToLog) {
+			WriteToLog(Query->SQL->Text);
+		}
 
 		SQLGetParam(Query, "RWNUM", ftFixedWideChar)->Value =
 			KeyOracleTrain->TrainNum;
 
-#ifdef SQL_TO_LOG
-		WriteToLog("PARAMS: RWNUM = " + KeyOracleTrain->TrainNum);
-#endif
+		if (SQLToLog) {
+			WriteToLog(SQLParamsToStr(Query));
+		}
 
 		Query->Open();
 

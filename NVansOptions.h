@@ -42,7 +42,7 @@ __published:
 	TGroupBox *gbOptionsPass;
 	TLabeledEdit *eOptionsPass;
 	TLabeledEdit *eOptionsPass2;
-	TCheckBox *cboxUseLocal;
+	TCheckBox *cboxSQLToLog;
 	TRadioGroup *rgScaleType;
 
 	void __fastcall FormCreate(TObject *Sender);

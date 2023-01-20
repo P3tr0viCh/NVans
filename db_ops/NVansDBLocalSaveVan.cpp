@@ -39,87 +39,80 @@ void TDBLocalSaveVan::SetVan(TLocalVan * Van) {
 void TDBLocalSaveVan::Operation() {
 	Connection->Open();
 
-	TADOQuery * QueryUpdate = new TADOQuery(NULL);
+	TADOQuery * Query = new TADOQuery(NULL);
 	try {
-		QueryUpdate->Connection = Connection;
+		Query->Connection = Connection;
 
-		QueryUpdate->SQL->Text = SQLLoad(IDS_SQL_LOCAL_MVANS_UPDATE);
+		SQLSetText(Query, IDS_SQL_LOCAL_MVANS_UPDATE);
 
-#ifdef SQL_TO_LOG
-		WriteToLog(QueryUpdate->SQL->Text);
-#endif
+		if (SQLToLog) {
+			WriteToLog(Query->SQL->Text);
+		}
 
-		SQLGetParam(QueryUpdate, "ID", ftInteger)->Value = Van->ID;
+		SQLGetParam(Query, "ID", ftInteger)->Value = Van->ID;
 
-		SQLGetParam(QueryUpdate, "INVNUM", ftString)->Value = Van->VanNum;
+		SQLGetParam(Query, "INVNUM", ftString)->Value = Van->VanNum;
 
-		SQLGetParam(QueryUpdate, "CARRYING", ftInteger)->Value = Van->Carrying;
-		SQLGetParam(QueryUpdate, "LOADNORM", ftInteger)->Value = Van->Carrying;
+		SQLGetParam(Query, "CARRYING", ftInteger)->Value = Van->Carrying;
+		SQLGetParam(Query, "LOADNORM", ftInteger)->Value = Van->Carrying;
 
-		SQLGetParam(QueryUpdate, "TARE", ftInteger)->Value = Van->Tare;
-		SQLGetParam(QueryUpdate, "TARE_T", ftInteger)->Value = Van->TareT;
-		SQLGetParam(QueryUpdate, "ISCALES_TARE", ftInteger)->Value =
+		SQLGetParam(Query, "TARE", ftInteger)->Value = Van->Tare;
+		SQLGetParam(Query, "TARE_T", ftInteger)->Value = Van->TareT;
+		SQLGetParam(Query, "ISCALES_TARE", ftInteger)->Value =
 			Van->TareScaleNum;
-		SQLGetParam(QueryUpdate, "IDATETIME_TARE", ftString)->Value =
+		SQLGetParam(Query, "IDATETIME_TARE", ftString)->Value =
 			DateTimeToSQLStr(Van->TareDateTime);
 
-		SQLGetParam(QueryUpdate, "NETTO", ftInteger)->Value = Van->Netto;
+		SQLGetParam(Query, "NETTO", ftInteger)->Value = Van->Netto;
 
-		SQLGetParam(QueryUpdate, "OVERLOAD", ftInteger)->Value = Van->Overload;
+		SQLGetParam(Query, "OVERLOAD", ftInteger)->Value = Van->Overload;
 
-		SQLGetParam(QueryUpdate, "CARGOTYPE", ftString)->Value = Van->CargoType;
-		SQLGetParam(QueryUpdate, "CARGOTYPE_CODE", ftString)->Value = Null();
+		SQLGetParam(Query, "CARGOTYPE", ftString)->Value = Van->CargoType;
+		SQLGetParam(Query, "CARGOTYPE_CODE", ftString)->Value = Null();
 
-		SQLGetParam(QueryUpdate, "DEPART_STATION", ftString)->Value =
+		SQLGetParam(Query, "DEPART_STATION", ftString)->Value =
 			Van->DepartStation;
-		SQLGetParam(QueryUpdate, "DEPART_STATION_CODE", ftString)
-			->Value = Null();
-		SQLGetParam(QueryUpdate, "PURPOSE_STATION", ftString)->Value =
+		SQLGetParam(Query, "DEPART_STATION_CODE", ftString)->Value = Null();
+		SQLGetParam(Query, "PURPOSE_STATION", ftString)->Value =
 			Van->PurposeStation;
-		SQLGetParam(QueryUpdate, "PURPOSE_STATION_CODE", ftString)
-			->Value = Null();
+		SQLGetParam(Query, "PURPOSE_STATION_CODE", ftString)->Value = Null();
 
-		SQLGetParam(QueryUpdate, "INVOICE_NUM", ftString)->Value =
-			Van->InvoiceNum;
+		SQLGetParam(Query, "INVOICE_NUM", ftString)->Value = Van->InvoiceNum;
 
-		SQLGetParam(QueryUpdate, "INVOICE_SUPPLIER", ftString)->Value =
+		SQLGetParam(Query, "INVOICE_SUPPLIER", ftString)->Value =
 			Van->InvoiceSupplier;
-		SQLGetParam(QueryUpdate, "INVOICE_SUPPLIER_CODE", ftString)
-			->Value = Null();
-		SQLGetParam(QueryUpdate, "INVOICE_CONSIGN", ftString)->Value =
+		SQLGetParam(Query, "INVOICE_SUPPLIER_CODE", ftString)->Value = Null();
+		SQLGetParam(Query, "INVOICE_CONSIGN", ftString)->Value =
 			Van->InvoiceRecipient;
-		SQLGetParam(QueryUpdate, "INVOICE_CONSIGN_CODE", ftString)
-			->Value = Null();
+		SQLGetParam(Query, "INVOICE_CONSIGN_CODE", ftString)->Value = Null();
 
-		SQLGetParam(QueryUpdate, "INVOICE_NETTO", ftInteger)->Value =
+		SQLGetParam(Query, "INVOICE_NETTO", ftInteger)->Value =
 			Van->InvoiceNetto;
-		SQLGetParam(QueryUpdate, "INVOICE_TARE", ftInteger)->Value =
-			Van->InvoiceTare;
+		SQLGetParam(Query, "INVOICE_TARE", ftInteger)->Value = Van->InvoiceTare;
 
 		// TODO
-		SQLGetParam(QueryUpdate, "DISBALONG", ftInteger)->Value = 0;
-		SQLGetParam(QueryUpdate, "DISBCROSS", ftInteger)->Value = 0;
-		SQLGetParam(QueryUpdate, "TOL_DISBALONG", ftInteger)->Value = 0;
-		SQLGetParam(QueryUpdate, "TOL_DISBCROSS", ftInteger)->Value = 0;
+		SQLGetParam(Query, "DISBALONG", ftInteger)->Value = 0;
+		SQLGetParam(Query, "DISBCROSS", ftInteger)->Value = 0;
+		SQLGetParam(Query, "TOL_DISBALONG", ftInteger)->Value = 0;
+		SQLGetParam(Query, "TOL_DISBCROSS", ftInteger)->Value = 0;
 
-#ifdef SQL_TO_LOG
-		WriteToLog("UPDATE PARAMS: ID = " + IntToStr(Van->ID) + ", " +
-			"INVNUM = " + Van->VanNum + ", ...");
-#endif
+		if (SQLToLog) {
+			WriteToLog(SQLParamsToStr(Query));
+		}
 
-		QueryUpdate->ExecSQL();
+		Query->ExecSQL();
 
-#ifdef SQL_TO_LOG
-		WriteToLog("RowsAffected: " + IntToStr(QueryUpdate->RowsAffected));
-#endif
+		if (SQLToLog) {
+			WriteToLog("RowsAffected: " + IntToStr(Query->RowsAffected));
+		}
 
-		if (QueryUpdate->RowsAffected != 1) {
+		if (Query->RowsAffected != 1) {
 			throw Exception("record with id=" + IntToStr(Van->ID) +
 				" not exists");
 		}
 	}
 	__finally {
-		QueryUpdate->Free();
+		Query->Free();
 
 		Connection->Close();
 	}

@@ -4,7 +4,7 @@ object frmOptions: TfrmOptions
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = #1053#1072#1089#1090#1088#1086#1081#1082#1080
-  ClientHeight = 360
+  ClientHeight = 354
   ClientWidth = 576
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -22,28 +22,27 @@ object frmOptions: TfrmOptions
     Left = 0
     Top = 0
     Width = 576
-    Height = 312
+    Height = 306
     Align = alClient
     BevelOuter = bvLowered
     TabOrder = 0
+    ExplicitHeight = 312
     object PageControl: TPageControl
       Left = 1
       Top = 1
       Width = 574
-      Height = 310
+      Height = 304
       ActivePage = tsProgram
       Align = alClient
       TabOrder = 0
+      ExplicitHeight = 310
       object tsProgram: TTabSheet
         Caption = #1055#1088#1086#1075#1088#1072#1084#1084#1072
         ImageIndex = 3
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
+        ExplicitHeight = 278
         object gbOptionsPass: TGroupBox
           Left = 8
-          Top = 16
+          Top = 8
           Width = 344
           Height = 84
           Caption = #1042#1093#1086#1076' '#1074' '#1085#1072#1089#1090#1088#1086#1081#1082#1080
@@ -73,32 +72,31 @@ object frmOptions: TfrmOptions
             TabOrder = 1
           end
         end
-        object cboxUseLocal: TCheckBox
-          Left = 8
-          Top = 112
-          Width = 288
+        object cboxSQLToLog: TCheckBox
+          Left = 360
+          Top = 16
+          Width = 200
           Height = 17
-          Caption = #1048#1089#1087#1086#1083#1100#1079#1086#1074#1072#1090#1100' '#1083#1086#1082#1072#1083#1100#1085#1091#1102' '#1073#1072#1079#1091' '#1076#1072#1085#1085#1099#1093
-          TabOrder = 1
+          Caption = #1047#1072#1087#1080#1089#1100' '#1079#1072#1087#1088#1086#1089#1086#1074' '#1082' '#1041#1044' '#1074' '#1083#1086#1075
+          TabOrder = 2
         end
         object rgScaleType: TRadioGroup
           Left = 8
-          Top = 144
-          Width = 144
-          Height = 80
+          Top = 96
+          Width = 344
+          Height = 168
           Caption = #1058#1080#1087' '#1074#1077#1089#1086#1074
           Items.Strings = (
-            #1044#1080#1085#1072#1084#1080#1082#1072
-            #1057#1090#1072#1090#1080#1082#1072)
-          TabOrder = 2
+            #1054#1090#1082#1083#1102#1095#1077#1085#1086
+            #1040#1074#1080#1090#1077#1082': '#1044#1080#1085#1072#1084#1080#1082#1072
+            #1040#1074#1080#1090#1077#1082': '#1057#1090#1072#1090#1080#1082#1072
+            #1055#1091#1083#1100#1090' '#1088#1091#1095#1085#1086#1075#1086' '#1074#1074#1086#1076#1072)
+          TabOrder = 1
         end
       end
       object tsLocalDatabase: TTabSheet
         Caption = #1051#1086#1082#1072#1083#1100#1085#1072#1103' '#1073#1072#1079#1072' '#1076#1072#1085#1085#1099#1093
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
+        ExplicitHeight = 278
         object lblLocalDriver: TLabel
           Left = 8
           Top = 136
@@ -161,10 +159,7 @@ object frmOptions: TfrmOptions
       object tsServerOracleDatabase: TTabSheet
         Caption = #1057#1077#1088#1074#1077#1088' Oracle'
         ImageIndex = 1
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
+        ExplicitHeight = 278
         object lblOracleLDriver: TLabel
           Left = 8
           Top = 136
@@ -187,7 +182,7 @@ object frmOptions: TfrmOptions
         object eOracleService: TLabeledEdit
           Left = 256
           Top = 40
-          Width = 240
+          Width = 80
           Height = 25
           EditLabel.Width = 78
           EditLabel.Height = 17
@@ -239,12 +234,13 @@ object frmOptions: TfrmOptions
   end
   object PanelButtons: TPanel
     Left = 0
-    Top = 312
+    Top = 306
     Width = 576
     Height = 48
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
+    ExplicitTop = 312
     DesignSize = (
       576
       48)

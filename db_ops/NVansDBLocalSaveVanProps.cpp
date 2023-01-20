@@ -51,19 +51,15 @@ void TDBLocalSaveVanProps::Operation() {
 
 		bool DoUpdate;
 
-		String QueryFindText = SQLLoad(IDS_SQL_LOCAL_PVANS_SELECT);
-		String QueryUpdateText = SQLLoad(IDS_SQL_LOCAL_PVANS_UPDATE);
-		String QueryInsertText = SQLLoad(IDS_SQL_LOCAL_PVANS_INSERT);
+		SQLSetText(QueryFind, IDS_SQL_LOCAL_PVANS_SELECT);
+		SQLSetText(QueryUpdate, IDS_SQL_LOCAL_PVANS_UPDATE);
+		SQLSetText(QueryInsert, IDS_SQL_LOCAL_PVANS_INSERT);
 
-		QueryFind->SQL->Text = QueryFindText;
-		QueryUpdate->SQL->Text = QueryUpdateText;
-		QueryInsert->SQL->Text = QueryInsertText;
-
-#ifdef SQL_TO_LOG
-		WriteToLog(QueryFind->SQL->Text);
-		WriteToLog(QueryUpdate->SQL->Text);
-		WriteToLog(QueryInsert->SQL->Text);
-#endif
+		if (SQLToLog) {
+			WriteToLog(QueryFind->SQL->Text);
+			WriteToLog(QueryUpdate->SQL->Text);
+			WriteToLog(QueryInsert->SQL->Text);
+		}
 
 		TParameter * pFindVanNum = SQLGetParam(QueryFind, "INVNUM", ftString);
 		TParameter * pUpdateVanNum =
@@ -111,10 +107,10 @@ void TDBLocalSaveVanProps::Operation() {
 
 			pFindVanNum->Value = VanList->Items[i]->VanNum;
 
-#ifdef SQL_TO_LOG
-			WriteToLog("SELECT PARAMS: INVNUM = " +
-				VarToStr(pFindVanNum->Value));
-#endif
+			if (SQLToLog) {
+				WriteToLog(SQLParamsToStr(QueryFind));
+			}
+
 			QueryFind->Open();
 			DoUpdate = QueryFind->RecordCount > 0;
 			QueryFind->Close();
@@ -126,12 +122,9 @@ void TDBLocalSaveVanProps::Operation() {
 				pUpdateLoadNorm->Value = VanList->Items[i]->Carrying;
 				pUpdateTareT->Value = VanList->Items[i]->TareT;
 
-#ifdef SQL_TO_LOG
-				WriteToLog("UPDATE PARAMS: CARRYING = " +
-					VarToStr(pUpdateCarrying->Value) + ", " + "TARE_T = " +
-					VarToStr(pUpdateTareT->Value) + ", " + "IDATETIME* = " +
-					VarToStr(DateTime));
-#endif
+				if (SQLToLog) {
+					WriteToLog(SQLParamsToStr(QueryUpdate));
+				}
 			}
 			else {
 				pInserTLocalVanNum->Value = VanList->Items[i]->VanNum;
@@ -140,12 +133,9 @@ void TDBLocalSaveVanProps::Operation() {
 				pInsertLoadNorm->Value = VanList->Items[i]->Carrying;
 				pInsertTareT->Value = VanList->Items[i]->TareT;
 
-#ifdef SQL_TO_LOG
-				WriteToLog("INSERT PARAMS: CARRYING = " +
-					VarToStr(pInsertCarrying->Value) + ", " + "TARE_T = " +
-					VarToStr(pInsertTareT->Value) + ", " + "IDATETIME* = " +
-					VarToStr(DateTime));
-#endif
+				if (SQLToLog) {
+					WriteToLog(SQLParamsToStr(QueryInsert));
+				}
 			}
 
 			if (DoUpdate) {

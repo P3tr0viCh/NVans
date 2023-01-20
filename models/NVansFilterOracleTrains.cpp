@@ -53,9 +53,9 @@ String __fastcall TFilterOracleTrains::ToString() {
 	S = "TFilterOracleTrains{";
 	S += "Date=" + DateToStr(Date);
 	S += ",";
-	S += "VanNum='" + VanNum + "'";
+	S += "VanNum=" + VanNum;
 	S += ",";
-	S += "InvoiceNum_1='" + InvoiceNum_1 + "'";
+	S += "InvoiceNum_1=" + InvoiceNum_1;
 	S += "}";
 
 	return S;

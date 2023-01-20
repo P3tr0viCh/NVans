@@ -42,15 +42,20 @@ __fastcall TfrmServerTrains::TfrmServerTrains(TComponent* Owner) : TForm(Owner)
 void __fastcall TfrmServerTrains::FormCreate(TObject *Sender) {
 	SelectedRow = -1;
 
-	Columns = new TNVansServerTrainsColumns();
+	ListColumns = new TServerTrainsColumns();
+
+	ListOptions = new TStringGridOptions(sgList);
+	ListOptions->ColSizing = true; // TODO
+	ListOptions->ColorChanged = Main->Settings->ColorChanged;
+	ListOptions->ColorReadOnly = Main->Settings->ColorReadOnly;
+	ListOptions->ColorSelected = Main->Settings->ColorSelected;
+	ListOptions->DefaultRowHeight = Main->DefaultRowHeight;
 
 	Filter = new TFilterOracleTrains();
 
 	FTrainList = new TOracleTrainList();
 
-	StringGridInit(sgList, Columns, Main->DefaultRowHeight);
-
-	sgList->Options = sgList->Options << goColSizing;
+	StringGridInit(sgList, ListColumns);
 
 	TFileIni * FileIni = TFileIni::GetNewInstance();
 	try {
@@ -88,15 +93,16 @@ void __fastcall TfrmServerTrains::FormDestroy(TObject *Sender) {
 
 	FTrainList->Free();
 	Filter->Free();
-	Columns->Free();
+
+	ListOptions->Free();
+	ListColumns->Free();
 }
 
 // ---------------------------------------------------------------------------
 void __fastcall TfrmServerTrains::sgListDrawCell(TObject *Sender, int ACol,
 	int ARow, TRect &Rect, TGridDrawState State) {
-	StringGridDrawCell(sgList, ACol, ARow, Rect, State, TIntegerSet(),
-		Columns->LeftAlign, TIntegerSet(), Main->Settings->ColorReadOnly, clMax,
-		true, false, clMax, Main->Settings->ColorSelected);
+	StringGridDrawCell(sgList, ACol, ARow, Rect, State, ListColumns,
+		ListOptions);
 }
 
 // ---------------------------------------------------------------------------
@@ -135,10 +141,10 @@ int TfrmServerTrains::SetTrain(int Index, TOracleTrain * Train) {
 		Index = StringGridAddRow(sgList);
 	}
 
-	sgList->Cells[TNVansServerTrainsColumns::RWNUM][Index] = Train->TrainNum;
-	sgList->Cells[TNVansServerTrainsColumns::DATETIME][Index] =
+	sgList->Cells[TServerTrainsColumns::RWNUM][Index] = Train->TrainNum;
+	sgList->Cells[TServerTrainsColumns::DATETIME][Index] =
 		DTToS(Train->DateTime, false);
-	sgList->Cells[TNVansServerTrainsColumns::VAN_COUNT][Index] =
+	sgList->Cells[TServerTrainsColumns::VAN_COUNT][Index] =
 		IntToStr(Train->VanCount);
 
 	return Index;
@@ -181,6 +187,8 @@ void TfrmServerTrains::LoadTrains() {
 		Filter);
 	try {
 		DBOracleLoadTrains->Tag = DB_OPERATION_ORACLE_LOAD_TRAINS;
+
+		DBOracleLoadTrains->SQLToLog = Main->Settings->SQLToLog;
 
 		DBOracleLoadTrains->Execute();
 

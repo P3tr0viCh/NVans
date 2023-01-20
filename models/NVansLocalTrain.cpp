@@ -60,9 +60,9 @@ String __fastcall TLocalTrain::ToString() {
 	S += ",";
 	S += "DateTime=" + DateTimeToStr(DateTime);
 	S += ",";
-	S += "VanCount='" + IntToStr(VanCount) + "'";
+	S += "VanCount=" + IntToStr(VanCount);
 	S += ",";
-	S += "WeightType='" + IntToStr(WeightType) + "'";
+	S += "WeightType=" + IntToStr(WeightType);
 	S += "}";
 
 	return S;

@@ -40,7 +40,9 @@ __published:
 private:
 	int SelectedRow;
 
-	TNVansLocalTrainsColumns * Columns;
+	TLocalTrainsColumns * ListColumns;
+
+	TStringGridOptions * ListOptions;
 
 	TFilterLocalTrains * Filter;
 

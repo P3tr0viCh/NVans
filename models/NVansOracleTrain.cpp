@@ -58,7 +58,7 @@ String __fastcall TOracleTrain::ToString() {
 	S += ",";
 	S += "DateTime=" + DateTimeToStr(DateTime);
 	S += ",";
-	S += "VanCount='" + IntToStr(VanCount) + "'";
+	S += "VanCount=" + IntToStr(VanCount);
 	S += "}";
 
 	return S;

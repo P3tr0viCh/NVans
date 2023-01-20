@@ -61,8 +61,24 @@ void __fastcall TMain::FormCreate(TObject *Sender) {
 
 	FSettings = new TSettings();
 
-	ServerColumns = new TNVansServerColumns();
-	LocalColumns = new TNVansLocalColumns();
+	DefaultRowHeight = Canvas->TextHeight("ComboBox") + 8;
+
+	ServerColumns = new TServerColumns();
+	LocalColumns = new TLocalColumns();
+
+	ServerOptions = new TStringGridOptions(sgServer);
+	ServerOptions->ColSizing = true; // TODO
+	ServerOptions->ColorChanged = Main->Settings->ColorChanged;
+	ServerOptions->ColorReadOnly = Main->Settings->ColorReadOnly;
+	ServerOptions->ColorSelected = Main->Settings->ColorSelected;
+	ServerOptions->DefaultRowHeight = Main->DefaultRowHeight;
+
+	LocalOptions = new TStringGridOptions(sgLocal);
+	LocalOptions->ColSizing = true; // TODO
+	LocalOptions->ColorChanged = Main->Settings->ColorChanged;
+	LocalOptions->ColorReadOnly = Main->Settings->ColorReadOnly;
+	LocalOptions->ColorSelected = Main->Settings->ColorSelected;
+	LocalOptions->DefaultRowHeight = Main->DefaultRowHeight;
 
 	FKeyOracleTrain = new TKeyOracleTrain();
 
@@ -71,21 +87,11 @@ void __fastcall TMain::FormCreate(TObject *Sender) {
 
 	Caption = Application->Title + " " + GetFileVer(Application->ExeName);
 
-	DefaultRowHeight = Canvas->TextHeight("ComboBox") + 8;
-
-	StringGridInit(sgServer, ServerColumns, DefaultRowHeight);
-	StringGridInit(sgLocal, LocalColumns, DefaultRowHeight);
-
-	sgServer->Options = sgServer->Options << goColSizing;
-	sgLocal->Options = sgLocal->Options << goColSizing;
+	StringGridInit(sgServer, ServerColumns);
+	StringGridInit(sgLocal, LocalColumns);
 
 	TFileIni * FileIni = TFileIni::GetNewInstance();
 	try {
-		sgServer->Height = FileIni->ReadInteger(Name, "ServerHeight",
-			sgServer->Height);
-		Splitter->Top = sgServer->Top + sgServer->Height;
-		PanelCommon->Top = Splitter->Top + Splitter->Height;
-
 		FileIni->ReadFormBounds(this);
 
 		StringGridColWidthsReadFromIni(sgServer, FileIni, Name,
@@ -141,6 +147,9 @@ void __fastcall TMain::FormDestroy(TObject *Sender) {
 
 	FKeyOracleTrain->Free();
 
+	LocalOptions->Free();
+	ServerOptions->Free();
+
 	LocalColumns->Free();
 	ServerColumns->Free();
 
@@ -156,6 +165,15 @@ void __fastcall TMain::FormShow(TObject *Sender) {
 #endif
 
 #ifdef _DEBUG
+	switch (Settings->ScaleType) {
+	case stAvitekDyn:
+	case stAvitekSta:
+	case stWME:
+		break;
+	default:
+		return;
+	}
+
 	KeyOracleTrain->TrainNum = "42";
 	KeyOracleTrainChanged();
 
@@ -192,18 +210,20 @@ void __fastcall TMain::ApplicationEventsException(TObject *Sender, Exception *E)
 // ---------------------------------------------------------------------------
 void __fastcall TMain::sgServerDrawCell(TObject *Sender, int ACol, int ARow,
 	TRect &Rect, TGridDrawState State) {
-	StringGridDrawCell(sgServer, ACol, ARow, Rect, State, TIntegerSet(),
-		ServerColumns->LeftAlign, TIntegerSet(), Main->Settings->ColorReadOnly,
-		clMax, true, false, clMax, Main->Settings->ColorSelected);
+	StringGridDrawCell(sgServer, ACol, ARow, Rect, State, ServerColumns,
+		ServerOptions);
 }
 
 // ---------------------------------------------------------------------------
 void __fastcall TMain::sgLocalDrawCell(TObject *Sender, int ACol, int ARow,
 	TRect &Rect, TGridDrawState State) {
-	StringGridDrawCell(sgLocal, ACol, ARow, Rect, State, IsLocalVanTare(ARow) ?
-		LocalColumns->ReadOnlyIfTare : TIntegerSet(), LocalColumns->LeftAlign,
-		TIntegerSet(), Main->Settings->ColorReadOnly, clMax, true, false,
-		Main->Settings->ColorChanged, Main->Settings->ColorSelected);
+	// TODO
+	// StringGridDrawCell(sgLocal, ACol, ARow, Rect, State, IsLocalVanTare(ARow) ?
+	// LocalColumns->ReadOnlyIfTare : TIntegerSet(), LocalColumns->LeftAlign,
+	// TIntegerSet(), Main->Settings->ColorReadOnly, clMax, true, false,
+	// Main->Settings->ColorChanged, Main->Settings->ColorSelected);
+	StringGridDrawCell(sgLocal, ACol, ARow, Rect, State, LocalColumns,
+		LocalOptions);
 }
 
 // ---------------------------------------------------------------------------
@@ -279,7 +299,7 @@ void TMain::MenuItemAction(TMenuItemAction Action) {
 			for (int LocalIndex = sgLocal->Row, i = 0;
 			LocalIndex < sgLocal->RowCount && i < SL->Count; LocalIndex++, i++)
 			{
-				if (!sgLocal->Cells[TNVansLocalColumns::VANNUM][LocalIndex]
+				if (!sgLocal->Cells[TLocalColumns::VANNUM][LocalIndex]
 					.IsEmpty()) {
 					if (!MsgBoxYesNo(IDS_QUESTION_DATA_OVERWRITE)) {
 						return;
@@ -291,7 +311,7 @@ void TMain::MenuItemAction(TMenuItemAction Action) {
 			for (int LocalIndex = sgLocal->Row, i = 0;
 			LocalIndex < sgLocal->RowCount && i < SL->Count; LocalIndex++, i++)
 			{
-				LocalVan = GetLocalVan(LocalIndex);
+				LocalVan = LocalVanList->Items[LocalIndex - 1];
 
 				LocalVan->VanNum = SL->Strings[i];
 
@@ -308,42 +328,49 @@ void TMain::MenuItemAction(TMenuItemAction Action) {
 		break;
 	case maClear:
 		for (int R = S->Selection.Top; R <= S->Selection.Bottom; R++) {
-			LocalVan = GetLocalVan(R);
+			LocalVan = LocalVanList->Items[R - 1];
+
+			LocalVan->CalcFields = false;
 
 			for (int C = S->Selection.Left; C <= S->Selection.Right; C++) {
 				switch (C) {
-				case TNVansLocalColumns::VANNUM:
+				case TLocalColumns::VANNUM:
 					LocalVan->VanNum = "";
 					break;
-				case TNVansLocalColumns::CARGOTYPE:
+				case TLocalColumns::CARGOTYPE:
 					LocalVan->CargoType = "";
 					break;
-				case TNVansLocalColumns::INVOICE_NUM:
-					LocalVan->InvoiceNetto = 0;
+				case TLocalColumns::INVOICE_NUM:
+					LocalVan->InvoiceNum = "";
 					break;
-				case TNVansLocalColumns::INVOICE_SUPPLIER:
+				case TLocalColumns::INVOICE_SUPPLIER:
 					LocalVan->InvoiceSupplier = "";
 					break;
-				case TNVansLocalColumns::INVOICE_RECIPIENT:
+				case TLocalColumns::INVOICE_RECIPIENT:
 					LocalVan->InvoiceRecipient = "";
 					break;
-				case TNVansLocalColumns::DEPART_STATION:
+				case TLocalColumns::DEPART_STATION:
 					LocalVan->DepartStation = "";
 					break;
-				case TNVansLocalColumns::PURPOSE_STATION:
+				case TLocalColumns::PURPOSE_STATION:
 					LocalVan->PurposeStation = "";
 					break;
-				case TNVansLocalColumns::CARRYING:
+				case TLocalColumns::CARRYING:
 					LocalVan->Carrying = 0;
 					break;
-				case TNVansLocalColumns::INVOICE_NETTO:
+				case TLocalColumns::TARE_T:
+					LocalVan->TareT = 0;
+					break;
+				case TLocalColumns::INVOICE_NETTO:
 					LocalVan->InvoiceNetto = 0;
 					break;
-				case TNVansLocalColumns::INVOICE_TARE:
+				case TLocalColumns::INVOICE_TARE:
 					LocalVan->InvoiceTare = 0;
 					break;
 				}
 			}
+
+			LocalVan->CalcFields = true;
 
 			SetLocalVan(R, LocalVan);
 
@@ -413,32 +440,50 @@ void __fastcall TMain::PopupMenuPopup(TObject *Sender) {
 void TMain::SetControlsEnabled(const bool Enabled) {
 	PanelServer->Enabled = Enabled;
 	sgServer->Enabled = Enabled;
-	Splitter->Enabled = Enabled;
 	PanelCommon->Enabled = Enabled;
 	sgLocal->Enabled = Enabled;
 	PanelLocal->Enabled = Enabled;
 }
 
 // ---------------------------------------------------------------------------
-void TMain::SetUseLocal() {
-	sgServer->Align = Settings->UseLocal ? alTop : alClient;
-	if (Settings->UseLocal) {
-		sgServer->Height = ClientHeight / 2 - PanelServer->Height -
-			PanelLocal->Height + StatusBar->Height;
-		Splitter->Top = sgServer->Top + sgServer->Height;
-		PanelCommon->Top = Splitter->Top + Splitter->Height;
+void TMain::UpdateScaleType() {
+	PanelCommon->Visible = Settings->ScaleType != stDisabled;
+
+	sgLocal->Visible = Settings->ScaleType == stAvitekDyn ||
+		Settings->ScaleType == stAvitekSta;
+
+	btnSaveVanProps->Visible = sgLocal->Visible;
+
+	PanelLocal->Visible = sgLocal->Visible;
+
+	btnLocalTrains->Visible = Settings->ScaleType == stAvitekDyn;
+
+	if (sgLocal->Visible) {
+		sgServer->Align = alTop;
+		PanelCommon->Align = alTop;
+		sgServer->Height =
+			(ClientHeight - PanelServer->Height - PanelCommon->Height -
+			PanelLocal->Height - StatusBar->Height) / 2;
 	}
-	Splitter->Visible = Settings->UseLocal;
-	PanelCommon->Visible = Settings->UseLocal;
-	sgLocal->Visible = Settings->UseLocal;
-	PanelLocal->Visible = Settings->UseLocal;
+	else {
+		sgServer->Align = alClient;
+		PanelCommon->Align = alBottom;
+	}
 }
 
 // ---------------------------------------------------------------------------
 void TMain::SettingsChanged() {
-	SetUseLocal();
+	eRWNum->Text = "";
 
-	btnLocalTrains->Visible = Settings->ScaleTypeDyn;
+	ServerVanList = NULL;
+
+	LocalVanList = NULL;
+
+	LocalChanged = false;
+
+	UpdateScaleType();
+
+	EndOperation();
 }
 
 // ---------------------------------------------------------------------------
@@ -449,10 +494,10 @@ void TMain::StartOperation(TOperation Operation) {
 
 	switch (Operation) {
 	case oLoad:
-		Ident = IDS_STATUS_TRAIN_LOAD;
+		Ident = IDS_STATUS_DATA_LOAD;
 		break;
 	case oSave:
-		Ident = IDS_STATUS_TRAIN_SAVE;
+		Ident = IDS_STATUS_DATA_SAVE;
 		break;
 	}
 
@@ -468,19 +513,36 @@ void TMain::StartOperation(TOperation Operation) {
 
 // ---------------------------------------------------------------------------
 void TMain::EndOperation() {
-	frmLocalTrains->EndLoad();
-	frmServerTrains->EndLoad();
+	if (frmLocalTrains) {
+		frmLocalTrains->EndLoad();
+	}
+	if (frmServerTrains) {
+		frmServerTrains->EndLoad();
+	}
 
 	SetControlsEnabled(true);
 
 	StatusBar->SimpleText = "";
 
-	btnReverse->Enabled = ServerVanList->Count > 1;
+	btnServerReverse->Enabled = ServerVanList->Count > 1;
+	btnServerSaveToFile->Enabled = btnServerReverse->Enabled;
 
-	btnSaveVanProps->Enabled = ServerVanList->Count > 0;
-	btnCopyDataAll->Enabled =
-		btnSaveVanProps->Enabled && LocalVanList->Count > 0;
-	btnCopyDataMass->Enabled = btnCopyDataAll->Enabled;
+	switch (Settings->ScaleType) {
+	case stAvitekDyn:
+	case stAvitekSta:
+		btnSaveVanProps->Enabled = ServerVanList->Count > 0;
+
+		btnCopyDataAll->Enabled =
+			btnSaveVanProps->Enabled && LocalVanList->Count > 0;
+		btnCopyDataMass->Enabled = btnCopyDataAll->Enabled;
+
+		break;
+	case stWME:
+		btnCopyDataAll->Enabled = ServerVanList->Count > 0;
+		btnCopyDataMass->Enabled = btnCopyDataAll->Enabled;
+
+		break;
+	}
 
 	RestoreCursor();
 }
@@ -491,34 +553,32 @@ int TMain::SetServerVan(int Index, TOracleVan * Van) {
 		Index = StringGridAddRow(sgServer);
 	}
 
-	sgServer->Objects[TNVansServerColumns::VAN_OBJECT][Index] = Van;
+	sgServer->Objects[TServerColumns::VAN_OBJECT][Index] = Van;
 
-	sgServer->Cells[TNVansServerColumns::NUM][Index] = IntToStr(Index);
+	sgServer->Cells[TServerColumns::NUM][Index] = IntToStr(Index);
 
-	sgServer->Cells[TNVansServerColumns::VANNUM][Index] = Van->VanNum;
+	sgServer->Cells[TServerColumns::VANNUM][Index] = Van->VanNum;
 
-	sgServer->Cells[TNVansServerColumns::CARGOTYPE][Index] = Van->CargoType;
+	sgServer->Cells[TServerColumns::CARGOTYPE][Index] = Van->CargoType;
 
-	sgServer->Cells[TNVansServerColumns::INVOICE_NUM][Index] = Van->InvoiceNum;
+	sgServer->Cells[TServerColumns::INVOICE_NUM][Index] = Van->InvoiceNum;
 
-	sgServer->Cells[TNVansServerColumns::INVOICE_SUPPLIER][Index] =
+	sgServer->Cells[TServerColumns::INVOICE_SUPPLIER][Index] =
 		Van->InvoiceSupplier;
-	sgServer->Cells[TNVansServerColumns::INVOICE_RECIPIENT][Index] =
+	sgServer->Cells[TServerColumns::INVOICE_RECIPIENT][Index] =
 		Van->InvoiceRecipient;
 
-	sgServer->Cells[TNVansServerColumns::DEPART_STATION][Index] =
-		Van->DepartStation;
-	sgServer->Cells[TNVansServerColumns::PURPOSE_STATION][Index] =
+	sgServer->Cells[TServerColumns::DEPART_STATION][Index] = Van->DepartStation;
+	sgServer->Cells[TServerColumns::PURPOSE_STATION][Index] =
 		Van->PurposeStation;
 
-	StringGridSetCellInt(sgServer, TNVansServerColumns::CARRYING, Index,
+	StringGridSetCellInt(sgServer, TServerColumns::CARRYING, Index,
 		Van->Carrying);
-	StringGridSetCellInt(sgServer, TNVansServerColumns::TARE_T, Index,
-		Van->TareT);
+	StringGridSetCellInt(sgServer, TServerColumns::TARE_T, Index, Van->TareT);
 
-	StringGridSetCellInt(sgServer, TNVansServerColumns::INVOICE_NETTO, Index,
+	StringGridSetCellInt(sgServer, TServerColumns::INVOICE_NETTO, Index,
 		Van->InvoiceNetto);
-	StringGridSetCellInt(sgServer, TNVansServerColumns::INVOICE_TARE, Index,
+	StringGridSetCellInt(sgServer, TServerColumns::INVOICE_TARE, Index,
 		Van->InvoiceTare);
 
 	return Index;
@@ -530,53 +590,38 @@ int TMain::SetLocalVan(int Index, TLocalVan * Van) {
 		Index = StringGridAddRow(sgLocal);
 	}
 
-	sgLocal->Objects[TNVansLocalColumns::VAN_OBJECT][Index] = Van;
+	sgLocal->Objects[TLocalColumns::VAN_OBJECT][Index] = Van;
 
-	sgLocal->Cells[TNVansLocalColumns::NUM][Index] = IntToStr(Index);
+	sgLocal->Cells[TLocalColumns::NUM][Index] = IntToStr(Index);
 
-	sgLocal->Cells[TNVansLocalColumns::DATETIME][Index] = DTToS(Van->DateTime);
+	sgLocal->Cells[TLocalColumns::DATETIME][Index] = DTToS(Van->DateTime);
 
-	sgLocal->Cells[TNVansLocalColumns::VANNUM][Index] = Van->VanNum;
+	sgLocal->Cells[TLocalColumns::VANNUM][Index] = Van->VanNum;
 
-	sgLocal->Cells[TNVansLocalColumns::CARGOTYPE][Index] = Van->CargoType;
+	sgLocal->Cells[TLocalColumns::CARGOTYPE][Index] = Van->CargoType;
 
-	sgLocal->Cells[TNVansLocalColumns::INVOICE_NUM][Index] = Van->InvoiceNum;
+	sgLocal->Cells[TLocalColumns::INVOICE_NUM][Index] = Van->InvoiceNum;
 
-	sgLocal->Cells[TNVansLocalColumns::INVOICE_SUPPLIER][Index] =
+	sgLocal->Cells[TLocalColumns::INVOICE_SUPPLIER][Index] =
 		Van->InvoiceSupplier;
-	sgLocal->Cells[TNVansLocalColumns::INVOICE_RECIPIENT][Index] =
+	sgLocal->Cells[TLocalColumns::INVOICE_RECIPIENT][Index] =
 		Van->InvoiceRecipient;
 
-	sgLocal->Cells[TNVansLocalColumns::DEPART_STATION][Index] =
-		Van->DepartStation;
-	sgLocal->Cells[TNVansLocalColumns::PURPOSE_STATION][Index] =
-		Van->PurposeStation;
+	sgLocal->Cells[TLocalColumns::DEPART_STATION][Index] = Van->DepartStation;
+	sgLocal->Cells[TLocalColumns::PURPOSE_STATION][Index] = Van->PurposeStation;
 
-	StringGridSetCellInt(sgLocal, TNVansLocalColumns::CARRYING, Index,
+	StringGridSetCellInt(sgLocal, TLocalColumns::CARRYING, Index,
 		Van->Carrying);
-	StringGridSetCellInt(sgLocal, TNVansLocalColumns::TARE_T, Index,
-		Van->TareT);
-	StringGridSetCellInt(sgLocal, TNVansLocalColumns::INVOICE_NETTO, Index,
+	StringGridSetCellInt(sgLocal, TLocalColumns::TARE_T, Index, Van->TareT);
+	StringGridSetCellInt(sgLocal, TLocalColumns::INVOICE_NETTO, Index,
 		Van->InvoiceNetto);
-	StringGridSetCellInt(sgLocal, TNVansLocalColumns::INVOICE_TARE, Index,
+	StringGridSetCellInt(sgLocal, TLocalColumns::INVOICE_TARE, Index,
 		Van->InvoiceTare);
 
-	StringGridSetCellInt(sgLocal, TNVansLocalColumns::NETTO_DIFF, Index,
+	StringGridSetCellInt(sgLocal, TLocalColumns::NETTO_DIFF, Index,
 		Van->NettoDiff);
 
 	return Index;
-}
-
-// ---------------------------------------------------------------------------
-TOracleVan * TMain::GetServerVan(int Index) {
-	return (TOracleVan *) sgServer->Objects
-		[TNVansServerColumns::VAN_OBJECT][Index];
-}
-
-// ---------------------------------------------------------------------------
-TLocalVan * TMain::GetLocalVan(int Index) {
-	return (TLocalVan *) sgLocal->Objects[TNVansLocalColumns::VAN_OBJECT]
-		[Index];
 }
 
 // ---------------------------------------------------------------------------
@@ -678,9 +723,7 @@ void TMain::SetLocalVanList(TLocalVanList * Value) {
 	ProcMess();
 
 	for (int i = 0; i < LocalVanList->Count; i++) {
-		if (!LocalTrainNum.IsEmpty() || LocalVanList->Items[i]->IsLoaded) {
-			SetLocalVan(-1, LocalVanList->Items[i]);
-		}
+		SetLocalVan(-1, LocalVanList->Items[i]);
 	}
 }
 
@@ -695,6 +738,8 @@ void TMain::ServerLoadTrain(bool WithJoin) {
 		KeyOracleTrain, WithJoin);
 	try {
 		DBOracleLoadTrain->Tag = DB_OPERATION_ORACLE_LOAD_TRAIN;
+
+		DBOracleLoadTrain->SQLToLog = Settings->SQLToLog;
 
 		DBOracleLoadTrain->Execute();
 
@@ -718,6 +763,8 @@ void TMain::ServerLoadTrainDateTime(TKeyOracleTrain * KeyOracleTrain) {
 		DBOracleLoadTrainDateTime->Tag =
 			DB_OPERATION_ORACLE_LOAD_TRAIN_DATETIME;
 
+		DBOracleLoadTrainDateTime->SQLToLog = Settings->SQLToLog;
+
 		DBOracleLoadTrainDateTime->Execute();
 	}
 	__finally {
@@ -740,6 +787,8 @@ void TMain::LocalLoadVans() {
 		LocalTrainNum);
 	try {
 		DBLocalLoadVans->Tag = DB_OPERATION_LOCAL_LOAD_VANS;
+
+		DBLocalLoadVans->SQLToLog = Settings->SQLToLog;
 
 		DBLocalLoadVans->Execute();
 
@@ -765,12 +814,14 @@ bool TMain::LocalSaveVans() {
 	try {
 		DBLocalSaveVan->Tag = DB_OPERATION_LOCAL_SAVE_VAN;
 
+		DBLocalSaveVan->SQLToLog = Settings->SQLToLog;
+
 		for (int i = 1; i < sgLocal->RowCount; i++) {
 			if (!StringGridRowIsChanged(sgLocal, i)) {
 				continue;
 			}
 
-			DBLocalSaveVan->Van = GetLocalVan(i);
+			DBLocalSaveVan->Van = LocalVanList->Items[i - 1];
 
 			Result = DBLocalSaveVan->Execute();
 
@@ -799,7 +850,7 @@ bool TMain::LocalSaveVans() {
 		}
 	}
 
-    return Result;
+	return Result;
 }
 
 // ---------------------------------------------------------------------------
@@ -811,6 +862,8 @@ void TMain::LocalSaveVanProps() {
 		ServerVanList);
 	try {
 		DBLocalSaveVanProps->Tag = DB_OPERATION_LOCAL_SAVE_VAN_PROPS;
+
+		DBLocalSaveVanProps->SQLToLog = Settings->SQLToLog;
 
 		DBLocalSaveVanProps->Execute();
 	}
@@ -835,10 +888,6 @@ void __fastcall TMain::btnServerLoadClick(TObject *Sender) {
 
 // ---------------------------------------------------------------------------
 void __fastcall TMain::btnLocalLoadClick(TObject *Sender) {
-	if (!Settings->UseLocal) {
-		return;
-	}
-
 	if (LocalChanged) {
 		if (!MsgBoxYesNo(IDS_QUESTION_DATA_NEED_SAVE)) {
 			return;
@@ -888,7 +937,7 @@ void __fastcall TMain::FormResize(TObject *Sender) {
 		return;
 	}
 
-	if (!Settings->UseLocal) {
+	if (!sgLocal->Visible) {
 		return;
 	}
 
@@ -900,25 +949,25 @@ void __fastcall TMain::FormResize(TObject *Sender) {
 void __fastcall TMain::TimerResizeTimer(TObject *Sender) {
 	TimerResize->Enabled = false;
 
-	if (sgLocal->Height < Splitter->MinSize) {
-		sgServer->Height = ClientHeight - Splitter->MinSize -
-			PanelServer->Height - Splitter->Height - PanelCommon->Height -
-			PanelLocal->Height - StatusBar->Height;
+	if (sgLocal->Visible) {
+		sgServer->Height =
+			(ClientHeight - PanelServer->Height - PanelCommon->Height -
+			PanelLocal->Height - StatusBar->Height) / 2;
 	}
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TMain::btnServerTrainsClick(TObject *Sender) {
+void __fastcall TMain::btnServerTrainsClick(TObject * Sender) {
 	frmServerTrains->Visible = !frmServerTrains->Visible;
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TMain::btnLocalTrainsClick(TObject *Sender) {
+void __fastcall TMain::btnLocalTrainsClick(TObject * Sender) {
 	frmLocalTrains->Visible = !frmLocalTrains->Visible;
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TMain::btnSaveVanPropsClick(TObject *Sender) {
+void __fastcall TMain::btnSaveVanPropsClick(TObject * Sender) {
 	if (MsgBoxYesNo(IDS_QUESTION_SAVE_VANPROPS)) {
 		LocalSaveVanProps();
 	}
@@ -1020,11 +1069,21 @@ void TMain::AvitekUpdateProt() {
 
 // ---------------------------------------------------------------------------
 void __fastcall TMain::btnCopyDataAllClick(TObject * Sender) {
-	if (AvitekCheckNeedSave()) {
-		return;
-	}
+	switch (Settings->ScaleType) {
+	case stAvitekDyn:
+	case stAvitekSta:
+		if (AvitekCheckNeedSave()) {
+			return;
+		}
 
-	CopyData(((TButton *) Sender)->Tag == 0);
+		CopyData(((TButton*) Sender)->Tag == 0);
+
+		break;
+	case stWME:
+		SendDataToWME(((TButton*) Sender)->Tag == 0);
+
+		break;
+	}
 }
 
 // ---------------------------------------------------------------------------
@@ -1048,50 +1107,50 @@ bool TMain::DataExists(TIntegerPairList * Result) {
 		ServerIndex = Result->Items[i]->Int1->Value;
 		LocalIndex = Result->Items[i]->Int2->Value;
 
-		if (CheckField(TNVansLocalColumns::CARGOTYPE,
-			TNVansServerColumns::CARGOTYPE, LocalIndex, ServerIndex)) {
-			return true;
-		}
-
-		if (CheckField(TNVansLocalColumns::INVOICE_NUM,
-			TNVansServerColumns::INVOICE_NUM, LocalIndex, ServerIndex)) {
-			return true;
-		}
-
-		if (CheckField(TNVansLocalColumns::INVOICE_SUPPLIER,
-			TNVansServerColumns::INVOICE_SUPPLIER, LocalIndex, ServerIndex)) {
-			return true;
-		}
-		if (CheckField(TNVansLocalColumns::INVOICE_RECIPIENT,
-			TNVansServerColumns::INVOICE_RECIPIENT, LocalIndex, ServerIndex)) {
-			return true;
-		}
-
-		if (CheckField(TNVansLocalColumns::DEPART_STATION,
-			TNVansServerColumns::DEPART_STATION, LocalIndex, ServerIndex)) {
-			return true;
-		}
-		if (CheckField(TNVansLocalColumns::PURPOSE_STATION,
-			TNVansServerColumns::PURPOSE_STATION, LocalIndex, ServerIndex)) {
-			return true;
-		}
-
-		if (CheckField(TNVansLocalColumns::CARRYING,
-			TNVansServerColumns::CARRYING, LocalIndex, ServerIndex)) {
-			return true;
-		}
-
-		if (CheckField(TNVansLocalColumns::TARE_T, TNVansServerColumns::TARE_T,
+		if (CheckField(TLocalColumns::CARGOTYPE, TServerColumns::CARGOTYPE,
 			LocalIndex, ServerIndex)) {
 			return true;
 		}
 
-		if (CheckField(TNVansLocalColumns::INVOICE_NETTO,
-			TNVansServerColumns::INVOICE_NETTO, LocalIndex, ServerIndex)) {
+		if (CheckField(TLocalColumns::INVOICE_NUM, TServerColumns::INVOICE_NUM,
+			LocalIndex, ServerIndex)) {
 			return true;
 		}
-		if (CheckField(TNVansLocalColumns::INVOICE_TARE,
-			TNVansServerColumns::INVOICE_TARE, LocalIndex, ServerIndex)) {
+
+		if (CheckField(TLocalColumns::INVOICE_SUPPLIER,
+			TServerColumns::INVOICE_SUPPLIER, LocalIndex, ServerIndex)) {
+			return true;
+		}
+		if (CheckField(TLocalColumns::INVOICE_RECIPIENT,
+			TServerColumns::INVOICE_RECIPIENT, LocalIndex, ServerIndex)) {
+			return true;
+		}
+
+		if (CheckField(TLocalColumns::DEPART_STATION,
+			TServerColumns::DEPART_STATION, LocalIndex, ServerIndex)) {
+			return true;
+		}
+		if (CheckField(TLocalColumns::PURPOSE_STATION,
+			TServerColumns::PURPOSE_STATION, LocalIndex, ServerIndex)) {
+			return true;
+		}
+
+		if (CheckField(TLocalColumns::CARRYING, TServerColumns::CARRYING,
+			LocalIndex, ServerIndex)) {
+			return true;
+		}
+
+		if (CheckField(TLocalColumns::TARE_T, TServerColumns::TARE_T,
+			LocalIndex, ServerIndex)) {
+			return true;
+		}
+
+		if (CheckField(TLocalColumns::INVOICE_NETTO,
+			TServerColumns::INVOICE_NETTO, LocalIndex, ServerIndex)) {
+			return true;
+		}
+		if (CheckField(TLocalColumns::INVOICE_TARE,
+			TServerColumns::INVOICE_TARE, LocalIndex, ServerIndex)) {
 			return true;
 		}
 	}
@@ -1104,19 +1163,20 @@ void TMain::CopyData(bool CopyAll) {
 	TStringList * Source = new TStringList();
 	TStringList * Dest = new TStringList();
 
-	TIntegerPairList * Result = new TIntegerPairList();
-
-	for (int i = 1; i < sgServer->RowCount; i++) {
-		Source->Add(sgServer->Cells[TNVansServerColumns::VANNUM][i]);
+	for (int i = 0; i < ServerVanList->Count; i++) {
+		Source->Add(ServerVanList->Items[i]->VanNum);
 	}
-	for (int i = 1; i < sgLocal->RowCount; i++) {
-		if (GetLocalVan(i)->IsLoaded) {
-			Dest->Add(sgLocal->Cells[TNVansLocalColumns::VANNUM][i]);
+
+	for (int i = 0; i < LocalVanList->Count; i++) {
+		if (LocalVanList->Items[i]->IsLoaded) {
+			Dest->Add(LocalVanList->Items[i]->VanNum);
 		}
 		else {
 			Dest->Add("*");
 		}
 	}
+
+	TIntegerPairList * Result = new TIntegerPairList();
 
 	try {
 		FindMatch(Source, Dest, Result);
@@ -1127,15 +1187,10 @@ void TMain::CopyData(bool CopyAll) {
 			return;
 		}
 
-		for (int i = 0; i < Result->Count; i++) {
-			Result->Items[i]->Int1->Value++;
-			Result->Items[i]->Int2->Value++;
-		}
-
 		TGridRect Selection;
 
-		Selection.Left = TNVansLocalColumns::VANNUM;
-		Selection.Right = TNVansLocalColumns::VANNUM;
+		Selection.Left = TLocalColumns::VANNUM;
+		Selection.Right = TLocalColumns::VANNUM;
 
 		int MinInt2 = Result->Items[0]->Int2->Value;
 		int MaxInt2 = Result->Items[0]->Int2->Value;
@@ -1147,12 +1202,12 @@ void TMain::CopyData(bool CopyAll) {
 				MaxInt2 = Result->Items[i]->Int2->Value;
 			}
 		}
-		Selection.Top = MinInt2;
+		Selection.Top = MinInt2 + 1;
 		if (MaxInt2 - MinInt2 > Result->Count) {
 			Selection.Bottom = Selection.Top;
 		}
 		else {
-			Selection.Bottom = MaxInt2;
+			Selection.Bottom = MaxInt2 + 1;
 		}
 
 		sgLocal->Row = Selection.Top;
@@ -1177,8 +1232,8 @@ void TMain::CopyData(bool CopyAll) {
 			ServerIndex = Result->Items[i]->Int1->Value;
 			LocalIndex = Result->Items[i]->Int2->Value;
 
-			ServerVan = GetServerVan(ServerIndex);
-			LocalVan = GetLocalVan(LocalIndex);
+			ServerVan = ServerVanList->Items[ServerIndex];
+			LocalVan = LocalVanList->Items[LocalIndex];
 
 			LocalVan->CalcFields = false;
 
@@ -1211,9 +1266,9 @@ void TMain::CopyData(bool CopyAll) {
 
 			LocalVan->CalcFields = true;
 
-			SetLocalVan(LocalIndex, LocalVan);
+			SetLocalVan(LocalIndex + 1, LocalVan);
 
-			StringGridRowSetChanged(sgLocal, LocalIndex, true);
+			StringGridRowSetChanged(sgLocal, LocalIndex + 1, true);
 		}
 
 		LocalChanged = true;
@@ -1228,20 +1283,9 @@ void TMain::CopyData(bool CopyAll) {
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TMain::sgServerSelectCell(TObject *Sender, int ACol, int ARow,
+void __fastcall TMain::sgServerSelectCell(TObject * Sender, int ACol, int ARow,
 	bool &CanSelect) {
 	StringGridInvalidateSelected((TStringGrid*) Sender);
-}
-
-// ---------------------------------------------------------------------------
-bool TMain::IsLocalVanTare(int Index) {
-	TLocalVan * LocalVan = GetLocalVan(Index);
-
-	if (LocalVan == NULL) {
-		return false;
-	}
-
-	return !LocalVan->IsLoaded;
 }
 
 // ---------------------------------------------------------------------------
@@ -1267,10 +1311,10 @@ void __fastcall TMain::btnLocalSaveClick(TObject * Sender) {
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TMain::sgLocalDblClick(TObject *Sender) {
+void __fastcall TMain::sgLocalDblClick(TObject * Sender) {
 #ifdef _DEBUG
 	if (sgLocal->Row > 0) {
-		TLocalVan * Van = GetLocalVan(sgLocal->Row);
+		TLocalVan * Van = LocalVanList->Items[sgLocal->Row - 1];
 		MsgBox(StringReplace(Van->ToString(), ",", sLineBreak,
 			TReplaceFlags() << rfReplaceAll));
 	}
@@ -1278,7 +1322,7 @@ void __fastcall TMain::sgLocalDblClick(TObject *Sender) {
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TMain::btnReverseClick(TObject * Sender) {
+void __fastcall TMain::btnServerReverseClick(TObject * Sender) {
 	TOracleVanList * VanList = new TOracleVanList();
 	try {
 		TOracleVan * Van;
@@ -1304,7 +1348,7 @@ void TMain::DBOperationEventStart(TObject * Sender) {
 	switch (((TDBOperation*)Sender)->Tag) {
 	case DB_OPERATION_CHECK:
 		Log = Format(IDS_LOG_DATABASE_CONNECT,
-			ARRAYOFCONST((((TDBConnectionServer*)((TDBOperationCheck*)Sender)
+			ARRAYOFCONST((((TDBConnectionServer*)((TDBOperationCheck*) Sender)
 			->DBConnection)->User,
 			((TDBConnectionServer*)((TDBOperationCheck*)Sender)->DBConnection)
 			->Host, ((TDBConnectionServer*)((TDBOperationCheck*)Sender)
@@ -1462,6 +1506,82 @@ void TMain::DBOperationEventEndFail(TObject * Sender) {
 	WriteToLog(Format(LogId, ((TDBOperation*)Sender)->ErrorMessage));
 
 	MsgBoxErr(Format(MessageId, ((TDBOperation*)Sender)->ErrorMessage));
+}
+
+String CsvStr(String S) {
+	if (S.IsEmpty()) {
+		return S;
+	}
+
+	for (int i = S.Length(); i > 1; i--) {
+		if (S[i] == '"') {
+			S.Insert('"', i);
+		}
+	}
+
+	S = String('"') + S + String('"');
+
+	return S;
+}
+
+// ---------------------------------------------------------------------------
+void TMain::ServerSaveTrainToFile(TOracleVanList * ServerVanList,
+	String FileName) {
+	StartOperation(oSave);
+
+	TStringList * List = new TStringList();
+	try {
+		String S;
+
+		for (int i = 0; i < ServerVanList->Count; i++) {
+			S = DateTimeToStr(ServerVanList->Items[i]->InvoiceDateTime);
+			S += ";";
+			S += CsvStr(ServerVanList->Items[i]->VanNum);
+			S += ";";
+			S += CsvStr(ServerVanList->Items[i]->CargoType);
+			S += ";";
+			S += CsvStr(ServerVanList->Items[i]->InvoiceNum);
+			S += ";";
+			S += CsvStr(ServerVanList->Items[i]->InvoiceSupplier);
+			S += ";";
+			S += CsvStr(ServerVanList->Items[i]->InvoiceRecipient);
+			S += ";";
+			S += CsvStr(ServerVanList->Items[i]->DepartStation);
+			S += ";";
+			S += CsvStr(ServerVanList->Items[i]->PurposeStation);
+			S += ";";
+			S += IntToStr(ServerVanList->Items[i]->Carrying);
+			S += ";";
+			S += IntToStr(ServerVanList->Items[i]->TareT);
+			S += ";";
+			S += IntToStr(ServerVanList->Items[i]->InvoiceNetto);
+			S += ";";
+			S += IntToStr(ServerVanList->Items[i]->InvoiceTare);
+
+			List->Add(S);
+		}
+
+		List->SaveToFile(FileName);
+	}
+	__finally {
+		List->Free();
+
+		EndOperation();
+	}
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TMain::btnServerSaveToFileClick(TObject *Sender) {
+	SaveDialog->FileName = "";
+
+	if (SaveDialog->Execute()) {
+		ServerSaveTrainToFile(ServerVanList, SaveDialog->FileName);
+	}
+}
+
+// ---------------------------------------------------------------------------
+void TMain::SendDataToWME(bool SendAll) {
+	MsgBox(BoolToStr(SendAll, true));
 }
 
 // ---------------------------------------------------------------------------

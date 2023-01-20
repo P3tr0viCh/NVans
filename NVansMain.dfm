@@ -2,11 +2,11 @@ object Main: TMain
   Left = 0
   Top = 0
   Caption = 'Main'
-  ClientHeight = 368
-  ClientWidth = 960
+  ClientHeight = 408
+  ClientWidth = 1024
   Color = clBtnFace
-  Constraints.MinHeight = 407
-  Constraints.MinWidth = 976
+  Constraints.MinHeight = 447
+  Constraints.MinWidth = 1024
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -13
@@ -20,22 +20,10 @@ object Main: TMain
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 17
-  object Splitter: TSplitter
-    Left = 0
-    Top = 148
-    Width = 960
-    Height = 8
-    Cursor = crSizeNS
-    Align = alTop
-    AutoSnap = False
-    MinSize = 100
-    ExplicitTop = 158
-    ExplicitWidth = 880
-  end
   object StatusBar: TStatusBar
     Left = 0
-    Top = 344
-    Width = 960
+    Top = 384
+    Width = 1024
     Height = 24
     Panels = <
       item
@@ -47,12 +35,14 @@ object Main: TMain
     ParentFont = True
     SimplePanel = True
     UseSystemFont = False
+    ExplicitTop = 344
+    ExplicitWidth = 960
   end
   object sgServer: TStringGrid
     Left = 0
     Top = 48
-    Width = 960
-    Height = 100
+    Width = 1024
+    Height = 120
     Align = alTop
     ColCount = 2
     DefaultColWidth = 32
@@ -64,12 +54,13 @@ object Main: TMain
     OnDrawCell = sgServerDrawCell
     OnFixedCellClick = sgServerFixedCellClick
     OnSelectCell = sgServerSelectCell
+    ExplicitWidth = 960
   end
   object sgLocal: TStringGrid
     Left = 0
-    Top = 196
-    Width = 960
-    Height = 100
+    Top = 216
+    Width = 1024
+    Height = 120
     Align = alClient
     ColCount = 2
     DefaultColWidth = 32
@@ -82,17 +73,21 @@ object Main: TMain
     OnDrawCell = sgLocalDrawCell
     OnFixedCellClick = sgServerFixedCellClick
     OnSelectCell = sgServerSelectCell
+    ExplicitLeft = -8
+    ExplicitTop = 218
+    ExplicitWidth = 960
   end
   object PanelServer: TPanel
     Left = 0
     Top = 0
-    Width = 960
+    Width = 1024
     Height = 48
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
+    ExplicitWidth = 960
     DesignSize = (
-      960
+      1024
       48)
     object lblRWNum: TLabel
       Left = 8
@@ -103,7 +98,7 @@ object Main: TMain
       FocusControl = eRWNum
       WordWrap = True
     end
-    object Label1: TLabel
+    object lblDateTime: TLabel
       Left = 200
       Top = 7
       Width = 51
@@ -113,14 +108,15 @@ object Main: TMain
       WordWrap = True
     end
     object btnClose: TButton
-      Left = 872
+      Left = 936
       Top = 8
       Width = 80
       Height = 32
       Anchors = [akTop, akRight]
       Caption = #1047#1072#1082#1088#1099#1090#1100
-      TabOrder = 7
+      TabOrder = 8
       OnClick = btnCloseClick
+      ExplicitLeft = 872
     end
     object btnServerLoad: TButton
       Left = 384
@@ -132,43 +128,45 @@ object Main: TMain
       OnClick = btnServerLoadClick
     end
     object btnOptions: TButton
-      Left = 776
+      Left = 840
       Top = 8
       Width = 80
       Height = 32
       Anchors = [akTop, akRight]
       Caption = #1053#1072#1089#1090#1088#1086#1081#1082#1080
-      TabOrder = 6
+      TabOrder = 7
       OnClick = btnOptionsClick
+      ExplicitLeft = 776
     end
     object btnServerTrains: TButton
       Left = 472
       Top = 8
-      Width = 80
+      Width = 72
       Height = 32
       Caption = #1057#1087#1080#1089#1086#1082
       TabOrder = 3
       OnClick = btnServerTrainsClick
     end
     object btnAbout: TButton
-      Left = 672
+      Left = 736
       Top = 8
       Width = 96
       Height = 32
       Anchors = [akTop, akRight]
       Caption = #1054' '#1087#1088#1086#1075#1088#1072#1084#1084#1077
-      TabOrder = 5
+      TabOrder = 6
       OnClick = btnAboutClick
+      ExplicitLeft = 672
     end
-    object btnReverse: TButton
-      Left = 560
+    object btnServerReverse: TButton
+      Left = 552
       Top = 8
-      Width = 80
+      Width = 72
       Height = 32
       Caption = #1056#1077#1074#1077#1088#1089
       Enabled = False
       TabOrder = 4
-      OnClick = btnReverseClick
+      OnClick = btnServerReverseClick
     end
     object eRWNum: TEdit
       Left = 58
@@ -189,15 +187,27 @@ object Main: TMain
       TabOrder = 1
       OnKeyDown = eRWNumKeyDown
     end
+    object btnServerSaveToFile: TButton
+      Left = 640
+      Top = 8
+      Width = 80
+      Height = 32
+      Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
+      Enabled = False
+      TabOrder = 5
+      OnClick = btnServerSaveToFileClick
+    end
   end
   object PanelLocal: TPanel
     Left = 0
-    Top = 296
-    Width = 960
+    Top = 336
+    Width = 1024
     Height = 48
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 4
+    ExplicitTop = 352
+    ExplicitWidth = 960
     object btnLocalLoad: TButton
       Left = 8
       Top = 8
@@ -229,15 +239,16 @@ object Main: TMain
   end
   object PanelCommon: TPanel
     Left = 0
-    Top = 156
-    Width = 960
-    Height = 40
+    Top = 168
+    Width = 1024
+    Height = 48
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 2
+    ExplicitWidth = 960
     object btnSaveVanProps: TButton
       Left = 304
-      Top = 0
+      Top = 8
       Width = 112
       Height = 32
       Caption = #1061#1072#1088#1072#1082#1090#1077#1088#1080#1089#1090#1080#1082#1080
@@ -247,7 +258,7 @@ object Main: TMain
     end
     object btnCopyDataAll: TButton
       Left = 8
-      Top = 0
+      Top = 8
       Width = 112
       Height = 32
       Caption = #1050#1086#1087#1080#1088#1086#1074#1072#1090#1100' '#1074#1089#1105
@@ -258,7 +269,7 @@ object Main: TMain
     object btnCopyDataMass: TButton
       Tag = 1
       Left = 128
-      Top = 0
+      Top = 8
       Width = 160
       Height = 32
       Caption = #1050#1086#1087#1080#1088#1086#1074#1072#1090#1100' '#1090#1086#1083#1100#1082#1086' '#1074#1077#1089
@@ -269,14 +280,14 @@ object Main: TMain
   end
   object ApplicationEvents: TApplicationEvents
     OnException = ApplicationEventsException
-    Left = 600
+    Left = 584
     Top = 80
   end
   object TimerResize: TTimer
     Enabled = False
     Interval = 100
     OnTimer = TimerResizeTimer
-    Left = 504
+    Left = 488
     Top = 80
   end
   object PopupMenu: TPopupMenu
@@ -304,5 +315,12 @@ object Main: TMain
       ShortCut = 16449
       OnClick = miSelectAllClick
     end
+  end
+  object SaveDialog: TSaveDialog
+    DefaultExt = 'csv'
+    Filter = 'CSV ('#1088#1072#1079#1076#1077#1083#1080#1090#1077#1083#1080' - '#1079#1072#1087#1103#1090#1099#1077') |*.csv|'#1042#1089#1077' '#1092#1072#1081#1083#1099'|*.*'
+    Options = [ofOverwritePrompt, ofHideReadOnly, ofPathMustExist, ofEnableSizing]
+    Left = 680
+    Top = 80
   end
 end

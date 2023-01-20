@@ -52,7 +52,9 @@ __published:
 private:
 	int SelectedRow;
 
-	TNVansServerTrainsColumns * Columns;
+	TServerTrainsColumns * ListColumns;
+
+	TStringGridOptions * ListOptions;
 
 	TFilterOracleTrains * Filter;
 

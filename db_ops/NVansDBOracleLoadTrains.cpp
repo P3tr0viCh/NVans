@@ -19,8 +19,8 @@
 // ---------------------------------------------------------------------------
 __fastcall TDBOracleLoadTrains::TDBOracleLoadTrains
 	(TDBConnection * DBConnection, IDBOperationEvent * DBOperationEvent,
-	TFilterOracleTrains * Filter)
-	: TDBOperation(DBConnection, DBOperationEvent) {
+	TFilterOracleTrains * Filter) : TDBOperation(DBConnection, DBOperationEvent)
+{
 	FFilter = new TFilterOracleTrains();
 
 	FTrainList = new TOracleTrainList();
@@ -46,33 +46,31 @@ void TDBOracleLoadTrains::Operation() {
 			Filter->VanNum.IsEmpty() && Filter->InvoiceNum_1.IsEmpty();
 
 		if (SearchByDate) {
-			Query->SQL->Text = SQLLoad(IDS_SQL_ORACLE_NVANS_TRAINS_BY_DT);
+			SQLSetText(Query, IDS_SQL_ORACLE_NVANS_TRAINS_BY_DT);
 		}
 		else {
-			Query->SQL->Text = SQLLoad(IDS_SQL_ORACLE_NVANS_TRAINS_BY_VN);
+			SQLSetText(Query, IDS_SQL_ORACLE_NVANS_TRAINS_BY_VN);
 		}
 
-#ifdef SQL_TO_LOG
-		WriteToLog(Query->SQL->Text);
-#endif
+		if (SQLToLog) {
+			WriteToLog(Query->SQL->Text);
+		}
 
 		if (SearchByDate) {
 			SQLGetParam(Query, "DATE_FROM", ftDate)->Value = Filter->Date;
 			SQLGetParam(Query, "DATE_TO", ftDate)->Value = Filter->Date + 1;
 
-#ifdef SQL_TO_LOG
-			WriteToLog("PARAMS: DATE_FROM = " + DateToStr(Filter->Date) + ", " +
-				"DATE_TO = " + DateToStr(Filter->Date + 1));
-#endif
+			if (SQLToLog) {
+				WriteToLog(SQLParamsToStr(Query));
+			}
 		}
 		else {
 			SQLGetParam(Query, "INVNUM", ftFixedWideChar)->Value =
 				Filter->VanNum;
 
-#ifdef SQL_TO_LOG
-			WriteToLog("PARAMS: INVNUM = " + Filter->VanNum + ", " +
-				"DATE_FROM = " + DateToStr(Filter->Date - 30));
-#endif
+			if (SQLToLog) {
+				WriteToLog(SQLParamsToStr(Query));
+			}
 		}
 
 		Query->Open();

@@ -13,6 +13,11 @@
 #define LOCAL_DB_NAME "wdb_disk"
 
 // ---------------------------------------------------------------------------
+enum TScaleType {
+	stDisabled = 0, stAvitekDyn, stAvitekSta, stWME
+};
+
+// ---------------------------------------------------------------------------
 class TSettings : public TObject {
 private:
 	// При добавлении настройки, обновлять TSettings, Equals, Assign, ToString;
@@ -25,9 +30,9 @@ private:
 	TColor FColorReadOnly;
 	TColor FColorSelected;
 
-	bool FUseLocal;
+	TScaleType FScaleType;
 
-	bool FScaleTypeDyn;
+	bool FSQLToLog;
 
 	TDBConnectionMySQL * FLocalConnection;
 	TDBConnectionMySQL * FServerMySQLConnection;
@@ -36,13 +41,11 @@ private:
 	// -----------------------------------------------------------------------
 	String GetConfigFileName();
 
-	String CRC(String Text);
-
 	String Encrypt(String Text);
 	String Decrypt(String Text);
 
 	String GetCRC();
-	void CheckCRC(String CRC);
+	void CheckCRC(String EncryptedCRC);
 
 	void LoadSettings();
 	void SaveSettings();
@@ -70,10 +73,9 @@ public:
 	__property TColor ColorSelected = {
 		read = FColorSelected, write = FColorSelected};
 
-	__property bool UseLocal = {read = FUseLocal, write = FUseLocal};
+	__property TScaleType ScaleType = {read = FScaleType, write = FScaleType};
 
-	__property bool ScaleTypeDyn = {read = FScaleTypeDyn, write = FScaleTypeDyn
-	};
+	__property bool SQLToLog = {read = FSQLToLog, write = FSQLToLog};
 
 	__property TDBConnectionMySQL * LocalConnection = {read = FLocalConnection};
 	__property TDBConnectionMySQL * ServerMySQLConnection = {

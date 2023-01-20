@@ -30,9 +30,9 @@ __fastcall TSettings::TSettings() {
 	FColorReadOnly = TColor(0x00E8E8E8);
 	FColorSelected = clHotLight;
 
-	FUseLocal = false;
+	FSQLToLog = false;
 
-	FScaleTypeDyn = true;
+	FScaleType = stDisabled;
 
 	FLocalConnection = new TDBConnectionMySQL();
 	FServerMySQLConnection = new TDBConnectionMySQL();
@@ -63,10 +63,10 @@ bool __fastcall TSettings::Equals(TObject * Obj) {
 	if (Settings->ColorReadOnly != ColorReadOnly)
 		return false;
 
-	if (Settings->UseLocal != UseLocal)
+	if (Settings->SQLToLog != SQLToLog)
 		return false;
 
-	if (Settings->ScaleTypeDyn != ScaleTypeDyn)
+	if (Settings->ScaleType != ScaleType)
 		return false;
 
 	if (!Settings->LocalConnection->Equals(LocalConnection))
@@ -85,9 +85,9 @@ void __fastcall TSettings::Assign(TSettings * Source) {
 
 	FColorReadOnly = Source->ColorReadOnly;
 
-	FUseLocal = Source->UseLocal;
+	FSQLToLog = Source->SQLToLog;
 
-	FScaleTypeDyn = Source->ScaleTypeDyn;
+	FScaleType = Source->ScaleType;
 
 	FLocalConnection->Assign(Source->LocalConnection);
 	FServerMySQLConnection->Assign(Source->ServerMySQLConnection);
@@ -99,14 +99,22 @@ String __fastcall TSettings::ToString() {
 	String S;
 
 	S = "TSettings{";
-	S += "OptionsPass='" + OptionsPass + "'";
+	S += "OptionsPass=" + OptionsPass;
 	S += ",";
-	S += "ColorReadOnly='" + ColorToString(ColorReadOnly) + "'";
+
+	S += "ColorChanged=" + ColorToString(ColorChanged);
+	S += ", ";
+	S += "ColorReadOnly='" + ColorToString(ColorReadOnly);
+	S += ", ";
+	S += "ColorSelected=" + ColorToString(ColorSelected);
+	S += ", ";
+
+	S += "ScaleType=" + IntToStr(ScaleType);
 	S += ",";
-	S += "UseLocal='" + BoolToStr(UseLocal) + "'";
+
+	S += "SQLToLog=" + BoolToStr(SQLToLog);
 	S += ",";
-	S += "ScaleTypeDyn='" + BoolToStr(ScaleTypeDyn) + "'";
-	S += ",";
+
 	S += "LocalConnection=" + LocalConnection->ToString();
 	S += ",";
 	S += "ServerMySQLConnection=" + ServerMySQLConnection->ToString();
@@ -124,69 +132,27 @@ String TSettings::GetConfigFileName() {
 }
 
 // ---------------------------------------------------------------------------
-String TSettings::CRC(String Text) {
-	try {
-		return HashSHA256(Text);
-	}
-	catch (...) {
-		return "";
-	}
-}
-
-// ---------------------------------------------------------------------------
 String TSettings::Encrypt(String Text) {
-	if (Text.IsEmpty()) {
-		return "";
-	}
-
-	try {
-		return EncryptAES(Text, ENC_KEY);
-	}
-	catch (...) {
-		return "";
-	}
+	return ::Encrypt(Text, ENC_KEY);
 }
 
 // ---------------------------------------------------------------------------
 String TSettings::Decrypt(String Text) {
-	if (Text.IsEmpty()) {
-		return "";
-	}
-
-	try {
-		return DecryptAES(Text, ENC_KEY);
-	}
-	catch (...) {
-		throw EEncodingError("decrypt");
-	}
+	return ::Decrypt(Text, ENC_KEY);
 }
 
 // ---------------------------------------------------------------------------
 String TSettings::GetCRC() {
 	String S = ToString();
 	S = CRC(S);
-	S = Encrypt(S);
 	return S;
 }
 
 // ---------------------------------------------------------------------------
-void TSettings::CheckCRC(String S) {
-#ifdef DISABLE_CHECK_CRC
-	return;
+void TSettings::CheckCRC(String EncryptedCRC) {
+#ifndef DISABLE_CHECK_CRC
+	::CheckCRC(GetCRC(), EncryptedCRC, ENC_KEY);
 #endif
-
-	if (S.IsEmpty()) {
-		throw EEncodingError(IDS_LOG_ERROR_CRC_EMPTY);
-	}
-
-	S = Decrypt(S);
-
-	String RightCRC = ToString();
-	RightCRC = CRC(RightCRC);
-
-	if (!SameStr(S, RightCRC)) {
-		throw EEncodingError(IDS_LOG_ERROR_CRC_WRONG);
-	}
 }
 
 // ---------------------------------------------------------------------------
@@ -196,14 +162,24 @@ void TSettings::LoadSettings() {
 	String Section;
 
 	try {
+		// -------------------------------------------------------------------
 		Section = "Main";
 		OptionsPass = Decrypt(IniFile->ReadString(Section, "OptionsPass",
-			OptionsPass));
+			Encrypt(OptionsPass)));
+
+		ColorChanged = TColor(IniFile->ReadInteger(Section, "ColorChanged",
+			ColorChanged));
 		ColorReadOnly = TColor(IniFile->ReadInteger(Section, "ColorReadOnly",
 			ColorReadOnly));
-		UseLocal = IniFile->ReadBool(Section, "UseLocal", UseLocal);
-		ScaleTypeDyn = IniFile->ReadBool(Section, "ScaleTypeDyn", ScaleTypeDyn);
+		ColorSelected = TColor(IniFile->ReadInteger(Section, "ColorSelected",
+			ColorSelected));
 
+		ScaleType = (TScaleType)IniFile->ReadInteger(Section, "ScaleType",
+			ScaleType);
+
+		SQLToLog = IniFile->ReadBool(Section, "SQLToLog", SQLToLog);
+
+		// -------------------------------------------------------------------
 		Section = "LocalConnection";
 		LocalConnection->Host = IniFile->ReadString(Section, "Host",
 			LocalConnection->Host);
@@ -215,10 +191,11 @@ void TSettings::LoadSettings() {
 			LocalConnection->User);
 		LocalConnection->Password =
 			Decrypt(IniFile->ReadString(Section, "Pass",
-			LocalConnection->Password));
+			Encrypt(LocalConnection->Password)));
 		LocalConnection->Driver = IniFile->ReadString(Section, "Driver",
 			LocalConnection->Driver);
 
+		// -------------------------------------------------------------------
 		Section = "ServerOracleConnection";
 		ServerOracleConnection->Host =
 			IniFile->ReadString(Section, "Host", ServerOracleConnection->Host);
@@ -231,11 +208,12 @@ void TSettings::LoadSettings() {
 			IniFile->ReadString(Section, "User", ServerOracleConnection->User);
 		ServerOracleConnection->Password =
 			Decrypt(IniFile->ReadString(Section, "Pass",
-			ServerOracleConnection->Password));
+			Encrypt(ServerOracleConnection->Password)));
 		ServerOracleConnection->Driver =
 			IniFile->ReadString(Section, "Driver",
 			ServerOracleConnection->Driver);
 
+		// -------------------------------------------------------------------
 		CheckCRC(IniFile->ReadString("CRC", "CRC", ""));
 	}
 	__finally {
@@ -250,15 +228,23 @@ void TSettings::SaveSettings() {
 	String Section;
 
 	try {
-		IniFile->WriteString("CRC", "CRC", GetCRC());
+		IniFile->WriteString("CRC", "CRC", Encrypt(GetCRC()));
 
+		// -------------------------------------------------------------------
 		Section = "Main";
 		IniFile->WriteString(Section, "Version", GetFileVer());
-		IniFile->WriteString(Section, "OptionsPass", Encrypt(OptionsPass));
-		IniFile->WriteInteger(Section, "ColorReadOnly", ColorReadOnly);
-		IniFile->WriteBool(Section, "UseLocal", UseLocal);
-		IniFile->WriteBool(Section, "ScaleTypeDyn", ScaleTypeDyn);
 
+		IniFile->WriteString(Section, "OptionsPass", Encrypt(OptionsPass));
+
+		IniFile->WriteInteger(Section, "ColorChanged", ColorChanged);
+		IniFile->WriteInteger(Section, "ColorReadOnly", ColorReadOnly);
+		IniFile->WriteInteger(Section, "ColorSelected", ColorSelected);
+
+		IniFile->WriteInteger(Section, "ScaleType", ScaleType);
+
+		IniFile->WriteBool(Section, "SQLToLog", SQLToLog);
+
+		// -------------------------------------------------------------------
 		Section = "LocalConnection";
 		IniFile->WriteString(Section, "Host", LocalConnection->Host);
 		IniFile->WriteString(Section, "Port", LocalConnection->Port);
@@ -268,6 +254,7 @@ void TSettings::SaveSettings() {
 			Encrypt(LocalConnection->Password));
 		IniFile->WriteString(Section, "Driver", LocalConnection->Driver);
 
+		// -------------------------------------------------------------------
 		Section = "ServerOracleConnection";
 		IniFile->WriteString(Section, "Host", ServerOracleConnection->Host);
 		IniFile->WriteString(Section, "Port", ServerOracleConnection->Port);

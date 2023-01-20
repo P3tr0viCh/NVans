@@ -41,13 +41,20 @@ __fastcall TfrmLocalTrains::TfrmLocalTrains(TComponent* Owner) : TForm(Owner) {
 void __fastcall TfrmLocalTrains::FormCreate(TObject *Sender) {
 	SelectedRow = -1;
 
-	Columns = new TNVansLocalTrainsColumns();
+	ListColumns = new TLocalTrainsColumns();
+
+	ListOptions = new TStringGridOptions(sgList);
+	ListOptions->ColSizing = true; // TODO
+	ListOptions->ColorChanged = Main->Settings->ColorChanged;
+	ListOptions->ColorReadOnly = Main->Settings->ColorReadOnly;
+	ListOptions->ColorSelected = Main->Settings->ColorSelected;
+	ListOptions->DefaultRowHeight = Main->DefaultRowHeight;
 
 	Filter = new TFilterLocalTrains();
 
 	FTrainList = new TLocalTrainList();
 
-	StringGridInit(sgList, Columns, Main->DefaultRowHeight);
+	StringGridInit(sgList, ListColumns);
 
 	sgList->Options = sgList->Options << goColSizing;
 
@@ -82,15 +89,16 @@ void __fastcall TfrmLocalTrains::FormDestroy(TObject *Sender) {
 
 	FTrainList->Free();
 	Filter->Free();
-	Columns->Free();
+
+	ListOptions->Free();
+	ListColumns->Free();
 }
 
 // ---------------------------------------------------------------------------
 void __fastcall TfrmLocalTrains::sgListDrawCell(TObject *Sender, int ACol,
 	int ARow, TRect &Rect, TGridDrawState State) {
-	StringGridDrawCell(sgList, ACol, ARow, Rect, State, TIntegerSet(),
-		Columns->LeftAlign, TIntegerSet(), Main->Settings->ColorReadOnly, clMax,
-		true, false, clMax, Main->Settings->ColorSelected);
+	StringGridDrawCell(sgList, ACol, ARow, Rect, State, ListColumns,
+		ListOptions);
 
 }
 
@@ -122,11 +130,11 @@ int TfrmLocalTrains::SetTrain(int Index, TLocalTrain * Train) {
 		Index = StringGridAddRow(sgList);
 	}
 
-	sgList->Cells[TNVansLocalTrainsColumns::DATETIME][Index] =
+	sgList->Cells[TLocalTrainsColumns::DATETIME][Index] =
 		DTToS(Train->DateTime, false);
-	sgList->Cells[TNVansLocalTrainsColumns::VAN_COUNT][Index] =
+	sgList->Cells[TLocalTrainsColumns::VAN_COUNT][Index] =
 		IntToStr(Train->VanCount);
-	sgList->Cells[TNVansLocalTrainsColumns::TRAIN_NUM][Index] = Train->TrainNum;
+	sgList->Cells[TLocalTrainsColumns::TRAIN_NUM][Index] = Train->TrainNum;
 
 	return Index;
 }
@@ -168,6 +176,8 @@ void TfrmLocalTrains::LoadTrains() {
 	try {
 		DBLocalLoadTrains->Tag = DB_OPERATION_LOCAL_LOAD_TRAINS;
 
+		DBLocalLoadTrains->SQLToLog = Main->Settings->SQLToLog;
+
 		DBLocalLoadTrains->Execute();
 
 		TrainList = DBLocalLoadTrains->TrainList;
@@ -186,7 +196,7 @@ void TfrmLocalTrains::UpdateTrains() {
 	String TrainNum = "";
 
 	if (!StringGridIsEmpty(sgList) && SelectedRow > 0) {
-		TrainNum = sgList->Cells[TNVansLocalTrainsColumns::TRAIN_NUM]
+		TrainNum = sgList->Cells[TLocalTrainsColumns::TRAIN_NUM]
 			[SelectedRow];
 	}
 
@@ -201,7 +211,7 @@ void TfrmLocalTrains::UpdateTrains() {
 
 	if (!TrainNum.IsEmpty()) {
 		for (int i = 1; i < sgList->RowCount; i++) {
-			if (AnsiSameStr(sgList->Cells[TNVansLocalTrainsColumns::TRAIN_NUM]
+			if (AnsiSameStr(sgList->Cells[TLocalTrainsColumns::TRAIN_NUM]
 				[i], TrainNum)) {
 				sgList->Row = i;
 				break;
@@ -220,7 +230,7 @@ void __fastcall TfrmLocalTrains::sgListDblClick(TObject *Sender) {
 		return;
 	}
 
-	Main->LocalTrainNum = sgList->Cells[TNVansLocalTrainsColumns::TRAIN_NUM]
+	Main->LocalTrainNum = sgList->Cells[TLocalTrainsColumns::TRAIN_NUM]
 		[SelectedRow];
 }
 

@@ -26,6 +26,7 @@
 #include "NVansOracleVan.h"
 
 #include "NVansKeyOracleTrain.h"
+#include <Vcl.Dialogs.hpp>
 
 // ---------------------------------------------------------------------------
 class TMain : public TForm, public IDBOperationEvent {
@@ -36,7 +37,6 @@ __published:
 	TApplicationEvents *ApplicationEvents;
 	TPanel *PanelServer;
 	TButton *btnClose;
-	TSplitter *Splitter;
 	TButton *btnServerLoad;
 	TButton *btnOptions;
 	TButton *btnServerTrains;
@@ -55,11 +55,13 @@ __published:
 	TMenuItem *miCopy;
 	TMenuItem *miPasteVanNum;
 	TMenuItem *miClear;
-	TButton *btnReverse;
+	TButton *btnServerReverse;
 	TLabel *lblRWNum;
 	TEdit *eRWNum;
-	TLabel *Label1;
+	TLabel *lblDateTime;
 	TEdit *eDateTime;
+	TButton *btnServerSaveToFile;
+	TSaveDialog *SaveDialog;
 
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
@@ -93,14 +95,18 @@ __published:
 	void __fastcall miPasteVanNumClick(TObject *Sender);
 	void __fastcall PopupMenuPopup(TObject *Sender);
 	void __fastcall miClearClick(TObject *Sender);
-	void __fastcall btnReverseClick(TObject *Sender);
+	void __fastcall btnServerReverseClick(TObject *Sender);
 	void __fastcall eRWNumChange(TObject *Sender);
+	void __fastcall btnServerSaveToFileClick(TObject *Sender);
 
 private:
 	TSettings * FSettings;
 
-	TNVansServerColumns * ServerColumns;
-	TNVansLocalColumns * LocalColumns;
+	TServerColumns * ServerColumns;
+	TLocalColumns * LocalColumns;
+
+	TStringGridOptions * ServerOptions;
+	TStringGridOptions * LocalOptions;
 
 	TKeyOracleTrain * FKeyOracleTrain;
 	String FLocalTrainNum;
@@ -115,19 +121,14 @@ private:
 	// -----------------------------------------------------------------------
 	void SetControlsEnabled(const bool Enabled);
 
-	void SetUseLocal();
+	void UpdateScaleType();
 
 	void SettingsChanged();
 
 	int SetServerVan(int Index, TOracleVan * Van);
 	int SetLocalVan(int Index, TLocalVan * Van);
 
-	bool IsLocalVanTare(int Index);
-
 	void SetLocalChanged(bool Changed);
-
-	TOracleVan * GetServerVan(int Index);
-	TLocalVan * GetLocalVan(int Index);
 
 	void SetKeyOracleTrain(TKeyOracleTrain * Value);
 	void SetLocalTrainNum(String Value);
@@ -140,6 +141,8 @@ private:
 	void ServerLoadTrain(bool WithJoin);
 	void ServerLoadTrainDateTime(TKeyOracleTrain * KeyOracleTrain);
 
+	void ServerSaveTrainToFile(TOracleVanList * ServerVanList, String FileName);
+
 	void LocalLoadVans();
 	bool LocalSaveVans();
 	void LocalSaveVanProps();
@@ -147,6 +150,7 @@ private:
 	bool CheckField(int Column1, int Column2, int Index1, int Index2);
 	bool DataExists(TIntegerPairList * Result);
 	void CopyData(bool CopyAll);
+	void SendDataToWME(bool SendAll);
 
 	enum TAvitekBtn {
 		abSave, abUpdate
