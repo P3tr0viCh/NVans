@@ -35,8 +35,6 @@ object Main: TMain
     ParentFont = True
     SimplePanel = True
     UseSystemFont = False
-    ExplicitTop = 344
-    ExplicitWidth = 960
   end
   object sgServer: TStringGrid
     Left = 0
@@ -54,7 +52,6 @@ object Main: TMain
     OnDrawCell = sgServerDrawCell
     OnFixedCellClick = sgServerFixedCellClick
     OnSelectCell = sgServerSelectCell
-    ExplicitWidth = 960
   end
   object sgLocal: TStringGrid
     Left = 0
@@ -73,9 +70,6 @@ object Main: TMain
     OnDrawCell = sgLocalDrawCell
     OnFixedCellClick = sgServerFixedCellClick
     OnSelectCell = sgServerSelectCell
-    ExplicitLeft = -8
-    ExplicitTop = 218
-    ExplicitWidth = 960
   end
   object PanelServer: TPanel
     Left = 0
@@ -85,7 +79,6 @@ object Main: TMain
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitWidth = 960
     DesignSize = (
       1024
       48)
@@ -116,7 +109,6 @@ object Main: TMain
       Caption = #1047#1072#1082#1088#1099#1090#1100
       TabOrder = 8
       OnClick = btnCloseClick
-      ExplicitLeft = 872
     end
     object btnServerLoad: TButton
       Left = 384
@@ -136,7 +128,6 @@ object Main: TMain
       Caption = #1053#1072#1089#1090#1088#1086#1081#1082#1080
       TabOrder = 7
       OnClick = btnOptionsClick
-      ExplicitLeft = 776
     end
     object btnServerTrains: TButton
       Left = 472
@@ -156,7 +147,6 @@ object Main: TMain
       Caption = #1054' '#1087#1088#1086#1075#1088#1072#1084#1084#1077
       TabOrder = 6
       OnClick = btnAboutClick
-      ExplicitLeft = 672
     end
     object btnServerReverse: TButton
       Left = 552
@@ -206,8 +196,6 @@ object Main: TMain
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 4
-    ExplicitTop = 352
-    ExplicitWidth = 960
     object btnLocalLoad: TButton
       Left = 8
       Top = 8
@@ -245,7 +233,6 @@ object Main: TMain
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 2
-    ExplicitWidth = 960
     object btnSaveVanProps: TButton
       Left = 304
       Top = 8

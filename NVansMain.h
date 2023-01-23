@@ -141,7 +141,7 @@ private:
 	void ServerLoadTrain(bool WithJoin);
 	void ServerLoadTrainDateTime(TKeyOracleTrain * KeyOracleTrain);
 
-	void ServerSaveTrainToFile(TOracleVanList * ServerVanList, String FileName);
+	bool ServerSaveTrainToFile(TOracleVanList * ServerVanList, String FileName);
 
 	void LocalLoadVans();
 	bool LocalSaveVans();
@@ -176,7 +176,7 @@ public:
 	int DefaultRowHeight;
 
 	enum TOperation {
-		oLoad, oSave
+		oLoad, oSave, oSendToWME
 	};
 
 	// -----------------------------------------------------------------------

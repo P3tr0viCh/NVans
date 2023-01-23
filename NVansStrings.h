@@ -28,7 +28,12 @@
 #define IDS_ERROR_LOCAL_SAVE_VAN_PROPS				232
 #define IDS_ERROR_LOCAL_LOAD_TRAINS					233
 
+#define IDS_ERROR_SAVE_TO_FILE                      240
+
 #define IDS_ERROR_AVITEK_NEED_SAVE					250
+
+#define IDS_ERROR_SEND_TO_WME_NOT_FOUND				260
+#define IDS_ERROR_SEND_TO_WME_BAD_RESULT            261
 
 #define IDS_MSG_DATABASE_CONNECT_OK					300
 #define IDS_MSG_DATABASE_CONNECT_FAIL				301
@@ -38,6 +43,7 @@
 #define IDS_STATUS_TRAIN_LIST_COUNT					400
 #define IDS_STATUS_DATA_LOAD						401
 #define IDS_STATUS_DATA_SAVE						402
+#define IDS_STATUS_SEND_TO_WME						403
 
 #define IDS_CONNECTION_MYSQL_DRIVER_0				1000
 #define IDS_CONNECTION_MYSQL_DRIVER_1				1001
@@ -55,6 +61,7 @@
 #define IDS_LOG_ERROR_SAVE_SETTINGS					2103
 #define IDS_LOG_ERROR_PASS_WRONG					2110
 #define IDS_LOG_ERROR_TERMINATED_IN_WORK_PROGRESS	2120
+
 #define IDS_LOG_ERROR_AVITEK_NEED_SAVE				2130
 #define IDS_LOG_ERROR_AVITEK_SAVE_BTN_NOT_FOUND		2131
 #define IDS_LOG_ERROR_AVITEK_UPD_BTN_NOT_FOUND		2132
@@ -82,6 +89,13 @@
 #define IDS_LOG_COPY_DATA							2500
 #define IDS_LOG_COPY_DATA_NOT_FOUND					2501
 #define IDS_LOG_COPY_DATA_OVERWRITE_CANCEL			2502
+
+#define IDS_LOG_SAVE_TO_FILE_OK                     2600
+#define IDS_LOG_SAVE_TO_FILE_FAIL                   2601
+
+#define IDS_LOG_SEND_TO_WME_OK                      2700
+#define IDS_LOG_SEND_TO_WME_NOT_FOUND               2701
+#define IDS_LOG_SEND_TO_WME_BAD_RESULT              2702
 
 // ---------------------------------------------------------------------------
 #endif

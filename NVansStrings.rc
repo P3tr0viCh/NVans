@@ -27,7 +27,12 @@ IDS_ERROR_LOCAL_SAVE_VANS,              "Во время сохранения вагонов произошла о
 IDS_ERROR_LOCAL_SAVE_VAN_PROPS,         "Во время сохранения характеристик вагонов произошла ошибка:\n\n%s."
 IDS_ERROR_LOCAL_LOAD_TRAINS,            "Во время загрузки состава произошла ошибка:\n\n%s."
 
+IDS_ERROR_SAVE_TO_FILE,                 "Во время сохранения состава в файл произошла ошибка:\n\n%s"
+
 IDS_ERROR_AVITEK_NEED_SAVE,             "В результах взвешивания ПО «Авитек» имеются не сохранённые данные. Необходимо сохранить записи, либо отменить изменения.\n\nПереключиться на весовую программу?"
+
+IDS_ERROR_SEND_TO_WME_NOT_FOUND,        "АРМ «Ручной ввод» не запущено.\n\nОткройте указанную программу, после чего повторите действие."
+IDS_ERROR_SEND_TO_WME_BAD_RESULT,       "Неверный отклик от АРМ «Ручной ввод»."
 
 IDS_MSG_DATABASE_CONNECT_OK,            "Соединение с базой данных выполнено.\n\nВерсия сервера:\n%s."
 IDS_MSG_DATABASE_CONNECT_FAIL,          "Не удалось подключиться к базе данных.\n\nОшибка:\n%s."
@@ -37,6 +42,7 @@ IDS_MSG_MATCH_NOT_FOUND,                "Не удалось найти соответствие между нат
 IDS_STATUS_TRAIN_LIST_COUNT,            "Количество: %s"
 IDS_STATUS_DATA_LOAD,                   "Загрузка..."
 IDS_STATUS_DATA_SAVE,                   "Сохранение..."
+IDS_STATUS_SEND_TO_WME,                 "Отправка данных в АРМ «Ручной ввод»..."
 
 IDS_CONNECTION_MYSQL_DRIVER_0,          "MySQL ODBC 3.51 Driver"
 IDS_CONNECTION_MYSQL_DRIVER_1,          "MySQL ODBC 8.0 ANSI Driver"
@@ -54,6 +60,7 @@ IDS_LOG_ERROR_SAVE_SETTINGS,                    "write settings fail: %s"
 IDS_LOG_ERROR_CHECK_SETTINGS,                   "check settings for %s"
 IDS_LOG_ERROR_PASS_WRONG,                       "login: pass wrong"
 IDS_LOG_ERROR_TERMINATED_IN_WORK_PROGRESS,      "app terminated in work progress"
+
 IDS_LOG_ERROR_AVITEK_NEED_SAVE,                 "error: avitek prot_form opened, need save"
 IDS_LOG_ERROR_AVITEK_SAVE_BTN_NOT_FOUND,        "error: avitek prot_form opened, but save_btn not found"
 IDS_LOG_ERROR_AVITEK_UPD_BTN_NOT_FOUND,         "error: avitek prot_form opened, but update_btn not found"
@@ -81,5 +88,12 @@ IDS_LOG_LOCAL_LOAD_TRAINS_FAIL,                 "local load trains fail: %s"
 IDS_LOG_COPY_DATA,                              "copy data, count=%d"
 IDS_LOG_COPY_DATA_NOT_FOUND,                    "copy data: not found"
 IDS_LOG_COPY_DATA_OVERWRITE_CANCEL,             "copy data: overwrite cancel"
+
+IDS_LOG_SAVE_TO_FILE_OK,                        "save to file '%s' ok"
+IDS_LOG_SAVE_TO_FILE_FAIL,                      "save to file '%s' fail: %s"
+
+IDS_LOG_SEND_TO_WME_OK,                        "send data to wme ok"
+IDS_LOG_SEND_TO_WME_NOT_FOUND,                 "send data to wme fail: app window not found"
+IDS_LOG_SEND_TO_WME_BAD_RESULT,                "send data to wme fail: bad result (%s)"
 
 END

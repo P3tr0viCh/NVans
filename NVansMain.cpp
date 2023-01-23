@@ -20,6 +20,9 @@
 #include <DBOperationEvent.h>
 #include <DBOperationCheck.h>
 
+#include <WMECommonConsts.h>
+#include <WMECommonStrings.h>
+
 #include "NVansAdd.h"
 
 #include "NVansStrings.h"
@@ -498,6 +501,9 @@ void TMain::StartOperation(TOperation Operation) {
 		break;
 	case oSave:
 		Ident = IDS_STATUS_DATA_SAVE;
+		break;
+	case oSendToWME:
+		Ident = IDS_STATUS_SEND_TO_WME;
 		break;
 	}
 
@@ -1525,10 +1531,8 @@ String CsvStr(String S) {
 }
 
 // ---------------------------------------------------------------------------
-void TMain::ServerSaveTrainToFile(TOracleVanList * ServerVanList,
+bool TMain::ServerSaveTrainToFile(TOracleVanList * ServerVanList,
 	String FileName) {
-	StartOperation(oSave);
-
 	TStringList * List = new TStringList();
 	try {
 		String S;
@@ -1561,27 +1565,89 @@ void TMain::ServerSaveTrainToFile(TOracleVanList * ServerVanList,
 			List->Add(S);
 		}
 
-		List->SaveToFile(FileName);
+		try {
+			List->SaveToFile(FileName);
+
+			WriteToLog(Format(IDS_LOG_SAVE_TO_FILE_OK, FileName));
+		}
+		catch (Exception * E) {
+			WriteToLog(Format(IDS_LOG_SAVE_TO_FILE_FAIL,
+				ARRAYOFCONST((FileName, E->Message))));
+
+			MsgBoxErr(Format(IDS_ERROR_SAVE_TO_FILE, E->Message));
+
+			return false;
+		}
 	}
 	__finally {
 		List->Free();
-
-		EndOperation();
 	}
+
+	return true;
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TMain::btnServerSaveToFileClick(TObject *Sender) {
+void __fastcall TMain::btnServerSaveToFileClick(TObject * Sender) {
 	SaveDialog->FileName = "";
 
 	if (SaveDialog->Execute()) {
-		ServerSaveTrainToFile(ServerVanList, SaveDialog->FileName);
+		StartOperation(oSave);
+
+		try {
+			ServerSaveTrainToFile(ServerVanList, SaveDialog->FileName);
+		}
+		__finally {
+			EndOperation();
+		}
 	}
 }
 
 // ---------------------------------------------------------------------------
 void TMain::SendDataToWME(bool SendAll) {
-	MsgBox(BoolToStr(SendAll, true));
+	StartOperation(oSendToWME);
+	try {
+		HWND hWnd = FindWindow(TEXT("TApplication"),
+			LoadStr(IDS_WME_APP_TITLE).w_str());
+
+		if (!hWnd) {
+			WriteToLog(IDS_LOG_SEND_TO_WME_NOT_FOUND);
+
+			MsgBoxErr(IDS_ERROR_SEND_TO_WME_NOT_FOUND);
+
+			return;
+		}
+
+		String FileName = SlashSep(GetTempFolderPath(), "NVans2WME.csv");
+
+		if (!ServerSaveTrainToFile(ServerVanList, FileName)) {
+			return;
+		}
+
+		SwitchToThisWindow(hWnd, true);
+
+		COPYDATASTRUCT cd;
+
+		cd.cbData = sizeof(TCHAR) * FileName.Length();
+		cd.lpData = FileName.c_str();
+
+		int lResult = SendMessage(hWnd, WM_COPYDATA,
+			WME_NEW_DATA_FROM_FILE_WPARAM, (LPARAM) & cd);
+
+		// switch (lResult) {
+		// case WME_NEW_DATA_FROM_FILE_RESULT_OK:
+		// WriteToLog(IDS_LOG_SEND_TO_WME_OK);
+		//
+		// break;
+		// default:
+		// WriteToLog(Format(IDS_LOG_SEND_TO_WME_BAD_RESULT,
+		// IntToStr(lResult)));
+		//
+		// MsgBoxErr(IDS_ERROR_SEND_TO_WME_BAD_RESULT);
+		// }
+	}
+	__finally {
+		EndOperation();
+	}
 }
 
 // ---------------------------------------------------------------------------
