@@ -20,9 +20,6 @@
 #include <DBOperationEvent.h>
 #include <DBOperationCheck.h>
 
-#include <WMECommonConsts.h>
-#include <WMECommonStrings.h>
-
 #include "NVansAdd.h"
 
 #include "NVansStrings.h"
@@ -1606,44 +1603,30 @@ void __fastcall TMain::btnServerSaveToFileClick(TObject * Sender) {
 void TMain::SendDataToWME(bool SendAll) {
 	StartOperation(oSendToWME);
 	try {
-		HWND hWnd = FindWindow(TEXT("TApplication"),
-			LoadStr(IDS_WME_APP_TITLE).w_str());
+		String FileName = "c:\\docs\\Projects.exe\\WME\\Win32\\Debug\\WME.exe";
 
-		if (!hWnd) {
-			WriteToLog(IDS_LOG_SEND_TO_WME_NOT_FOUND);
+		String DataFileName = SlashSep(GetTempFolderPath(), "NVans2WME.csv");
 
-			MsgBoxErr(IDS_ERROR_SEND_TO_WME_NOT_FOUND);
-
+		if (!ServerSaveTrainToFile(ServerVanList, DataFileName)) {
 			return;
 		}
 
-		String FileName = SlashSep(GetTempFolderPath(), "NVans2WME.csv");
+		try {
+			ShellExec(FileName, DataFileName);
 
-		if (!ServerSaveTrainToFile(ServerVanList, FileName)) {
-			return;
+			WriteToLog(Format(IDS_LOG_EXEC_FILE_OK, FileName));
 		}
+		catch (EFileNotFoundException * E) {
+			WriteToLog(Format(IDS_LOG_EXEC_FILE_FAIL, "not exists"));
 
-		SwitchToThisWindow(hWnd, true);
+			MsgBoxErr(Format(IDS_ERROR_EXEC_FILE_NOT_FOUND, FileName));
+		}
+		catch (Exception * E) {
+			WriteToLog(Format(IDS_LOG_EXEC_FILE_FAIL,
+				ARRAYOFCONST((FileName, E->Message))));
 
-		COPYDATASTRUCT cd;
-
-		cd.cbData = sizeof(TCHAR) * FileName.Length();
-		cd.lpData = FileName.c_str();
-
-		int lResult = SendMessage(hWnd, WM_COPYDATA,
-			WME_NEW_DATA_FROM_FILE_WPARAM, (LPARAM) & cd);
-
-		// switch (lResult) {
-		// case WME_NEW_DATA_FROM_FILE_RESULT_OK:
-		// WriteToLog(IDS_LOG_SEND_TO_WME_OK);
-		//
-		// break;
-		// default:
-		// WriteToLog(Format(IDS_LOG_SEND_TO_WME_BAD_RESULT,
-		// IntToStr(lResult)));
-		//
-		// MsgBoxErr(IDS_ERROR_SEND_TO_WME_BAD_RESULT);
-		// }
+			MsgBoxErr(Format(IDS_ERROR_EXEC_FILE, FileName));
+		}
 	}
 	__finally {
 		EndOperation();

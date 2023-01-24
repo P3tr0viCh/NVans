@@ -440,17 +440,6 @@
             <ResourceType>RCDATA</ResourceType>
             <ResourceId>ORACLE_NVANS_TRAIN_JOIN</ResourceId>
         </RcItem>
-        <None Include="..\WME\common\WMECommonConsts.h">
-            <BuildOrder>77</BuildOrder>
-        </None>
-        <None Include="..\WME\common\WMECommonStrings.h">
-            <BuildOrder>75</BuildOrder>
-        </None>
-        <ResourceCompile Include="..\WME\common\WMECommonStrings.rc">
-            <ModuleName>WMECommonStrings.rc</ModuleName>
-            <Form>WMECommonStrings.res</Form>
-            <BuildOrder>76</BuildOrder>
-        </ResourceCompile>
         <FormResources Include="NVansLocalTrains.dfm"/>
         <FormResources Include="NVansOptions.dfm"/>
         <FormResources Include="NVansMain.dfm"/>

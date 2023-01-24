@@ -2,8 +2,9 @@
 
 STRINGTABLE
 BEGIN
-IDS_COPYRIGHT,          "© Константин Дураев (Уральская Сталь)|@P3tr0viCh@yandex.ru"
-IDS_COPYRIGHT_STATUS,   "© Константин Дураев"
+IDS_APP_ID,                             "ru.p3tr0vich.NVans"
+IDS_APP_TITLE,                          "Натурный лист"
+IDS_COPYRIGHT,                          "© Константин Дураев (Уральская Сталь)|@P3tr0viCh@yandex.ru"
 
 IDS_QUESTION_CLOSE_PROGRAM,             "Закрыть программу?"
 IDS_QUESTION_CLOSE_PROGRAM_CHANGED,     "Данные были изменены.\nЗакрыть программу без сохранения сделанных изменений?"
@@ -31,28 +32,28 @@ IDS_ERROR_SAVE_TO_FILE,                 "Во время сохранения состава в файл прои
 
 IDS_ERROR_AVITEK_NEED_SAVE,             "В результах взвешивания ПО «Авитек» имеются не сохранённые данные. Необходимо сохранить записи, либо отменить изменения.\n\nПереключиться на весовую программу?"
 
-IDS_ERROR_SEND_TO_WME_NOT_FOUND,        "АРМ «Ручной ввод» не запущено.\n\nОткройте указанную программу, после чего повторите действие."
-IDS_ERROR_SEND_TO_WME_BAD_RESULT,       "Неверный отклик от АРМ «Ручной ввод»."
+IDS_ERROR_EXEC_FILE,                    "Не удалось открыть ""%s""."
+IDS_ERROR_EXEC_FILE_NOT_FOUND,          "Не удалось открыть ""%s"".\n\nФайл не существует или не доступен в данный момент."
 
 IDS_MSG_DATABASE_CONNECT_OK,            "Соединение с базой данных выполнено.\n\nВерсия сервера:\n%s."
 IDS_MSG_DATABASE_CONNECT_FAIL,          "Не удалось подключиться к базе данных.\n\nОшибка:\n%s."
 IDS_MSG_RWNUM_NOT_EXISTS,               "Поезд с номером «%s» в базе данных отсутствует."
 IDS_MSG_MATCH_NOT_FOUND,                "Не удалось найти соответствие между натурным листом и вагонами в базе данных весов."
 
-IDS_STATUS_TRAIN_LIST_COUNT,            "Количество: %s"
-IDS_STATUS_DATA_LOAD,                   "Загрузка..."
-IDS_STATUS_DATA_SAVE,                   "Сохранение..."
-IDS_STATUS_SEND_TO_WME,                 "Отправка данных в АРМ «Ручной ввод»..."
+IDS_STATUS_TRAIN_LIST_COUNT,                    "Количество: %s"
+IDS_STATUS_DATA_LOAD,                           "Загрузка..."
+IDS_STATUS_DATA_SAVE,                           "Сохранение..."
+IDS_STATUS_SEND_TO_WME,                         "Отправка данных в АРМ «Ручной ввод»..."
 
-IDS_CONNECTION_MYSQL_DRIVER_0,          "MySQL ODBC 3.51 Driver"
-IDS_CONNECTION_MYSQL_DRIVER_1,          "MySQL ODBC 8.0 ANSI Driver"
-IDS_CONNECTION_ORACLE_DRIVER_0,         "Oracle in instantclient_12_1"
-IDS_CONNECTION_ORACLE_DRIVER_1,         "Oracle in instantclient_21_3"
+IDS_CONNECTION_MYSQL_DRIVER_0,                  "MySQL ODBC 3.51 Driver"
+IDS_CONNECTION_MYSQL_DRIVER_1,                  "MySQL ODBC 8.0 ANSI Driver"
+IDS_CONNECTION_ORACLE_DRIVER_0,                 "Oracle in instantclient_12_1"
+IDS_CONNECTION_ORACLE_DRIVER_1,                 "Oracle in instantclient_21_3"
 
-IDS_LOG_LOGIN_OK,                       "login: ok"
-IDS_LOG_LOGIN_CANCEL,                   "login: cancel"
-IDS_LOG_OPTIONS_SAVE,                   "options: save"
-IDS_LOG_OPTIONS_CANCEL,                 "options: cancel"
+IDS_LOG_LOGIN_OK,                               "login: ok"
+IDS_LOG_LOGIN_CANCEL,                           "login: cancel"
+IDS_LOG_OPTIONS_SAVE,                           "options: save"
+IDS_LOG_OPTIONS_CANCEL,                         "options: cancel"
 
 IDS_LOG_ERROR_EXCEPTION,                        "exception: %s"
 IDS_LOG_ERROR_LOAD_SETTINGS,                    "read settings fail: %s"
@@ -92,8 +93,7 @@ IDS_LOG_COPY_DATA_OVERWRITE_CANCEL,             "copy data: overwrite cancel"
 IDS_LOG_SAVE_TO_FILE_OK,                        "save to file '%s' ok"
 IDS_LOG_SAVE_TO_FILE_FAIL,                      "save to file '%s' fail: %s"
 
-IDS_LOG_SEND_TO_WME_OK,                        "send data to wme ok"
-IDS_LOG_SEND_TO_WME_NOT_FOUND,                 "send data to wme fail: app window not found"
-IDS_LOG_SEND_TO_WME_BAD_RESULT,                "send data to wme fail: bad result (%s)"
+IDS_LOG_EXEC_FILE_OK,                           "exec file '%s' ok"
+IDS_LOG_EXEC_FILE_FAIL,                         "exec file '%s' fail: %s"
 
 END

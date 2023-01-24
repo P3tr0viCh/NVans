@@ -4,6 +4,8 @@
 #pragma hdrstop
 #include <tchar.h>
 
+#include "NVansStrings.h"
+
 // ---------------------------------------------------------------------------
 USEFORM("NVansMain.cpp", Main);
 USEFORM("NVansLogin.cpp", frmLogin);
@@ -16,27 +18,29 @@ int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int) {
 	HANDLE hMutex;
 
 	try {
-		hMutex = OpenMutex(MUTEX_ALL_ACCESS, false, L"ru.p3tr0vich.NVans");
+		hMutex = OpenMutex(MUTEX_ALL_ACCESS, false,
+		LoadStr(IDS_APP_ID).w_str());
 
 		if (hMutex) {
 			ReleaseMutex(hMutex);
 
 			CloseHandle(hMutex);
 
-			HWND hWnd = FindWindow(TEXT("TApplication"), TEXT("Натурный лист"));
+			HWND hWnd = FindWindow(TEXT("TApplication"),
+				LoadStr(IDS_APP_TITLE).w_str());
 
 			SwitchToThisWindow(hWnd, true);
 
 			return 0;
 		}
 
-		hMutex = CreateMutex(NULL, false, L"ru.p3tr0vich.NVans");
+		hMutex = CreateMutex(NULL, false, LoadStr(IDS_APP_ID).w_str());
 
 		Application->Initialize();
 
 		Application->MainFormOnTaskBar = false;
 
-		Application->Title = "Натурный лист";
+		Application->Title = LoadStr(IDS_APP_TITLE);
 
 		Application->CreateForm(__classid(TMain), &Main);
 		Application->CreateForm(__classid(TfrmServerTrains), &frmServerTrains);

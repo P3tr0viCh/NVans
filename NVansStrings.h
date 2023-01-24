@@ -3,47 +3,48 @@
 #define NVansStringsH
 // ---------------------------------------------------------------------------
 
-#define IDS_COPYRIGHT								1
-#define IDS_COPYRIGHT_STATUS						2
+#define IDS_APP_ID						   	   		   1
+#define IDS_APP_TITLE						   		   2
+#define IDS_COPYRIGHT								   3
 
-#define IDS_QUESTION_CLOSE_PROGRAM					100
-#define IDS_QUESTION_CLOSE_PROGRAM_CHANGED			101
-#define IDS_QUESTION_SAVE_VANPROPS					102
-#define IDS_QUESTION_DATA_OVERWRITE					103
-#define IDS_QUESTION_DATA_NEED_SAVE					104
+#define IDS_QUESTION_CLOSE_PROGRAM					 100
+#define IDS_QUESTION_CLOSE_PROGRAM_CHANGED			 101
+#define IDS_QUESTION_SAVE_VANPROPS					 102
+#define IDS_QUESTION_DATA_OVERWRITE					 103
+#define IDS_QUESTION_DATA_NEED_SAVE					 104
 
-#define IDS_ERROR_UNKNOWN							200
-#define IDS_ERROR_UNKNOWN_EXCEPTION					201
-#define IDS_ERROR_LOAD_SETTINGS						202
-#define IDS_ERROR_SAVE_SETTINGS						203
-#define IDS_ERROR_NEED_RWNUM						204
-#define IDS_ERROR_PASS_WRONG						205
-#define IDS_ERROR_CHECK_PASS						206
+#define IDS_ERROR_UNKNOWN							 200
+#define IDS_ERROR_UNKNOWN_EXCEPTION					 201
+#define IDS_ERROR_LOAD_SETTINGS						 202
+#define IDS_ERROR_SAVE_SETTINGS						 203
+#define IDS_ERROR_NEED_RWNUM						 204
+#define IDS_ERROR_PASS_WRONG						 205
+#define IDS_ERROR_CHECK_PASS						 206
 
-#define IDS_ERROR_ORACLE_LOAD_TRAIN					220
-#define IDS_ERROR_ORACLE_LOAD_TRAINS				221
-#define IDS_ERROR_ORACLE_LOAD_TRAIN_DATETIME		222
-#define IDS_ERROR_LOCAL_LOAD_VANS					230
-#define IDS_ERROR_LOCAL_SAVE_VANS					231
-#define IDS_ERROR_LOCAL_SAVE_VAN_PROPS				232
-#define IDS_ERROR_LOCAL_LOAD_TRAINS					233
+#define IDS_ERROR_ORACLE_LOAD_TRAIN					 220
+#define IDS_ERROR_ORACLE_LOAD_TRAINS				 221
+#define IDS_ERROR_ORACLE_LOAD_TRAIN_DATETIME		 222
+#define IDS_ERROR_LOCAL_LOAD_VANS					 230
+#define IDS_ERROR_LOCAL_SAVE_VANS					 231
+#define IDS_ERROR_LOCAL_SAVE_VAN_PROPS				 232
+#define IDS_ERROR_LOCAL_LOAD_TRAINS					 233
 
-#define IDS_ERROR_SAVE_TO_FILE                      240
+#define IDS_ERROR_SAVE_TO_FILE                       240
 
-#define IDS_ERROR_AVITEK_NEED_SAVE					250
+#define IDS_ERROR_AVITEK_NEED_SAVE					 250
 
-#define IDS_ERROR_SEND_TO_WME_NOT_FOUND				260
-#define IDS_ERROR_SEND_TO_WME_BAD_RESULT            261
+#define IDS_ERROR_EXEC_FILE                  		 260
+#define IDS_ERROR_EXEC_FILE_NOT_FOUND        		 261
 
-#define IDS_MSG_DATABASE_CONNECT_OK					300
-#define IDS_MSG_DATABASE_CONNECT_FAIL				301
-#define IDS_MSG_RWNUM_NOT_EXISTS					302
-#define IDS_MSG_MATCH_NOT_FOUND						303
+#define IDS_MSG_DATABASE_CONNECT_OK					 300
+#define IDS_MSG_DATABASE_CONNECT_FAIL				 301
+#define IDS_MSG_RWNUM_NOT_EXISTS					 302
+#define IDS_MSG_MATCH_NOT_FOUND						 303
 
-#define IDS_STATUS_TRAIN_LIST_COUNT					400
-#define IDS_STATUS_DATA_LOAD						401
-#define IDS_STATUS_DATA_SAVE						402
-#define IDS_STATUS_SEND_TO_WME						403
+#define IDS_STATUS_TRAIN_LIST_COUNT					 400
+#define IDS_STATUS_DATA_LOAD						 401
+#define IDS_STATUS_DATA_SAVE						 402
+#define IDS_STATUS_SEND_TO_WME						 403
 
 #define IDS_CONNECTION_MYSQL_DRIVER_0				1000
 #define IDS_CONNECTION_MYSQL_DRIVER_1				1001
@@ -93,9 +94,8 @@
 #define IDS_LOG_SAVE_TO_FILE_OK                     2600
 #define IDS_LOG_SAVE_TO_FILE_FAIL                   2601
 
-#define IDS_LOG_SEND_TO_WME_OK                      2700
-#define IDS_LOG_SEND_TO_WME_NOT_FOUND               2701
-#define IDS_LOG_SEND_TO_WME_BAD_RESULT              2702
+#define IDS_LOG_EXEC_FILE_OK                        2700
+#define IDS_LOG_EXEC_FILE_FAIL          			2701
 
 // ---------------------------------------------------------------------------
 #endif
