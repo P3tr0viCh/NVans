@@ -30,13 +30,15 @@ private:
 	TColor FColorReadOnly;
 	TColor FColorSelected;
 
-	TScaleType FScaleType;
-
 	bool FSQLToLog;
 
+	TScaleType FScaleType;
+
 	TDBConnectionMySQL * FLocalConnection;
-	TDBConnectionMySQL * FServerMySQLConnection;
 	TDBConnectionOracle * FServerOracleConnection;
+
+	String FWMEProgramPath;
+	String FWMEProgramParams;
 
 	// -----------------------------------------------------------------------
 	String GetConfigFileName();
@@ -73,15 +75,18 @@ public:
 	__property TColor ColorSelected = {
 		read = FColorSelected, write = FColorSelected};
 
-	__property TScaleType ScaleType = {read = FScaleType, write = FScaleType};
-
 	__property bool SQLToLog = {read = FSQLToLog, write = FSQLToLog};
 
+	__property TScaleType ScaleType = {read = FScaleType, write = FScaleType};
+
 	__property TDBConnectionMySQL * LocalConnection = {read = FLocalConnection};
-	__property TDBConnectionMySQL * ServerMySQLConnection = {
-		read = FServerMySQLConnection};
 	__property TDBConnectionOracle * ServerOracleConnection = {
 		read = FServerOracleConnection};
+
+	__property String WMEProgramPath = {
+		read = FWMEProgramPath, write = FWMEProgramPath};
+	__property String WMEProgramParams = {
+		read = FWMEProgramParams, write = FWMEProgramParams};
 };
 
 // ---------------------------------------------------------------------------

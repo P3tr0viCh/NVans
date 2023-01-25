@@ -19,6 +19,7 @@ IDS_ERROR_SAVE_SETTINGS,                "Не удалось сохранить настройки."
 IDS_ERROR_NEED_RWNUM,                   "Не указан номер поезда."
 IDS_ERROR_PASS_WRONG,                   "Неправильный пароль.\n\nПопробуйте ещё раз."
 IDS_ERROR_CHECK_PASS,                   "Введённые пароли не совпадают. Повторите ввод нового пароля и его подверждения.";
+IDS_ERROR_FILE_NOT_EXISTS_IGNORE,       "Файл не существует: '%s'.\nИгнорировать?"
 
 IDS_ERROR_ORACLE_LOAD_TRAIN,            "Во время загрузки состава произошла ошибка:\n\n%s."
 IDS_ERROR_ORACLE_LOAD_TRAINS,           "Во время загрузки списка составов произошла ошибка:\n\n%s."

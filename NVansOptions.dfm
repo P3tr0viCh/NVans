@@ -26,7 +26,6 @@ object frmOptions: TfrmOptions
     Align = alClient
     BevelOuter = bvLowered
     TabOrder = 0
-    ExplicitHeight = 312
     object PageControl: TPageControl
       Left = 1
       Top = 1
@@ -35,11 +34,9 @@ object frmOptions: TfrmOptions
       ActivePage = tsProgram
       Align = alClient
       TabOrder = 0
-      ExplicitHeight = 310
       object tsProgram: TTabSheet
         Caption = #1055#1088#1086#1075#1088#1072#1084#1084#1072
         ImageIndex = 3
-        ExplicitHeight = 278
         object gbOptionsPass: TGroupBox
           Left = 8
           Top = 8
@@ -96,10 +93,9 @@ object frmOptions: TfrmOptions
       end
       object tsLocalDatabase: TTabSheet
         Caption = #1051#1086#1082#1072#1083#1100#1085#1072#1103' '#1073#1072#1079#1072' '#1076#1072#1085#1085#1099#1093
-        ExplicitHeight = 278
         object lblLocalDriver: TLabel
           Left = 8
-          Top = 136
+          Top = 122
           Width = 53
           Height = 17
           Caption = #1044#1088#1072#1081#1074#1077#1088
@@ -107,7 +103,7 @@ object frmOptions: TfrmOptions
         end
         object eLocalHost: TLabeledEdit
           Left = 8
-          Top = 40
+          Top = 32
           Width = 240
           Height = 25
           EditLabel.Width = 142
@@ -118,7 +114,7 @@ object frmOptions: TfrmOptions
         end
         object eLocalUser: TLabeledEdit
           Left = 8
-          Top = 96
+          Top = 88
           Width = 160
           Height = 25
           EditLabel.Width = 36
@@ -129,7 +125,7 @@ object frmOptions: TfrmOptions
         end
         object eLocalPass: TLabeledEdit
           Left = 176
-          Top = 96
+          Top = 88
           Width = 160
           Height = 25
           EditLabel.Width = 46
@@ -141,14 +137,14 @@ object frmOptions: TfrmOptions
         end
         object cboxLocalDriver: TComboBox
           Left = 8
-          Top = 160
+          Top = 144
           Width = 240
           Height = 25
           TabOrder = 3
         end
         object btnLocalCheck: TButton
           Left = 8
-          Top = 200
+          Top = 184
           Width = 80
           Height = 32
           Caption = #1055#1088#1086#1074#1077#1088#1082#1072
@@ -159,10 +155,9 @@ object frmOptions: TfrmOptions
       object tsServerOracleDatabase: TTabSheet
         Caption = #1057#1077#1088#1074#1077#1088' Oracle'
         ImageIndex = 1
-        ExplicitHeight = 278
         object lblOracleLDriver: TLabel
           Left = 8
-          Top = 136
+          Top = 122
           Width = 53
           Height = 17
           Caption = #1044#1088#1072#1081#1074#1077#1088
@@ -170,7 +165,7 @@ object frmOptions: TfrmOptions
         end
         object eOracleHost: TLabeledEdit
           Left = 8
-          Top = 40
+          Top = 32
           Width = 240
           Height = 25
           EditLabel.Width = 142
@@ -181,7 +176,7 @@ object frmOptions: TfrmOptions
         end
         object eOracleService: TLabeledEdit
           Left = 256
-          Top = 40
+          Top = 32
           Width = 80
           Height = 25
           EditLabel.Width = 78
@@ -192,7 +187,7 @@ object frmOptions: TfrmOptions
         end
         object eOracleUser: TLabeledEdit
           Left = 8
-          Top = 96
+          Top = 88
           Width = 160
           Height = 25
           EditLabel.Width = 36
@@ -203,7 +198,7 @@ object frmOptions: TfrmOptions
         end
         object eOraclePass: TLabeledEdit
           Left = 176
-          Top = 96
+          Top = 88
           Width = 160
           Height = 25
           EditLabel.Width = 46
@@ -215,19 +210,54 @@ object frmOptions: TfrmOptions
         end
         object cboxOracleDriver: TComboBox
           Left = 8
-          Top = 160
+          Top = 144
           Width = 240
           Height = 25
           TabOrder = 4
         end
         object btnOracleCheck: TButton
           Left = 8
-          Top = 200
+          Top = 184
           Width = 80
           Height = 32
           Caption = #1055#1088#1086#1074#1077#1088#1082#1072
           TabOrder = 5
           OnClick = btnOracleCheckClick
+        end
+      end
+      object tsWME: TTabSheet
+        Caption = #1055#1091#1083#1100#1090' '#1088#1091#1095#1085#1086#1075#1086' '#1074#1074#1086#1076#1072
+        ImageIndex = 3
+        object eWMEProgramPath: TLabeledEdit
+          Left = 8
+          Top = 32
+          Width = 512
+          Height = 25
+          EditLabel.Width = 169
+          EditLabel.Height = 17
+          EditLabel.Caption = #1055#1091#1090#1100' '#1082' '#1080#1089#1087#1086#1083#1085#1103#1077#1084#1086#1084#1091' '#1092#1072#1081#1083#1091
+          LabelSpacing = 4
+          TabOrder = 0
+        end
+        object eWMEProgramParams: TLabeledEdit
+          Left = 8
+          Top = 88
+          Width = 240
+          Height = 25
+          EditLabel.Width = 69
+          EditLabel.Height = 17
+          EditLabel.Caption = #1055#1072#1088#1072#1084#1077#1090#1088#1099
+          LabelSpacing = 4
+          TabOrder = 2
+        end
+        object btnWMEProgramPath: TButton
+          Left = 528
+          Top = 31
+          Width = 32
+          Height = 27
+          Caption = '...'
+          TabOrder = 1
+          OnClick = btnWMEProgramPathClick
         end
       end
     end
@@ -240,7 +270,6 @@ object frmOptions: TfrmOptions
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitTop = 312
     DesignSize = (
       576
       48)
@@ -266,5 +295,12 @@ object frmOptions: TfrmOptions
       ModalResult = 2
       TabOrder = 1
     end
+  end
+  object OpenDialog: TOpenDialog
+    DefaultExt = 'exe'
+    Filter = #1055#1088#1086#1075#1088#1072#1084#1084#1099'|*.exe|'#1042#1089#1077' '#1092#1072#1081#1083#1099'|*.*'
+    Options = [ofHideReadOnly, ofPathMustExist, ofFileMustExist, ofEnableSizing, ofDontAddToRecent]
+    Left = 309
+    Top = 141
   end
 end

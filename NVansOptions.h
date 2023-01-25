@@ -14,6 +14,7 @@
 #include <DBConnection.h>
 
 #include "NVansSettings.h"
+#include <Vcl.Dialogs.hpp>
 
 // ---------------------------------------------------------------------------
 class TfrmOptions : public TForm {
@@ -44,11 +45,17 @@ __published:
 	TLabeledEdit *eOptionsPass2;
 	TCheckBox *cboxSQLToLog;
 	TRadioGroup *rgScaleType;
+	TTabSheet *tsWME;
+	TLabeledEdit *eWMEProgramPath;
+	TLabeledEdit *eWMEProgramParams;
+	TButton *btnWMEProgramPath;
+	TOpenDialog *OpenDialog;
 
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
 	void __fastcall btnOKClick(TObject *Sender);
 	void __fastcall btnOracleCheckClick(TObject *Sender);
+	void __fastcall btnWMEProgramPathClick(TObject *Sender);
 
 private:
 	TSettings * Settings;

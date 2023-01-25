@@ -1530,36 +1530,43 @@ String CsvStr(String S) {
 // ---------------------------------------------------------------------------
 bool TMain::ServerSaveTrainToFile(TOracleVanList * ServerVanList,
 	String FileName) {
+	TStringList * Line = new TStringList();
 	TStringList * List = new TStringList();
+
 	try {
-		String S;
+		Line->Delimiter = ';';
+		Line->QuoteChar = '"';
+		Line->StrictDelimiter = true;
 
 		for (int i = 0; i < ServerVanList->Count; i++) {
-			S = DateTimeToStr(ServerVanList->Items[i]->InvoiceDateTime);
-			S += ";";
-			S += CsvStr(ServerVanList->Items[i]->VanNum);
-			S += ";";
-			S += CsvStr(ServerVanList->Items[i]->CargoType);
-			S += ";";
-			S += CsvStr(ServerVanList->Items[i]->InvoiceNum);
-			S += ";";
-			S += CsvStr(ServerVanList->Items[i]->InvoiceSupplier);
-			S += ";";
-			S += CsvStr(ServerVanList->Items[i]->InvoiceRecipient);
-			S += ";";
-			S += CsvStr(ServerVanList->Items[i]->DepartStation);
-			S += ";";
-			S += CsvStr(ServerVanList->Items[i]->PurposeStation);
-			S += ";";
-			S += IntToStr(ServerVanList->Items[i]->Carrying);
-			S += ";";
-			S += IntToStr(ServerVanList->Items[i]->TareT);
-			S += ";";
-			S += IntToStr(ServerVanList->Items[i]->InvoiceNetto);
-			S += ";";
-			S += IntToStr(ServerVanList->Items[i]->InvoiceTare);
+			Line->Clear();
 
-			List->Add(S);
+			// 0
+			Line->Add(DateTimeToStr(ServerVanList->Items[i]->InvoiceDateTime));
+			// 1
+			Line->Add(ServerVanList->Items[i]->VanNum);
+			// 2
+			Line->Add(ServerVanList->Items[i]->CargoType);
+			// 3
+			Line->Add(ServerVanList->Items[i]->InvoiceNum);
+			// 4
+			Line->Add(ServerVanList->Items[i]->InvoiceSupplier);
+			// 5
+			Line->Add(ServerVanList->Items[i]->InvoiceRecipient);
+			// 6
+			Line->Add(ServerVanList->Items[i]->DepartStation);
+			// 7
+			Line->Add(ServerVanList->Items[i]->PurposeStation);
+			// 8
+			Line->Add(IntToStr(ServerVanList->Items[i]->Carrying));
+			// 9
+			Line->Add(IntToStr(ServerVanList->Items[i]->TareT));
+			// 10
+			Line->Add(IntToStr(ServerVanList->Items[i]->InvoiceNetto));
+			// 11
+			Line->Add(IntToStr(ServerVanList->Items[i]->InvoiceTare));
+
+			List->Add(Line->DelimitedText);
 		}
 
 		try {
@@ -1578,6 +1585,7 @@ bool TMain::ServerSaveTrainToFile(TOracleVanList * ServerVanList,
 	}
 	__finally {
 		List->Free();
+		Line->Free();
 	}
 
 	return true;
@@ -1603,7 +1611,7 @@ void __fastcall TMain::btnServerSaveToFileClick(TObject * Sender) {
 void TMain::SendDataToWME(bool SendAll) {
 	StartOperation(oSendToWME);
 	try {
-		String FileName = "c:\\docs\\Projects.exe\\WME\\Win32\\Debug\\WME.exe";
+		String FileName = Settings->WMEProgramPath;
 
 		String DataFileName = SlashSep(GetTempFolderPath(), "NVans2WME.csv");
 
@@ -1611,13 +1619,35 @@ void TMain::SendDataToWME(bool SendAll) {
 			return;
 		}
 
+		DataFileName = AnsiQuotedStr(DataFileName, '"');
+
+		String Params = Settings->WMEProgramParams;
+
+		if (Params.IsEmpty()) {
+			Params = DataFileName;
+		}
+		else {
+			int P = Params.Pos("%f");
+
+			if (P > 0) {
+				Params.Insert(DataFileName, P + 2);
+				Params.Delete(P, 2);
+			}
+			else {
+				Params = Params + " " + DataFileName;
+			}
+		}
+
 		try {
-			ShellExec(FileName, DataFileName);
+			// MsgBox(FileName + sLineBreak + Params);
+
+			ShellExec(FileName, Params);
 
 			WriteToLog(Format(IDS_LOG_EXEC_FILE_OK, FileName));
 		}
 		catch (EFileNotFoundException * E) {
-			WriteToLog(Format(IDS_LOG_EXEC_FILE_FAIL, "not exists"));
+			WriteToLog(Format(IDS_LOG_EXEC_FILE_FAIL,
+				ARRAYOFCONST((FileName, "not exists"))));
 
 			MsgBoxErr(Format(IDS_ERROR_EXEC_FILE_NOT_FOUND, FileName));
 		}

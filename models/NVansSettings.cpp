@@ -26,7 +26,7 @@ __fastcall TSettings::TSettings() {
 
 	FConfigFileName = GetConfigFileName();
 
-	FColorChanged = TColor(0x000085FB); // TODO: save
+	FColorChanged = TColor(0x000085FB);
 	FColorReadOnly = TColor(0x00E8E8E8);
 	FColorSelected = clHotLight;
 
@@ -35,7 +35,6 @@ __fastcall TSettings::TSettings() {
 	FScaleType = stDisabled;
 
 	FLocalConnection = new TDBConnectionMySQL();
-	FServerMySQLConnection = new TDBConnectionMySQL();
 	FServerOracleConnection = new TDBConnectionOracle();
 
 	FLocalConnection->Database = LOCAL_DB_NAME;
@@ -44,7 +43,6 @@ __fastcall TSettings::TSettings() {
 // ---------------------------------------------------------------------------
 __fastcall TSettings::~TSettings() {
 	FServerOracleConnection->Free();
-	FServerMySQLConnection->Free();
 	FLocalConnection->Free();
 }
 
@@ -60,7 +58,11 @@ bool __fastcall TSettings::Equals(TObject * Obj) {
 	if (Settings->OptionsPass != OptionsPass)
 		return false;
 
+	if (Settings->ColorChanged != ColorChanged)
+		return false;
 	if (Settings->ColorReadOnly != ColorReadOnly)
+		return false;
+	if (Settings->ColorSelected != ColorSelected)
 		return false;
 
 	if (Settings->SQLToLog != SQLToLog)
@@ -71,9 +73,12 @@ bool __fastcall TSettings::Equals(TObject * Obj) {
 
 	if (!Settings->LocalConnection->Equals(LocalConnection))
 		return false;
-	if (!Settings->ServerMySQLConnection->Equals(ServerMySQLConnection))
-		return false;
 	if (!Settings->ServerOracleConnection->Equals(ServerOracleConnection))
+		return false;
+
+	if (Settings->WMEProgramPath != WMEProgramPath)
+		return false;
+	if (Settings->WMEProgramParams != WMEProgramParams)
 		return false;
 
 	return true;
@@ -83,15 +88,19 @@ bool __fastcall TSettings::Equals(TObject * Obj) {
 void __fastcall TSettings::Assign(TSettings * Source) {
 	FOptionsPass = Source->OptionsPass;
 
+	FColorChanged = Source->ColorChanged;
 	FColorReadOnly = Source->ColorReadOnly;
+	FColorSelected = Source->ColorSelected;
 
 	FSQLToLog = Source->SQLToLog;
 
 	FScaleType = Source->ScaleType;
 
 	FLocalConnection->Assign(Source->LocalConnection);
-	FServerMySQLConnection->Assign(Source->ServerMySQLConnection);
 	FServerOracleConnection->Assign(Source->ServerOracleConnection);
+
+	FWMEProgramPath = Source->WMEProgramPath;
+	FWMEProgramParams = Source->WMEProgramParams;
 }
 
 // ---------------------------------------------------------------------------
@@ -103,23 +112,26 @@ String __fastcall TSettings::ToString() {
 	S += ",";
 
 	S += "ColorChanged=" + ColorToString(ColorChanged);
-	S += ", ";
+	S += ",";
 	S += "ColorReadOnly='" + ColorToString(ColorReadOnly);
-	S += ", ";
+	S += ",";
 	S += "ColorSelected=" + ColorToString(ColorSelected);
-	S += ", ";
-
-	S += "ScaleType=" + IntToStr(ScaleType);
 	S += ",";
 
 	S += "SQLToLog=" + BoolToStr(SQLToLog);
 	S += ",";
 
+	S += "ScaleType=" + IntToStr(ScaleType);
+	S += ",";
+
 	S += "LocalConnection=" + LocalConnection->ToString();
 	S += ",";
-	S += "ServerMySQLConnection=" + ServerMySQLConnection->ToString();
-	S += ",";
 	S += "ServerOracleConnection=" + ServerOracleConnection->ToString();
+	S += ",";
+
+	S += "WMEProgramPath=" + WMEProgramPath;
+	S += ",";
+	S += "WMEProgramParams=" + WMEProgramParams;
 
 	S += "}";
 
@@ -174,10 +186,10 @@ void TSettings::LoadSettings() {
 		ColorSelected = TColor(IniFile->ReadInteger(Section, "ColorSelected",
 			ColorSelected));
 
+		SQLToLog = IniFile->ReadBool(Section, "SQLToLog", SQLToLog);
+
 		ScaleType = (TScaleType)IniFile->ReadInteger(Section, "ScaleType",
 			ScaleType);
-
-		SQLToLog = IniFile->ReadBool(Section, "SQLToLog", SQLToLog);
 
 		// -------------------------------------------------------------------
 		Section = "LocalConnection";
@@ -214,6 +226,13 @@ void TSettings::LoadSettings() {
 			ServerOracleConnection->Driver);
 
 		// -------------------------------------------------------------------
+		Section = "WME";
+		WMEProgramPath = IniFile->ReadString(Section, "ProgramPath",
+			WMEProgramPath);
+		WMEProgramParams = IniFile->ReadString(Section, "ProgramParams",
+			WMEProgramParams);
+
+		// -------------------------------------------------------------------
 		CheckCRC(IniFile->ReadString("CRC", "CRC", ""));
 	}
 	__finally {
@@ -240,9 +259,9 @@ void TSettings::SaveSettings() {
 		IniFile->WriteInteger(Section, "ColorReadOnly", ColorReadOnly);
 		IniFile->WriteInteger(Section, "ColorSelected", ColorSelected);
 
-		IniFile->WriteInteger(Section, "ScaleType", ScaleType);
-
 		IniFile->WriteBool(Section, "SQLToLog", SQLToLog);
+
+		IniFile->WriteInteger(Section, "ScaleType", ScaleType);
 
 		// -------------------------------------------------------------------
 		Section = "LocalConnection";
@@ -264,6 +283,11 @@ void TSettings::SaveSettings() {
 		IniFile->WriteString(Section, "Pass",
 			Encrypt(ServerOracleConnection->Password));
 		IniFile->WriteString(Section, "Driver", ServerOracleConnection->Driver);
+
+		// -------------------------------------------------------------------
+		Section = "WME";
+		IniFile->WriteString(Section, "ProgramPath", WMEProgramPath);
+		IniFile->WriteString(Section, "ProgramParams", WMEProgramParams);
 	}
 	__finally {
 		delete IniFile;

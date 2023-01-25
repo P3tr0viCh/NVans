@@ -124,15 +124,18 @@ void TfrmOptions::UpdateForm() {
 				(Settings->ServerOracleConnection->Driver);
 		}
 	}
+
+	eWMEProgramPath->Text = Settings->WMEProgramPath;
+	eWMEProgramParams->Text = Settings->WMEProgramParams;
 }
 
 // ---------------------------------------------------------------------------
 void TfrmOptions::UpdateSettings() {
 	Settings->OptionsPass = eOptionsPass->Text;
 
-	Settings->SQLToLog = cboxSQLToLog->Checked;
-
 	Settings->ScaleType = rgScaleType->ItemIndex;
+
+	Settings->SQLToLog = cboxSQLToLog->Checked;
 
 	Settings->LocalConnection->Host = eLocalHost->Text;
 	Settings->LocalConnection->User = eLocalUser->Text;
@@ -144,16 +147,30 @@ void TfrmOptions::UpdateSettings() {
 	Settings->ServerOracleConnection->User = eOracleUser->Text;
 	Settings->ServerOracleConnection->Password = eOraclePass->Text;
 	Settings->ServerOracleConnection->Driver = cboxOracleDriver->Text;
+
+	Settings->WMEProgramPath = eWMEProgramPath->Text;
+	Settings->WMEProgramParams = eWMEProgramParams->Text;
 }
 
 // ---------------------------------------------------------------------------
 void __fastcall TfrmOptions::btnOKClick(TObject *Sender) {
-	if (!AnsiSameStr(eOptionsPass->Text, eOptionsPass2->Text)) {
+	if (eOptionsPass->Text != eOptionsPass2->Text) {
 		MsgBoxErr(IDS_ERROR_CHECK_PASS);
 
 		ControlSetFocus(eOptionsPass);
 
 		return;
+	}
+
+	if (rgScaleType->ItemIndex == stWME) {
+		if (!FileExists(eWMEProgramPath->Text)) {
+			ControlSetFocus(eWMEProgramPath);
+
+			if (!MsgBoxYesNo(Format(IDS_ERROR_FILE_NOT_EXISTS_IGNORE,
+				eWMEProgramPath->Text))) {
+				return;
+			}
+		}
 	}
 
 	UpdateSettings();
@@ -200,7 +217,7 @@ TDBConnection * TfrmOptions::GetConnectionInfo(TConnectionType Type) {
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TfrmOptions::btnOracleCheckClick(TObject *Sender) {
+void __fastcall TfrmOptions::btnOracleCheckClick(TObject * Sender) {
 	TDBConnection * DBConnection;
 	TDBOperationCheck * DBOperationCheck;
 
@@ -236,6 +253,13 @@ void __fastcall TfrmOptions::btnOracleCheckClick(TObject *Sender) {
 		DBConnection->Free();
 
 		RestoreCursor();
+	}
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TfrmOptions::btnWMEProgramPathClick(TObject * Sender) {
+	if (OpenDialog->Execute()) {
+		eWMEProgramPath->Text = OpenDialog->FileName;
 	}
 }
 
