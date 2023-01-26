@@ -2,6 +2,7 @@
 
 STRINGTABLE
 BEGIN
+IDS_GRID_HEADER_CHECKED,                "X"
 IDS_GRID_HEADER_NUM,                    "№"
 IDS_GRID_HEADER_DATETIME,               "Дата и время"
 IDS_GRID_HEADER_VANNUM,                 "№ вагона"

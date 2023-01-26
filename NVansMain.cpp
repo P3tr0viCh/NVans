@@ -61,7 +61,12 @@ void __fastcall TMain::FormCreate(TObject *Sender) {
 
 	FSettings = new TSettings();
 
-	DefaultRowHeight = Canvas->TextHeight("ComboBox") + 8;
+	FKeyOracleTrain = new TKeyOracleTrain();
+
+	FServerVanList = new TOracleVanList();
+	FLocalVanList = new TLocalVanList();
+
+	Caption = Application->Title + " " + GetFileVer(Application->ExeName);
 
 	ServerColumns = new TServerColumns();
 	LocalColumns = new TLocalColumns();
@@ -71,21 +76,12 @@ void __fastcall TMain::FormCreate(TObject *Sender) {
 	ServerOptions->ColorChanged = Main->Settings->ColorChanged;
 	ServerOptions->ColorReadOnly = Main->Settings->ColorReadOnly;
 	ServerOptions->ColorSelected = Main->Settings->ColorSelected;
-	ServerOptions->DefaultRowHeight = Main->DefaultRowHeight;
 
 	LocalOptions = new TStringGridOptions(sgLocal);
 	LocalOptions->ColSizing = true; // TODO
 	LocalOptions->ColorChanged = Main->Settings->ColorChanged;
 	LocalOptions->ColorReadOnly = Main->Settings->ColorReadOnly;
 	LocalOptions->ColorSelected = Main->Settings->ColorSelected;
-	LocalOptions->DefaultRowHeight = Main->DefaultRowHeight;
-
-	FKeyOracleTrain = new TKeyOracleTrain();
-
-	FServerVanList = new TOracleVanList();
-	FLocalVanList = new TLocalVanList();
-
-	Caption = Application->Title + " " + GetFileVer(Application->ExeName);
 
 	StringGridInit(sgServer, ServerColumns);
 	StringGridInit(sgLocal, LocalColumns);
@@ -210,20 +206,13 @@ void __fastcall TMain::ApplicationEventsException(TObject *Sender, Exception *E)
 // ---------------------------------------------------------------------------
 void __fastcall TMain::sgServerDrawCell(TObject *Sender, int ACol, int ARow,
 	TRect &Rect, TGridDrawState State) {
-	StringGridDrawCell(sgServer, ACol, ARow, Rect, State, ServerColumns,
-		ServerOptions);
+	StringGridDrawCell(sgServer, ACol, ARow, Rect, State, ServerOptions);
 }
 
 // ---------------------------------------------------------------------------
 void __fastcall TMain::sgLocalDrawCell(TObject *Sender, int ACol, int ARow,
 	TRect &Rect, TGridDrawState State) {
-	// TODO
-	// StringGridDrawCell(sgLocal, ACol, ARow, Rect, State, IsLocalVanTare(ARow) ?
-	// LocalColumns->ReadOnlyIfTare : TIntegerSet(), LocalColumns->LeftAlign,
-	// TIntegerSet(), Main->Settings->ColorReadOnly, clMax, true, false,
-	// Main->Settings->ColorChanged, Main->Settings->ColorSelected);
-	StringGridDrawCell(sgLocal, ACol, ARow, Rect, State, LocalColumns,
-		LocalOptions);
+	StringGridDrawCell(sgLocal, ACol, ARow, Rect, State, LocalOptions);
 }
 
 // ---------------------------------------------------------------------------
@@ -317,7 +306,7 @@ void TMain::MenuItemAction(TMenuItemAction Action) {
 
 				SetLocalVan(LocalIndex, LocalVan);
 
-				StringGridRowSetChanged(sgLocal, LocalIndex, true);
+				StringGridGetRowService(sgLocal, LocalIndex)->Changed = true;
 			}
 
 			LocalChanged = true;
@@ -374,7 +363,7 @@ void TMain::MenuItemAction(TMenuItemAction Action) {
 
 			SetLocalVan(R, LocalVan);
 
-			StringGridRowSetChanged(sgLocal, R, true);
+			StringGridGetRowService(sgLocal, R)->Changed = true;
 		}
 
 		LocalChanged = true;
@@ -452,6 +441,7 @@ void TMain::UpdateScaleType() {
 	sgLocal->Visible = Settings->ScaleType == stAvitekDyn ||
 		Settings->ScaleType == stAvitekSta;
 
+	btnCopyDataMass->Visible = sgLocal->Visible;
 	btnSaveVanProps->Visible = sgLocal->Visible;
 
 	PanelLocal->Visible = sgLocal->Visible;
@@ -624,6 +614,8 @@ int TMain::SetLocalVan(int Index, TLocalVan * Van) {
 	StringGridSetCellInt(sgLocal, TLocalColumns::NETTO_DIFF, Index,
 		Van->NettoDiff);
 
+	StringGridGetRowService(sgLocal, Index)->ReadOnly = !Van->IsLoaded;
+
 	return Index;
 }
 
@@ -661,7 +653,7 @@ void TMain::KeyOracleTrainChanged() {
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TMain::eRWNumChange(TObject *Sender) {
+void __fastcall TMain::eRWNumChange(TObject * Sender) {
 	if (eRWNum->Tag) {
 		return;
 	}
@@ -819,19 +811,23 @@ bool TMain::LocalSaveVans() {
 
 		DBLocalSaveVan->SQLToLog = Settings->SQLToLog;
 
-		for (int i = 1; i < sgLocal->RowCount; i++) {
-			if (!StringGridRowIsChanged(sgLocal, i)) {
+		TStringGridRowService * RowService;
+
+		for (int ARow = 1; ARow < sgLocal->RowCount; ARow++) {
+			RowService = StringGridGetRowService(sgLocal, ARow);
+
+			if (!RowService->Changed) {
 				continue;
 			}
 
-			DBLocalSaveVan->Van = LocalVanList->Items[i - 1];
+			DBLocalSaveVan->Van = LocalVanList->Items[ARow - 1];
 
 			Result = DBLocalSaveVan->Execute();
 
 			if (Result) {
 				SaveCount++;
 
-				StringGridRowSetChanged(sgLocal, i, false);
+				RowService->Changed = false;
 			}
 			else {
 				break;
@@ -878,7 +874,7 @@ void TMain::LocalSaveVanProps() {
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TMain::btnServerLoadClick(TObject *Sender) {
+void __fastcall TMain::btnServerLoadClick(TObject * Sender) {
 	if (eRWNum->Text.IsEmpty()) {
 		eRWNum->SetFocus();
 		MsgBoxErr(IDS_ERROR_NEED_RWNUM);
@@ -890,7 +886,7 @@ void __fastcall TMain::btnServerLoadClick(TObject *Sender) {
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TMain::btnLocalLoadClick(TObject *Sender) {
+void __fastcall TMain::btnLocalLoadClick(TObject * Sender) {
 	if (LocalChanged) {
 		if (!MsgBoxYesNo(IDS_QUESTION_DATA_NEED_SAVE)) {
 			return;
@@ -910,13 +906,13 @@ void __fastcall TMain::btnLocalLoadClick(TObject *Sender) {
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TMain::sgServerFixedCellClick(TObject *Sender, int ACol,
+void __fastcall TMain::sgServerFixedCellClick(TObject * Sender, int ACol,
 	int ARow) {
 	StringGridSelectRowAfterFixedCellClick((TStringGrid*)Sender, ARow);
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TMain::btnOptionsClick(TObject *Sender) {
+void __fastcall TMain::btnOptionsClick(TObject * Sender) {
 #ifndef FORCELOGON
 	if (TfrmLogin::Show(Settings->OptionsPass))
 #endif
@@ -935,7 +931,7 @@ void __fastcall TMain::btnOptionsClick(TObject *Sender) {
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TMain::FormResize(TObject *Sender) {
+void __fastcall TMain::FormResize(TObject * Sender) {
 	if (!Visible) {
 		return;
 	}
@@ -949,7 +945,7 @@ void __fastcall TMain::FormResize(TObject *Sender) {
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TMain::TimerResizeTimer(TObject *Sender) {
+void __fastcall TMain::TimerResizeTimer(TObject * Sender) {
 	TimerResize->Enabled = false;
 
 	if (sgLocal->Visible) {
@@ -1083,7 +1079,7 @@ void __fastcall TMain::btnCopyDataAllClick(TObject * Sender) {
 
 		break;
 	case stWME:
-		SendDataToWME(((TButton*) Sender)->Tag == 0);
+		SendDataToWME();
 
 		break;
 	}
@@ -1271,7 +1267,7 @@ void TMain::CopyData(bool CopyAll) {
 
 			SetLocalVan(LocalIndex + 1, LocalVan);
 
-			StringGridRowSetChanged(sgLocal, LocalIndex + 1, true);
+			StringGridGetRowService(sgLocal, LocalIndex + 1)->Changed = true;
 		}
 
 		LocalChanged = true;
@@ -1318,8 +1314,14 @@ void __fastcall TMain::sgLocalDblClick(TObject * Sender) {
 #ifdef _DEBUG
 	if (sgLocal->Row > 0) {
 		TLocalVan * Van = LocalVanList->Items[sgLocal->Row - 1];
+
 		MsgBox(StringReplace(Van->ToString(), ",", sLineBreak,
 			TReplaceFlags() << rfReplaceAll));
+
+		TStringGridRowService * RowService =
+			StringGridGetRowService(sgLocal, sgLocal->Row);
+
+		RowService->ReadOnly = !RowService->ReadOnly;
 	}
 #endif
 }
@@ -1511,22 +1513,6 @@ void TMain::DBOperationEventEndFail(TObject * Sender) {
 	MsgBoxErr(Format(MessageId, ((TDBOperation*)Sender)->ErrorMessage));
 }
 
-String CsvStr(String S) {
-	if (S.IsEmpty()) {
-		return S;
-	}
-
-	for (int i = S.Length(); i > 1; i--) {
-		if (S[i] == '"') {
-			S.Insert('"', i);
-		}
-	}
-
-	S = String('"') + S + String('"');
-
-	return S;
-}
-
 // ---------------------------------------------------------------------------
 bool TMain::ServerSaveTrainToFile(TOracleVanList * ServerVanList,
 	String FileName) {
@@ -1608,7 +1594,7 @@ void __fastcall TMain::btnServerSaveToFileClick(TObject * Sender) {
 }
 
 // ---------------------------------------------------------------------------
-void TMain::SendDataToWME(bool SendAll) {
+void TMain::SendDataToWME() {
 	StartOperation(oSendToWME);
 	try {
 		String FileName = Settings->WMEProgramPath;
@@ -1660,6 +1646,45 @@ void TMain::SendDataToWME(bool SendAll) {
 	}
 	__finally {
 		EndOperation();
+	}
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TMain::sgServerClick(TObject *Sender) {
+	if (StringGridIsEmpty(sgServer)) {
+		return;
+	}
+
+	int Col, Row;
+
+	StringGridMouseToCell(sgServer, Col, Row);
+
+	if (Row < 1) {
+		return;
+	}
+
+	if (Col == TServerColumns::CHECKED) {
+		StringGridSetCellChecked(sgServer, Col, Row,
+			!StringGridGetCellChecked(sgServer, Col, Row));
+	}
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TMain::sgServerKeyDown(TObject *Sender, WORD &Key,
+	TShiftState Shift) {
+	if (StringGridIsEmpty(sgServer)) {
+		return;
+	}
+
+	if (Shift.Empty() && Key == VK_SPACE) {
+		bool Checked = StringGridGetCellChecked(sgServer,
+			TServerColumns::CHECKED, sgServer->Selection.Top);
+
+		for (int Row = sgServer->Selection.Top;
+		Row <= sgServer->Selection.Bottom; Row++) {
+			StringGridSetCellChecked(sgServer, TServerColumns::CHECKED, Row,
+				!Checked);
+		}
 	}
 }
 

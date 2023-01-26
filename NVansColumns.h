@@ -13,7 +13,8 @@
 // ---------------------------------------------------------------------------
 class TServerColumns : public TStringGridBaseColumns {
 public:
-	static const NUM = SERVICE + 1;
+	static const CHECKED = SERVICE + 1;
+	static const NUM = CHECKED + 1;
 	static const VANNUM = NUM + 1;
 	static const CARGOTYPE = VANNUM + 1;
 	static const INVOICE_NUM = CARGOTYPE + 1;
@@ -30,13 +31,6 @@ public:
 
 	static const VAN_OBJECT = INVOICE_TARE + 1;
 
-	TServerColumns() {
-		LeftAlign =
-			TIntegerSet() << VANNUM << CARGOTYPE << INVOICE_NUM <<
-			INVOICE_SUPPLIER << INVOICE_RECIPIENT << DEPART_STATION <<
-			PURPOSE_STATION;
-	}
-
 	// ---------------------------------------------------------------------------
 	int GetCount() {
 		return COUNT;
@@ -44,23 +38,39 @@ public:
 
 	// ---------------------------------------------------------------------------
 	void SetStringGridHeader(TStringGrid * Grid) {
+		StringGridSetHeader(Grid, CHECKED, IDS_GRID_HEADER_CHECKED, 32);
+
 		StringGridSetHeader(Grid, NUM, IDS_GRID_HEADER_NUM, 32);
 
 		StringGridSetHeader(Grid, VANNUM, IDS_GRID_HEADER_VANNUM, 80);
+		StringGridGetColService(Grid, VANNUM)->Alignment = taLeftJustify;
 
 		StringGridSetHeader(Grid, CARGOTYPE, IDS_GRID_HEADER_CARGOTYPE, 180);
+		StringGridGetColService(Grid, CARGOTYPE)->Alignment = taLeftJustify;
 
 		StringGridSetHeader(Grid, INVOICE_NUM,
 			IDS_GRID_HEADER_INVOICE_NUM, 180);
+		StringGridGetColService(Grid, INVOICE_NUM)->Alignment = taLeftJustify;
+
 		StringGridSetHeader(Grid, INVOICE_SUPPLIER,
 			IDS_GRID_HEADER_INVOICE_SUPPLIER, 180);
+		StringGridGetColService(Grid, INVOICE_SUPPLIER)->Alignment =
+			taLeftJustify;
+
 		StringGridSetHeader(Grid, INVOICE_RECIPIENT,
 			IDS_GRID_HEADER_INVOICE_RECIPIENT, 180);
+		StringGridGetColService(Grid, INVOICE_RECIPIENT)->Alignment =
+			taLeftJustify;
 
 		StringGridSetHeader(Grid, DEPART_STATION,
 			IDS_GRID_HEADER_DEPART_STATION, 180);
+		StringGridGetColService(Grid, DEPART_STATION)->Alignment =
+			taLeftJustify;
+
 		StringGridSetHeader(Grid, PURPOSE_STATION,
 			IDS_GRID_HEADER_PURPOSE_STATION, 180);
+		StringGridGetColService(Grid, PURPOSE_STATION)->Alignment =
+			taLeftJustify;
 
 		StringGridSetHeader(Grid, CARRYING, IDS_GRID_HEADER_CARRYING, 64);
 		StringGridSetHeader(Grid, TARE_T, IDS_GRID_HEADER_TARE_T, 64);
@@ -94,17 +104,6 @@ public:
 
 	static const VAN_OBJECT = NETTO_DIFF + 1;
 
-	TIntegerSet ReadOnlyIfTare;
-
-	TLocalColumns() {
-		LeftAlign =
-			TIntegerSet() << DATETIME << VANNUM << CARGOTYPE << INVOICE_NUM <<
-			INVOICE_SUPPLIER << INVOICE_RECIPIENT << DEPART_STATION <<
-			PURPOSE_STATION;
-
-		ReadOnlyIfTare = TIntegerSet() << VANNUM;
-	}
-
 	// ---------------------------------------------------------------------------
 	int GetCount() {
 		return COUNT;
@@ -113,22 +112,39 @@ public:
 	// ---------------------------------------------------------------------------
 	void SetStringGridHeader(TStringGrid * Grid) {
 		StringGridSetHeader(Grid, NUM, IDS_GRID_HEADER_NUM, 32);
+
 		StringGridSetHeader(Grid, DATETIME, IDS_GRID_HEADER_DATETIME, 160);
+		StringGridGetColService(Grid, DATETIME)->Alignment = taLeftJustify;
 
 		StringGridSetHeader(Grid, VANNUM, IDS_GRID_HEADER_VANNUM, 80);
+		StringGridGetColService(Grid, VANNUM)->Alignment = taLeftJustify;
 
 		StringGridSetHeader(Grid, CARGOTYPE, IDS_GRID_HEADER_CARGOTYPE, 180);
+		StringGridGetColService(Grid, CARGOTYPE)->Alignment = taLeftJustify;
 
 		StringGridSetHeader(Grid, INVOICE_NUM,
 			IDS_GRID_HEADER_INVOICE_NUM, 180);
+		StringGridGetColService(Grid, INVOICE_NUM)->Alignment = taLeftJustify;
+
 		StringGridSetHeader(Grid, INVOICE_SUPPLIER,
 			IDS_GRID_HEADER_INVOICE_SUPPLIER, 180);
+		StringGridGetColService(Grid, INVOICE_SUPPLIER)->Alignment =
+			taLeftJustify;
+
 		StringGridSetHeader(Grid, INVOICE_RECIPIENT,
 			IDS_GRID_HEADER_INVOICE_RECIPIENT, 180);
+		StringGridGetColService(Grid, INVOICE_RECIPIENT)->Alignment =
+			taLeftJustify;
+
 		StringGridSetHeader(Grid, DEPART_STATION,
 			IDS_GRID_HEADER_DEPART_STATION, 180);
+		StringGridGetColService(Grid, DEPART_STATION)->Alignment =
+			taLeftJustify;
+
 		StringGridSetHeader(Grid, PURPOSE_STATION,
 			IDS_GRID_HEADER_PURPOSE_STATION, 180);
+		StringGridGetColService(Grid, PURPOSE_STATION)->Alignment =
+			taLeftJustify;
 
 		StringGridSetHeader(Grid, CARRYING, IDS_GRID_HEADER_CARRYING, 64);
 		StringGridSetHeader(Grid, TARE_T, IDS_GRID_HEADER_TARE_T, 64);
@@ -151,10 +167,6 @@ public:
 
 	static const COUNT = VAN_COUNT + 1;
 
-	TServerTrainsColumns() {
-		LeftAlign = TIntegerSet() << RWNUM << DATETIME;
-	}
-
 	// ---------------------------------------------------------------------------
 	int GetCount() {
 		return COUNT;
@@ -163,8 +175,12 @@ public:
 	// ---------------------------------------------------------------------------
 	void SetStringGridHeader(TStringGrid * Grid) {
 		StringGridSetHeader(Grid, RWNUM, IDS_GRID_HEADER_RWNUM, 80);
+		StringGridGetColService(Grid, RWNUM)->Alignment = taLeftJustify;
+
 		StringGridSetHeader(Grid, DATETIME,
 			IDS_GRID_HEADER_INVOICE_DATETIME, 112);
+		StringGridGetColService(Grid, DATETIME)->Alignment = taLeftJustify;
+
 		StringGridSetHeader(Grid, VAN_COUNT, IDS_GRID_HEADER_VAN_COUNT, 56);
 	}
 };
@@ -179,10 +195,6 @@ public:
 
 	static const TRAIN_NUM = VAN_COUNT + 1;
 
-	TLocalTrainsColumns() {
-		LeftAlign = TIntegerSet() << DATETIME;
-	}
-
 	// ---------------------------------------------------------------------------
 	int GetCount() {
 		return COUNT;
@@ -191,6 +203,8 @@ public:
 	// ---------------------------------------------------------------------------
 	void SetStringGridHeader(TStringGrid * Grid) {
 		StringGridSetHeader(Grid, DATETIME, IDS_GRID_HEADER_DATETIME, 112);
+		StringGridGetColService(Grid, DATETIME)->Alignment = taLeftJustify;
+
 		StringGridSetHeader(Grid, VAN_COUNT, IDS_GRID_HEADER_VAN_COUNT, 56);
 	}
 };

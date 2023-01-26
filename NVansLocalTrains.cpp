@@ -48,7 +48,6 @@ void __fastcall TfrmLocalTrains::FormCreate(TObject *Sender) {
 	ListOptions->ColorChanged = Main->Settings->ColorChanged;
 	ListOptions->ColorReadOnly = Main->Settings->ColorReadOnly;
 	ListOptions->ColorSelected = Main->Settings->ColorSelected;
-	ListOptions->DefaultRowHeight = Main->DefaultRowHeight;
 
 	Filter = new TFilterLocalTrains();
 
@@ -97,8 +96,7 @@ void __fastcall TfrmLocalTrains::FormDestroy(TObject *Sender) {
 // ---------------------------------------------------------------------------
 void __fastcall TfrmLocalTrains::sgListDrawCell(TObject *Sender, int ACol,
 	int ARow, TRect &Rect, TGridDrawState State) {
-	StringGridDrawCell(sgList, ACol, ARow, Rect, State, ListColumns,
-		ListOptions);
+	StringGridDrawCell(sgList, ACol, ARow, Rect, State, ListOptions);
 
 }
 
@@ -196,8 +194,7 @@ void TfrmLocalTrains::UpdateTrains() {
 	String TrainNum = "";
 
 	if (!StringGridIsEmpty(sgList) && SelectedRow > 0) {
-		TrainNum = sgList->Cells[TLocalTrainsColumns::TRAIN_NUM]
-			[SelectedRow];
+		TrainNum = sgList->Cells[TLocalTrainsColumns::TRAIN_NUM][SelectedRow];
 	}
 
 	SelectedRow = -1;
@@ -211,8 +208,8 @@ void TfrmLocalTrains::UpdateTrains() {
 
 	if (!TrainNum.IsEmpty()) {
 		for (int i = 1; i < sgList->RowCount; i++) {
-			if (AnsiSameStr(sgList->Cells[TLocalTrainsColumns::TRAIN_NUM]
-				[i], TrainNum)) {
+			if (AnsiSameStr(sgList->Cells[TLocalTrainsColumns::TRAIN_NUM][i],
+				TrainNum)) {
 				sgList->Row = i;
 				break;
 			}

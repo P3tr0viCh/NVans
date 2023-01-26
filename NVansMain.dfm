@@ -49,8 +49,10 @@ object Main: TMain
     Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goTabs, goFixedColClick]
     PopupMenu = PopupMenu
     TabOrder = 1
+    OnClick = sgServerClick
     OnDrawCell = sgServerDrawCell
     OnFixedCellClick = sgServerFixedCellClick
+    OnKeyDown = sgServerKeyDown
     OnSelectCell = sgServerSelectCell
   end
   object sgLocal: TStringGrid
@@ -248,7 +250,7 @@ object Main: TMain
       Top = 8
       Width = 112
       Height = 32
-      Caption = #1050#1086#1087#1080#1088#1086#1074#1072#1090#1100' '#1074#1089#1105
+      Caption = #1050#1086#1087#1080#1088#1086#1074#1072#1090#1100
       Enabled = False
       TabOrder = 0
       OnClick = btnCopyDataAllClick

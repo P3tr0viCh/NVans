@@ -98,6 +98,9 @@ __published:
 	void __fastcall btnServerReverseClick(TObject *Sender);
 	void __fastcall eRWNumChange(TObject *Sender);
 	void __fastcall btnServerSaveToFileClick(TObject *Sender);
+	void __fastcall sgServerClick(TObject *Sender);
+	void __fastcall sgServerKeyDown(TObject *Sender, WORD &Key, TShiftState Shift);
+
 
 private:
 	TSettings * FSettings;
@@ -150,7 +153,7 @@ private:
 	bool CheckField(int Column1, int Column2, int Index1, int Index2);
 	bool DataExists(TIntegerPairList * Result);
 	void CopyData(bool CopyAll);
-	void SendDataToWME(bool SendAll);
+	void SendDataToWME();
 
 	enum TAvitekBtn {
 		abSave, abUpdate
@@ -172,8 +175,6 @@ private:
 
 public:
 	__fastcall TMain(TComponent* Owner);
-
-	int DefaultRowHeight;
 
 	enum TOperation {
 		oLoad, oSave, oSendToWME

@@ -49,7 +49,6 @@ void __fastcall TfrmServerTrains::FormCreate(TObject *Sender) {
 	ListOptions->ColorChanged = Main->Settings->ColorChanged;
 	ListOptions->ColorReadOnly = Main->Settings->ColorReadOnly;
 	ListOptions->ColorSelected = Main->Settings->ColorSelected;
-	ListOptions->DefaultRowHeight = Main->DefaultRowHeight;
 
 	Filter = new TFilterOracleTrains();
 
@@ -101,8 +100,7 @@ void __fastcall TfrmServerTrains::FormDestroy(TObject *Sender) {
 // ---------------------------------------------------------------------------
 void __fastcall TfrmServerTrains::sgListDrawCell(TObject *Sender, int ACol,
 	int ARow, TRect &Rect, TGridDrawState State) {
-	StringGridDrawCell(sgList, ACol, ARow, Rect, State, ListColumns,
-		ListOptions);
+	StringGridDrawCell(sgList, ACol, ARow, Rect, State, ListOptions);
 }
 
 // ---------------------------------------------------------------------------
