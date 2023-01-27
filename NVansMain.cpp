@@ -1595,14 +1595,59 @@ void __fastcall TMain::btnServerSaveToFileClick(TObject * Sender) {
 
 // ---------------------------------------------------------------------------
 void TMain::SendDataToWME() {
+	if (ServerVanList->IsEmpty()) {
+		return;
+	}
+
 	StartOperation(oSendToWME);
 	try {
+		bool HasChecked = false;
+
+		for (int Row = 1; Row < sgServer->RowCount; Row++) {
+			if (StringGridGetCellChecked(sgServer,
+				TServerColumns::CHECKED, Row)) {
+				HasChecked = true;
+				break;
+			}
+		}
+
+		if (!HasChecked) {
+			if (MsgBoxYesNo(IDS_QUESTION_CHECKED_NONE)) {
+				for (int Row = 1; Row < sgServer->RowCount; Row++) {
+					StringGridSetCellChecked(sgServer, TServerColumns::CHECKED,
+						Row, true);
+				}
+			}
+			else {
+				return;
+			}
+		}
+
 		String FileName = Settings->WMEProgramPath;
 
 		String DataFileName = SlashSep(GetTempFolderPath(), "NVans2WME.csv");
 
-		if (!ServerSaveTrainToFile(ServerVanList, DataFileName)) {
-			return;
+		TOracleVanList * VanList = new TOracleVanList();
+		try {
+			TOracleVan * Van;
+
+			for (int Row = 1; Row < sgServer->RowCount; Row++) {
+				if (StringGridGetCellChecked(sgServer,
+					TServerColumns::CHECKED, Row)) {
+					Van = new TOracleVan();
+
+					Van->Assign(ServerVanList->Items[Row - 1]);
+
+					VanList->Add(Van);
+				}
+			}
+
+			if (!ServerSaveTrainToFile(VanList, DataFileName)) {
+				return;
+			}
+		}
+		__finally {
+			VanList->Free();
 		}
 
 		DataFileName = AnsiQuotedStr(DataFileName, '"');
@@ -1625,8 +1670,6 @@ void TMain::SendDataToWME() {
 		}
 
 		try {
-			// MsgBox(FileName + sLineBreak + Params);
-
 			ShellExec(FileName, Params);
 
 			WriteToLog(Format(IDS_LOG_EXEC_FILE_OK, FileName));
@@ -1650,7 +1693,7 @@ void TMain::SendDataToWME() {
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TMain::sgServerClick(TObject *Sender) {
+void __fastcall TMain::sgServerClick(TObject * Sender) {
 	if (StringGridIsEmpty(sgServer)) {
 		return;
 	}
@@ -1670,7 +1713,7 @@ void __fastcall TMain::sgServerClick(TObject *Sender) {
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TMain::sgServerKeyDown(TObject *Sender, WORD &Key,
+void __fastcall TMain::sgServerKeyDown(TObject * Sender, WORD & Key,
 	TShiftState Shift) {
 	if (StringGridIsEmpty(sgServer)) {
 		return;

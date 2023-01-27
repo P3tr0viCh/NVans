@@ -11,6 +11,7 @@ IDS_QUESTION_CLOSE_PROGRAM_CHANGED,     "Данные были изменены.\nЗакрыть программ
 IDS_QUESTION_SAVE_VANPROPS,             "Сохранить значения грузоподъёмности и тары по трафарету в таблицу характеристик вагонов?"
 IDS_QUESTION_DATA_OVERWRITE,            "Заменить существующие данные?"
 IDS_QUESTION_DATA_NEED_SAVE,            "Данные были изменены.\nПродолжить без сохранения сделанных изменений?"
+IDS_QUESTION_CHECKED_NONE,              "Записи для копирования не отмечены.\nВыделить и отправить все записи?"
 
 IDS_ERROR_UNKNOWN,                      "Неизвестная ошибка."
 IDS_ERROR_UNKNOWN_EXCEPTION,            "Возникла непредвиденная ошибка:\n\n%s."

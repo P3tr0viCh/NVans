@@ -31,12 +31,12 @@ public:
 
 	static const VAN_OBJECT = INVOICE_TARE + 1;
 
-	// ---------------------------------------------------------------------------
+	// -----------------------------------------------------------------------
 	int GetCount() {
 		return COUNT;
 	}
 
-	// ---------------------------------------------------------------------------
+	// -----------------------------------------------------------------------
 	void SetStringGridHeader(TStringGrid * Grid) {
 		StringGridSetHeader(Grid, CHECKED, IDS_GRID_HEADER_CHECKED, 32);
 
@@ -104,12 +104,12 @@ public:
 
 	static const VAN_OBJECT = NETTO_DIFF + 1;
 
-	// ---------------------------------------------------------------------------
+	// -----------------------------------------------------------------------
 	int GetCount() {
 		return COUNT;
 	}
 
-	// ---------------------------------------------------------------------------
+	// -----------------------------------------------------------------------
 	void SetStringGridHeader(TStringGrid * Grid) {
 		StringGridSetHeader(Grid, NUM, IDS_GRID_HEADER_NUM, 32);
 
@@ -167,12 +167,12 @@ public:
 
 	static const COUNT = VAN_COUNT + 1;
 
-	// ---------------------------------------------------------------------------
+	// -----------------------------------------------------------------------
 	int GetCount() {
 		return COUNT;
 	}
 
-	// ---------------------------------------------------------------------------
+	// -----------------------------------------------------------------------
 	void SetStringGridHeader(TStringGrid * Grid) {
 		StringGridSetHeader(Grid, RWNUM, IDS_GRID_HEADER_RWNUM, 80);
 		StringGridGetColService(Grid, RWNUM)->Alignment = taLeftJustify;
@@ -195,12 +195,12 @@ public:
 
 	static const TRAIN_NUM = VAN_COUNT + 1;
 
-	// ---------------------------------------------------------------------------
+	// -----------------------------------------------------------------------
 	int GetCount() {
 		return COUNT;
 	}
 
-	// ---------------------------------------------------------------------------
+	// -----------------------------------------------------------------------
 	void SetStringGridHeader(TStringGrid * Grid) {
 		StringGridSetHeader(Grid, DATETIME, IDS_GRID_HEADER_DATETIME, 112);
 		StringGridGetColService(Grid, DATETIME)->Alignment = taLeftJustify;

@@ -7,13 +7,12 @@
 #include "NVansStrings.h"
 
 // ---------------------------------------------------------------------------
+USEFORM("NVansLocalTrains.cpp", frmLocalTrains);
+USEFORM("NVansOptions.cpp", frmOptions);
 USEFORM("NVansMain.cpp", Main);
 USEFORM("NVansLogin.cpp", frmLogin);
-USEFORM("NVansOptions.cpp", frmOptions);
-USEFORM("NVansLocalTrains.cpp", frmLocalTrains);
 USEFORM("NVansServerTrains.cpp", frmServerTrains);
-
-// ---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int) {
 	HANDLE hMutex;
 
@@ -45,7 +44,6 @@ int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int) {
 		Application->CreateForm(__classid(TMain), &Main);
 		Application->CreateForm(__classid(TfrmServerTrains), &frmServerTrains);
 		Application->CreateForm(__classid(TfrmLocalTrains), &frmLocalTrains);
-
 		Application->Run();
 	}
 	catch (Exception &exception) {

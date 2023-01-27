@@ -177,7 +177,7 @@ object frmOptions: TfrmOptions
         object eOracleService: TLabeledEdit
           Left = 256
           Top = 32
-          Width = 80
+          Width = 240
           Height = 25
           EditLabel.Width = 78
           EditLabel.Height = 17
