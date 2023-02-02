@@ -53,6 +53,7 @@ object Main: TMain
     OnDrawCell = sgServerDrawCell
     OnFixedCellClick = sgServerFixedCellClick
     OnKeyDown = sgServerKeyDown
+    OnMouseUp = sgServerMouseUp
     OnSelectCell = sgServerSelectCell
   end
   object sgLocal: TStringGrid

@@ -1694,22 +1694,22 @@ void TMain::SendDataToWME() {
 
 // ---------------------------------------------------------------------------
 void __fastcall TMain::sgServerClick(TObject * Sender) {
-	if (StringGridIsEmpty(sgServer)) {
-		return;
-	}
-
-	int Col, Row;
-
-	StringGridMouseToCell(sgServer, Col, Row);
-
-	if (Row < 1) {
-		return;
-	}
-
-	if (Col == TServerColumns::CHECKED) {
-		StringGridSetCellChecked(sgServer, Col, Row,
-			!StringGridGetCellChecked(sgServer, Col, Row));
-	}
+	// if (StringGridIsEmpty(sgServer)) {
+	// return;
+	// }
+	// Caption = Caption + "+";
+	// int Col, Row;
+	//
+	// StringGridMouseToCell(sgServer, Col, Row);
+	//
+	// if (Row < 1) {
+	// return;
+	// }
+	//
+	// if (Col == TServerColumns::CHECKED) {
+	// StringGridSetCellChecked(sgServer, Col, Row,
+	// !StringGridGetCellChecked(sgServer, Col, Row));
+	// }
 }
 
 // ---------------------------------------------------------------------------
@@ -1728,6 +1728,35 @@ void __fastcall TMain::sgServerKeyDown(TObject * Sender, WORD & Key,
 			StringGridSetCellChecked(sgServer, TServerColumns::CHECKED, Row,
 				!Checked);
 		}
+	}
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TMain::sgServerMouseUp(TObject *Sender, TMouseButton Button,
+	TShiftState Shift, int X, int Y) {
+	if (Button != mbLeft) {
+		return;
+	}
+
+	if (StringGridIsEmpty(sgServer)) {
+		return;
+	}
+
+	int Col, Row;
+
+	StringGridMouseToCell(sgServer, Col, Row);
+
+	if (Row < 1) {
+		return;
+	}
+
+	if (Row != sgServer->Row) {
+		return;
+	}
+
+	if (Col == TServerColumns::CHECKED) {
+		StringGridSetCellChecked(sgServer, Col, Row,
+			!StringGridGetCellChecked(sgServer, Col, Row));
 	}
 }
 

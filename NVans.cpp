@@ -12,7 +12,8 @@ USEFORM("NVansOptions.cpp", frmOptions);
 USEFORM("NVansMain.cpp", Main);
 USEFORM("NVansLogin.cpp", frmLogin);
 USEFORM("NVansServerTrains.cpp", frmServerTrains);
-//---------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
 int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int) {
 	HANDLE hMutex;
 

@@ -100,6 +100,8 @@ __published:
 	void __fastcall btnServerSaveToFileClick(TObject *Sender);
 	void __fastcall sgServerClick(TObject *Sender);
 	void __fastcall sgServerKeyDown(TObject *Sender, WORD &Key, TShiftState Shift);
+	void __fastcall sgServerMouseUp(TObject *Sender, TMouseButton Button, TShiftState Shift,
+          int X, int Y);
 
 
 private:
