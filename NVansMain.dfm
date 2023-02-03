@@ -49,10 +49,10 @@ object Main: TMain
     Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goTabs, goFixedColClick]
     PopupMenu = PopupMenu
     TabOrder = 1
-    OnClick = sgServerClick
     OnDrawCell = sgServerDrawCell
     OnFixedCellClick = sgServerFixedCellClick
     OnKeyDown = sgServerKeyDown
+    OnMouseDown = sgServerMouseDown
     OnMouseUp = sgServerMouseUp
     OnSelectCell = sgServerSelectCell
   end
@@ -72,7 +72,7 @@ object Main: TMain
     OnDblClick = sgLocalDblClick
     OnDrawCell = sgLocalDrawCell
     OnFixedCellClick = sgServerFixedCellClick
-    OnSelectCell = sgServerSelectCell
+    OnSelectCell = sgLocalSelectCell
   end
   object PanelServer: TPanel
     Left = 0

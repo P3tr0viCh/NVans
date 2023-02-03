@@ -3,8 +3,6 @@
 #include <vcl.h>
 #pragma hdrstop
 
-#include "Clipbrd.hpp"
-
 #include <AboutFrm.h>
 
 #include <UtilsLog.h>
@@ -68,23 +66,33 @@ void __fastcall TMain::FormCreate(TObject *Sender) {
 
 	Caption = Application->Title + " " + GetFileVer(Application->ExeName);
 
+	sgServer->Tag = GRID_SERVER;
+	sgLocal->Tag = GRID_LOCAL;
+
 	ServerColumns = new TServerColumns();
 	LocalColumns = new TLocalColumns();
 
 	ServerOptions = new TStringGridOptions(sgServer);
 	ServerOptions->ColSizing = true; // TODO
+	ServerOptions->DrawSelectedRow = true;
 	ServerOptions->ColorChanged = Main->Settings->ColorChanged;
 	ServerOptions->ColorReadOnly = Main->Settings->ColorReadOnly;
 	ServerOptions->ColorSelected = Main->Settings->ColorSelected;
+	ServerOptions->ColorSelectedRow = clLtGray;
 
 	LocalOptions = new TStringGridOptions(sgLocal);
 	LocalOptions->ColSizing = true; // TODO
+	LocalOptions->DrawSelectedRow = true;
 	LocalOptions->ColorChanged = Main->Settings->ColorChanged;
 	LocalOptions->ColorReadOnly = Main->Settings->ColorReadOnly;
 	LocalOptions->ColorSelected = Main->Settings->ColorSelected;
+	LocalOptions->ColorSelectedRow = clLtGray;
 
 	StringGridInit(sgServer, ServerColumns);
 	StringGridInit(sgLocal, LocalColumns);
+
+	ServerSelectedRow = 1;
+	LocalSelectedRow = 1;
 
 	TFileIni * FileIni = TFileIni::GetNewInstance();
 	try {
@@ -233,9 +241,9 @@ void TMain::MenuItemAction(TMenuItemAction Action) {
 		return;
 	}
 
-	TStringGrid * S = (TStringGrid*) ActiveControl;
+	TStringGrid * SG = (TStringGrid*) ActiveControl;
 
-	if (StringGridIsEmpty(S)) {
+	if (StringGridIsEmpty(SG)) {
 		return;
 	}
 
@@ -243,29 +251,42 @@ void TMain::MenuItemAction(TMenuItemAction Action) {
 
 	String S2;
 
-	TGridRect Selection;
-
 	TLocalVan * LocalVan;
 
 	TStringList * SL;
 
+	int CheckedCol = -1;
+
+	if (SG->Tag == GRID_SERVER) {
+		CheckedCol = TServerColumns::CHECKED;
+	}
+
 	switch (Action) {
 	case maCopy:
-		for (int R = S->Selection.Top; R <= S->Selection.Bottom; R++) {
-			for (int C = S->Selection.Left; C <= S->Selection.Right - 1; C++) {
-				Text = Text + S->Cells[C][R] + TAB;
+		for (int Row = SG->Selection.Top; Row <= SG->Selection.Bottom; Row++) {
+			for (int Col = SG->Selection.Left; Col <= SG->Selection.Right - 1;
+			Col++) {
+				if (Col == CheckedCol) {
+					continue;
+				}
+
+				Text = Text + SG->Cells[Col][Row] + TAB;
 			}
-			Text = Text + S->Cells[S->Selection.Right][R];
-			Text = Text + sLineBreak;
+
+			Text = Text + SG->Cells[SG->Selection.Right][Row];
+
+			if (Row != SG->Selection.Bottom) {
+				Text = Text + sLineBreak;
+			}
 		}
 
-		Clipboard()->AsText = Text;
+		ClipboardSetText(Text);
 
 		break;
 	case maPaste:
 		SL = new TStringList();
 		try {
-			Text = Clipboard()->AsText;
+			Text = ClipboardGetText();
 
 			while (!Text.IsEmpty()) {
 				SplitStr(Text, sLineBreak, 0, S2, Text);
@@ -316,12 +337,12 @@ void TMain::MenuItemAction(TMenuItemAction Action) {
 		}
 		break;
 	case maClear:
-		for (int R = S->Selection.Top; R <= S->Selection.Bottom; R++) {
+		for (int R = SG->Selection.Top; R <= SG->Selection.Bottom; R++) {
 			LocalVan = LocalVanList->Items[R - 1];
 
 			LocalVan->CalcFields = false;
 
-			for (int C = S->Selection.Left; C <= S->Selection.Right; C++) {
+			for (int C = SG->Selection.Left; C <= SG->Selection.Right; C++) {
 				switch (C) {
 				case TLocalColumns::VANNUM:
 					LocalVan->VanNum = "";
@@ -370,15 +391,7 @@ void TMain::MenuItemAction(TMenuItemAction Action) {
 
 		break;
 	case maSelectAll:
-		StringGridInvalidateSelected(S);
-
-		Selection.Left = 1;
-		Selection.Right = S->ColCount - 1;
-
-		Selection.Top = 1;
-		Selection.Bottom = S->RowCount - 1;
-
-		S->Selection = Selection;
+		StringGridSelectAll(SG);
 
 		break;
 	}
@@ -1284,7 +1297,21 @@ void TMain::CopyData(bool CopyAll) {
 // ---------------------------------------------------------------------------
 void __fastcall TMain::sgServerSelectCell(TObject * Sender, int ACol, int ARow,
 	bool &CanSelect) {
-	StringGridInvalidateSelected((TStringGrid*) Sender);
+	StringGridInvalidateRow(sgServer, ServerSelectedRow);
+
+	ServerSelectedRow = ARow;
+
+	StringGridInvalidateRow(sgServer, ServerSelectedRow);
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TMain::sgLocalSelectCell(TObject *Sender, int ACol, int ARow,
+	bool &CanSelect) {
+	StringGridInvalidateRow(sgLocal, LocalSelectedRow);
+
+	LocalSelectedRow = ARow;
+
+	StringGridInvalidateRow(sgLocal, LocalSelectedRow);
 }
 
 // ---------------------------------------------------------------------------
@@ -1693,26 +1720,6 @@ void TMain::SendDataToWME() {
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TMain::sgServerClick(TObject * Sender) {
-	// if (StringGridIsEmpty(sgServer)) {
-	// return;
-	// }
-	// Caption = Caption + "+";
-	// int Col, Row;
-	//
-	// StringGridMouseToCell(sgServer, Col, Row);
-	//
-	// if (Row < 1) {
-	// return;
-	// }
-	//
-	// if (Col == TServerColumns::CHECKED) {
-	// StringGridSetCellChecked(sgServer, Col, Row,
-	// !StringGridGetCellChecked(sgServer, Col, Row));
-	// }
-}
-
-// ---------------------------------------------------------------------------
 void __fastcall TMain::sgServerKeyDown(TObject * Sender, WORD & Key,
 	TShiftState Shift) {
 	if (StringGridIsEmpty(sgServer)) {
@@ -1728,6 +1735,30 @@ void __fastcall TMain::sgServerKeyDown(TObject * Sender, WORD & Key,
 			StringGridSetCellChecked(sgServer, TServerColumns::CHECKED, Row,
 				!Checked);
 		}
+
+		UpdateStatusBar();
+	}
+}
+
+// ---------------------------------------------------------------------------
+void TMain::UpdateStatusBar() {
+	if (Settings->ScaleType != stWME) {
+		return;
+	}
+
+	int CheckedCount = 0;
+
+	for (int Row = 1; Row < sgServer->RowCount; Row++) {
+		if (StringGridGetCellChecked(sgServer, TServerColumns::CHECKED, Row)) {
+			CheckedCount++;
+		}
+	}
+
+	if (CheckedCount > 0) {
+		StatusBar->SimpleText = "Отмечено: " + IntToStr(CheckedCount);
+	}
+	else {
+		StatusBar->SimpleText = "";
 	}
 }
 
@@ -1758,6 +1789,26 @@ void __fastcall TMain::sgServerMouseUp(TObject *Sender, TMouseButton Button,
 		StringGridSetCellChecked(sgServer, Col, Row,
 			!StringGridGetCellChecked(sgServer, Col, Row));
 	}
+
+	UpdateStatusBar();
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TMain::sgServerMouseDown(TObject *Sender, TMouseButton Button,
+	TShiftState Shift, int X, int Y) {
+	if (ActiveControl == NULL) {
+		return;
+	}
+
+	if (!ActiveControl->ClassNameIs("TStringGrid")) {
+		return;
+	}
+
+	TStringGrid * SG = (TStringGrid*) ActiveControl;
+
+	int Col, Row;
+
+	StringGridMouseToCell(SG, Col, Row);
 }
 
 // ---------------------------------------------------------------------------

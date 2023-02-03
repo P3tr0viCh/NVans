@@ -13,6 +13,7 @@
 #include <Vcl.AppEvnts.hpp>
 #include <Vcl.ExtCtrls.hpp>
 #include <Vcl.Menus.hpp>
+#include <Vcl.Dialogs.hpp>
 
 #include <IntegerPair.h>
 
@@ -26,7 +27,6 @@
 #include "NVansOracleVan.h"
 
 #include "NVansKeyOracleTrain.h"
-#include <Vcl.Dialogs.hpp>
 
 // ---------------------------------------------------------------------------
 class TMain : public TForm, public IDBOperationEvent {
@@ -98,10 +98,13 @@ __published:
 	void __fastcall btnServerReverseClick(TObject *Sender);
 	void __fastcall eRWNumChange(TObject *Sender);
 	void __fastcall btnServerSaveToFileClick(TObject *Sender);
-	void __fastcall sgServerClick(TObject *Sender);
-	void __fastcall sgServerKeyDown(TObject *Sender, WORD &Key, TShiftState Shift);
-	void __fastcall sgServerMouseUp(TObject *Sender, TMouseButton Button, TShiftState Shift,
-          int X, int Y);
+	void __fastcall sgServerKeyDown(TObject *Sender, WORD &Key,
+		TShiftState Shift);
+	void __fastcall sgServerMouseUp(TObject *Sender, TMouseButton Button,
+		TShiftState Shift, int X, int Y);
+	void __fastcall sgServerMouseDown(TObject *Sender, TMouseButton Button,
+		TShiftState Shift, int X, int Y);
+	void __fastcall sgLocalSelectCell(TObject *Sender, int ACol, int ARow, bool &CanSelect);
 
 
 private:
@@ -123,10 +126,15 @@ private:
 	TOracleVanList * FServerVanList;
 	TLocalVanList * FLocalVanList;
 
+	int ServerSelectedRow;
+	int LocalSelectedRow;
+
 	// -----------------------------------------------------------------------
 	void SetControlsEnabled(const bool Enabled);
 
 	void UpdateScaleType();
+
+	void UpdateStatusBar();
 
 	void SettingsChanged();
 

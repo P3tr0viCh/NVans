@@ -11,6 +11,9 @@
 
 #include "NVansDebug.h"
 
+#define GRID_SERVER 10
+#define GRID_LOCAL  20
+
 // ---------------------------------------------------------------------------
 int DTToWTime(TDateTime ADateTime);
 String DTToS(TDateTime ADateTime, bool WithSecs = true);
