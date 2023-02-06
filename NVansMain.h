@@ -104,7 +104,9 @@ __published:
 		TShiftState Shift, int X, int Y);
 	void __fastcall sgServerMouseDown(TObject *Sender, TMouseButton Button,
 		TShiftState Shift, int X, int Y);
-	void __fastcall sgLocalSelectCell(TObject *Sender, int ACol, int ARow, bool &CanSelect);
+	void __fastcall sgLocalSelectCell(TObject *Sender, int ACol, int ARow,
+		bool &CanSelect);
+	void __fastcall FormKeyDown(TObject *Sender, WORD &Key, TShiftState Shift);
 
 
 private:
@@ -196,6 +198,9 @@ public:
 	void EndOperation();
 
 	void KeyOracleTrainChanged();
+
+	void __fastcall StartSearchEvent(TObject * Sender, String &Text,
+		bool &Found);
 
 	// -----------------------------------------------------------------------
 	__property TSettings * Settings = {read = FSettings};

@@ -37,6 +37,7 @@
 #include "NVansDBLocalSaveVanProps.h"
 
 #include "NVansLogin.h"
+#include "NVansSearch.h"
 #include "NVansOptions.h"
 #include "NVansServerTrains.h"
 #include "NVansLocalTrains.h"
@@ -73,20 +74,12 @@ void __fastcall TMain::FormCreate(TObject *Sender) {
 	LocalColumns = new TLocalColumns();
 
 	ServerOptions = new TStringGridOptions(sgServer);
-	ServerOptions->ColSizing = true; // TODO
-	ServerOptions->DrawSelectedRow = true;
-	ServerOptions->ColorChanged = Main->Settings->ColorChanged;
-	ServerOptions->ColorReadOnly = Main->Settings->ColorReadOnly;
-	ServerOptions->ColorSelected = Main->Settings->ColorSelected;
-	ServerOptions->ColorSelectedRow = clLtGray;
+	ServerOptions->ColSizing = true;
+	ServerOptions->DrawRowSelected = true;
 
 	LocalOptions = new TStringGridOptions(sgLocal);
-	LocalOptions->ColSizing = true; // TODO
-	LocalOptions->DrawSelectedRow = true;
-	LocalOptions->ColorChanged = Main->Settings->ColorChanged;
-	LocalOptions->ColorReadOnly = Main->Settings->ColorReadOnly;
-	LocalOptions->ColorSelected = Main->Settings->ColorSelected;
-	LocalOptions->ColorSelectedRow = clLtGray;
+	LocalOptions->ColSizing = true;
+	LocalOptions->DrawRowSelected = true;
 
 	StringGridInit(sgServer, ServerColumns);
 	StringGridInit(sgLocal, LocalColumns);
@@ -471,6 +464,12 @@ void TMain::UpdateScaleType() {
 	else {
 		sgServer->Align = alClient;
 		PanelCommon->Align = alBottom;
+	}
+
+	if (Settings->ScaleType != stWME) {
+		sgServer->ColWidths[1] = 0;
+	} else {
+		sgServer->ColWidths[1] = 32;
 	}
 }
 
@@ -1809,6 +1808,54 @@ void __fastcall TMain::sgServerMouseDown(TObject *Sender, TMouseButton Button,
 	int Col, Row;
 
 	StringGridMouseToCell(SG, Col, Row);
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TMain::FormKeyDown(TObject *Sender, WORD &Key,
+	TShiftState Shift) {
+	if (Shift.Empty() && Key == VK_F3) {
+		frmSearch->Show();
+	}
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TMain::StartSearchEvent(TObject * Sender, String &Text,
+	bool &Found) {
+	if (Text.IsEmpty()) {
+		return;
+	}
+
+	ShowWaitCursor();
+	try {
+		if (StringGridIsEmpty(sgServer)) {
+			Found = true;
+
+			return;
+		}
+
+		for (int Row = 1; Row < sgServer->RowCount; Row++) {
+			for (int Col = TServerColumns::VANNUM;
+			Col < TServerColumns::PURPOSE_STATION; Col++) {
+				if (sgServer->Cells[Col][Row].Pos(Text)) {
+					sgServer->Col = Col;
+					sgServer->Row = Row;
+
+					Text = sgServer->Cells[Col][Row];
+
+					Found = true;
+
+					break;
+				}
+			}
+
+			if (Found) {
+				break;
+			}
+		}
+	}
+	__finally {
+		RestoreCursor();
+	}
 }
 
 // ---------------------------------------------------------------------------

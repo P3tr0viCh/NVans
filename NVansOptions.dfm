@@ -1,8 +1,8 @@
 object frmOptions: TfrmOptions
   Left = 0
   Top = 0
-  BorderIcons = [biSystemMenu, biMinimize]
-  BorderStyle = bsSingle
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsDialog
   Caption = #1053#1072#1089#1090#1088#1086#1081#1082#1080
   ClientHeight = 354
   ClientWidth = 576
@@ -270,6 +270,8 @@ object frmOptions: TfrmOptions
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
+    ExplicitLeft = 1
+    ExplicitTop = 307
     DesignSize = (
       576
       48)

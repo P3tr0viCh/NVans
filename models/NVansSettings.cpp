@@ -26,10 +26,6 @@ __fastcall TSettings::TSettings() {
 
 	FConfigFileName = GetConfigFileName();
 
-	FColorChanged = TColor(0x000085FB);
-	FColorReadOnly = TColor(0x00E8E8E8);
-	FColorSelected = clHotLight;
-
 	FSQLToLog = false;
 
 	FScaleType = stDisabled;
@@ -58,13 +54,6 @@ bool __fastcall TSettings::Equals(TObject * Obj) {
 	if (Settings->OptionsPass != OptionsPass)
 		return false;
 
-	if (Settings->ColorChanged != ColorChanged)
-		return false;
-	if (Settings->ColorReadOnly != ColorReadOnly)
-		return false;
-	if (Settings->ColorSelected != ColorSelected)
-		return false;
-
 	if (Settings->SQLToLog != SQLToLog)
 		return false;
 
@@ -88,10 +77,6 @@ bool __fastcall TSettings::Equals(TObject * Obj) {
 void __fastcall TSettings::Assign(TSettings * Source) {
 	FOptionsPass = Source->OptionsPass;
 
-	FColorChanged = Source->ColorChanged;
-	FColorReadOnly = Source->ColorReadOnly;
-	FColorSelected = Source->ColorSelected;
-
 	FSQLToLog = Source->SQLToLog;
 
 	FScaleType = Source->ScaleType;
@@ -109,13 +94,6 @@ String __fastcall TSettings::ToString() {
 
 	S = "TSettings{";
 	S += "OptionsPass=" + OptionsPass;
-	S += ",";
-
-	S += "ColorChanged=" + ColorToString(ColorChanged);
-	S += ",";
-	S += "ColorReadOnly='" + ColorToString(ColorReadOnly);
-	S += ",";
-	S += "ColorSelected=" + ColorToString(ColorSelected);
 	S += ",";
 
 	S += "SQLToLog=" + BoolToStr(SQLToLog);
@@ -178,13 +156,6 @@ void TSettings::LoadSettings() {
 		Section = "Main";
 		OptionsPass = Decrypt(IniFile->ReadString(Section, "OptionsPass",
 			Encrypt(OptionsPass)));
-
-		ColorChanged = TColor(IniFile->ReadInteger(Section, "ColorChanged",
-			ColorChanged));
-		ColorReadOnly = TColor(IniFile->ReadInteger(Section, "ColorReadOnly",
-			ColorReadOnly));
-		ColorSelected = TColor(IniFile->ReadInteger(Section, "ColorSelected",
-			ColorSelected));
 
 		SQLToLog = IniFile->ReadBool(Section, "SQLToLog", SQLToLog);
 
@@ -254,10 +225,6 @@ void TSettings::SaveSettings() {
 		IniFile->WriteString(Section, "Version", GetFileVer());
 
 		IniFile->WriteString(Section, "OptionsPass", Encrypt(OptionsPass));
-
-		IniFile->WriteInteger(Section, "ColorChanged", ColorChanged);
-		IniFile->WriteInteger(Section, "ColorReadOnly", ColorReadOnly);
-		IniFile->WriteInteger(Section, "ColorSelected", ColorSelected);
 
 		IniFile->WriteBool(Section, "SQLToLog", SQLToLog);
 

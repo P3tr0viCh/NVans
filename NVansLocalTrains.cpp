@@ -45,9 +45,6 @@ void __fastcall TfrmLocalTrains::FormCreate(TObject *Sender) {
 
 	ListOptions = new TStringGridOptions(sgList);
 	ListOptions->ColSizing = true; // TODO
-	ListOptions->ColorChanged = Main->Settings->ColorChanged;
-	ListOptions->ColorReadOnly = Main->Settings->ColorReadOnly;
-	ListOptions->ColorSelected = Main->Settings->ColorSelected;
 
 	Filter = new TFilterLocalTrains();
 

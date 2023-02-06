@@ -12,10 +12,12 @@ object Main: TMain
   Font.Height = -13
   Font.Name = 'Segoe UI'
   Font.Style = []
+  KeyPreview = True
   OldCreateOrder = False
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnDestroy = FormDestroy
+  OnKeyDown = FormKeyDown
   OnResize = FormResize
   OnShow = FormShow
   PixelsPerInch = 96
