@@ -30,9 +30,8 @@ void __fastcall TfrmSearch::FormCreate(TObject *Sender) {
 		delete FileIni;
 	}
 
-	// workaround bug in win7
-	ClientHeight = eSearch->Height + 16;
-	ClientWidth = eSearch->Width + 16;
+	ClientHeight = eSearch->Height;
+	ClientWidth = eSearch->Width;
 	Constraints->MaxHeight = Height;
 	Constraints->MinHeight = Height;
 	Constraints->MinWidth = Width;

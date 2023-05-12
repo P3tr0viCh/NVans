@@ -4,8 +4,8 @@ object frmSearch: TfrmSearch
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSizeToolWin
   Caption = #1055#1086#1080#1089#1082
-  ClientHeight = 41
-  ClientWidth = 136
+  ClientHeight = 25
+  ClientWidth = 144
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -19,14 +19,14 @@ object frmSearch: TfrmSearch
   OnDestroy = FormDestroy
   OnHide = FormHide
   DesignSize = (
-    136
-    41)
+    144
+    25)
   PixelsPerInch = 96
   TextHeight = 17
   object eSearch: TEdit
-    Left = 8
-    Top = 8
-    Width = 120
+    Left = 0
+    Top = 0
+    Width = 144
     Height = 25
     Anchors = [akLeft, akTop, akRight]
     AutoSelect = False
