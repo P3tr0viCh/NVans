@@ -18,15 +18,13 @@
 
 // ---------------------------------------------------------------------------
 __fastcall TDBOracleLoadTrain::TDBOracleLoadTrain(TDBConnection * DBConnection,
-	IDBOperationEvent * DBOperationEvent, TKeyOracleTrain * KeyOracleTrain,
-	bool WithJoin) : TDBOperation(DBConnection, DBOperationEvent) {
+	IDBOperationEvent * DBOperationEvent, TKeyOracleTrain * KeyOracleTrain)
+	: TDBOperation(DBConnection, DBOperationEvent) {
 	FVanList = new TOracleVanList();
 
 	FKeyOracleTrain = new TKeyOracleTrain();
 
 	FKeyOracleTrain->Assign(KeyOracleTrain);
-
-	FWithJoin = WithJoin;
 }
 
 // ---------------------------------------------------------------------------
@@ -43,12 +41,7 @@ void TDBOracleLoadTrain::Operation() {
 	try {
 		Query->Connection = Connection;
 
-		if (WithJoin) {
-			SQLSetText(Query, IDS_SQL_ORACLE_NVANS_TRAIN_JOIN);
-		}
-		else {
-			SQLSetText(Query, IDS_SQL_ORACLE_NVANS_TRAIN);
-		}
+		SQLSetText(Query, IDS_SQL_ORACLE_NVANS_TRAIN);
 
 		if (SQLToLog) {
 			WriteToLog(Query->SQL->Text);

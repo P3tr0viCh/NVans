@@ -468,7 +468,8 @@ void TMain::UpdateScaleType() {
 
 	if (Settings->ScaleType != stWME) {
 		sgServer->ColWidths[1] = 0;
-	} else {
+	}
+	else {
 		sgServer->ColWidths[1] = 32;
 	}
 }
@@ -659,9 +660,7 @@ void TMain::KeyOracleTrainChanged() {
 
 	eDateTime->Text = DTToS(KeyOracleTrain->DateTime, false);
 
-	bool WithJoin = IsRightTrainNum(KeyOracleTrain->TrainNum) && !IsShift();
-
-	ServerLoadTrain(WithJoin);
+	ServerLoadTrain();
 }
 
 // ---------------------------------------------------------------------------
@@ -735,14 +734,14 @@ void TMain::SetLocalVanList(TLocalVanList * Value) {
 }
 
 // ---------------------------------------------------------------------------
-void TMain::ServerLoadTrain(bool WithJoin) {
+void TMain::ServerLoadTrain() {
 	StartOperation(oLoad);
 
 	ServerVanList = NULL;
 
 	TDBOracleLoadTrain * DBOracleLoadTrain =
 		new TDBOracleLoadTrain(Main->Settings->ServerOracleConnection, this,
-		KeyOracleTrain, WithJoin);
+		KeyOracleTrain);
 	try {
 		DBOracleLoadTrain->Tag = DB_OPERATION_ORACLE_LOAD_TRAIN;
 

@@ -20,16 +20,13 @@ private:
 
 public:
 	__fastcall TDBOracleLoadTrain(TDBConnection * DBConnection,
-		IDBOperationEvent * DBOperationEvent, TKeyOracleTrain * KeyOracleTrain,
-		bool WithJoin);
+		IDBOperationEvent * DBOperationEvent, TKeyOracleTrain * KeyOracleTrain);
 	__fastcall ~TDBOracleLoadTrain();
 
 	void Operation();
 
 	// -----------------------------------------------------------------------
 	__property TKeyOracleTrain * KeyOracleTrain = {read = FKeyOracleTrain};
-
-	__property bool WithJoin = {read = FWithJoin};
 
 	__property TOracleVanList * VanList = {read = FVanList};
 };

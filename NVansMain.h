@@ -153,7 +153,7 @@ private:
 	void SetServerVanList(TOracleVanList * Value);
 	void SetLocalVanList(TLocalVanList * Value);
 
-	void ServerLoadTrain(bool WithJoin);
+	void ServerLoadTrain();
 	void ServerLoadTrainDateTime(TKeyOracleTrain * KeyOracleTrain);
 
 	bool ServerSaveTrainToFile(TOracleVanList * ServerVanList, String FileName);
