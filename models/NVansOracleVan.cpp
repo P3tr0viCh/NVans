@@ -20,6 +20,8 @@ __fastcall TOracleVan::TOracleVan() {
 void TOracleVan::Init() {
 	FNum = 0;
 
+	FCargoTypeCode = DEFAULT_CODE;
+
 	FInvoiceDateTime = DEFAULT_DATETIME;
 
 	FCarrying = 0;
@@ -51,6 +53,8 @@ bool __fastcall TOracleVan::Equals(TObject * Obj) {
 		return false;
 
 	if (CargoType != Van->CargoType)
+		return false;
+	if (CargoTypeCode != Van->CargoTypeCode)
 		return false;
 
 	if (InvoiceNum != Van->InvoiceNum)
@@ -88,6 +92,7 @@ void __fastcall TOracleVan::Assign(TOracleVan * Source) {
 	VanNum = Source->VanNum;
 
 	CargoType = Source->CargoType;
+	CargoTypeCode = Source->CargoTypeCode;
 
 	InvoiceNum = Source->InvoiceNum;
 
@@ -116,6 +121,8 @@ String __fastcall TOracleVan::ToString() {
 	S += "VanNum=" + VanNum;
 	S += ",";
 	S += "CargoType=" + CargoType;
+	S += ",";
+	S += "CargoTypeCode=" + IntToStr(CargoTypeCode);
 	S += ",";
 	S += "InvoiceNum=" + InvoiceNum;
 	S += ",";

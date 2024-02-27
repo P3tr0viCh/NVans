@@ -97,7 +97,7 @@ object Main: TMain
       WordWrap = True
     end
     object lblDateTime: TLabel
-      Left = 200
+      Left = 160
       Top = 7
       Width = 51
       Height = 34
@@ -116,7 +116,7 @@ object Main: TMain
       OnClick = btnCloseClick
     end
     object btnServerLoad: TButton
-      Left = 384
+      Left = 336
       Top = 8
       Width = 80
       Height = 32
@@ -135,11 +135,11 @@ object Main: TMain
       OnClick = btnOptionsClick
     end
     object btnServerTrains: TButton
-      Left = 472
+      Left = 424
       Top = 8
       Width = 72
       Height = 32
-      Caption = #1057#1087#1080#1089#1086#1082
+      Caption = #1055#1086#1077#1079#1076#1072
       TabOrder = 3
       OnClick = btnServerTrainsClick
     end
@@ -154,7 +154,7 @@ object Main: TMain
       OnClick = btnAboutClick
     end
     object btnServerReverse: TButton
-      Left = 552
+      Left = 504
       Top = 8
       Width = 72
       Height = 32
@@ -164,16 +164,16 @@ object Main: TMain
       OnClick = btnServerReverseClick
     end
     object eRWNum: TEdit
-      Left = 58
+      Left = 56
       Top = 12
-      Width = 128
+      Width = 96
       Height = 25
       TabOrder = 0
       OnChange = eRWNumChange
       OnKeyDown = eRWNumKeyDown
     end
     object eDateTime: TEdit
-      Left = 258
+      Left = 216
       Top = 12
       Width = 112
       Height = 25
@@ -183,7 +183,7 @@ object Main: TMain
       OnKeyDown = eRWNumKeyDown
     end
     object btnServerSaveToFile: TButton
-      Left = 640
+      Left = 592
       Top = 8
       Width = 80
       Height = 32
@@ -306,6 +306,11 @@ object Main: TMain
       Caption = #1042#1099#1076#1077#1083#1080#1090#1100' '#1074#1089#1105
       ShortCut = 16449
       OnClick = miSelectAllClick
+    end
+    object miVanToString: TMenuItem
+      Caption = 'VanToString'
+      Visible = False
+      OnClick = miVanToStringClick
     end
   end
   object SaveDialog: TSaveDialog

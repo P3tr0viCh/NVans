@@ -28,6 +28,7 @@ private:
 	String FVanNum;
 
 	String FCargoType;
+	int FCargoTypeCode;
 
 	String FInvoiceNum;
 	String FInvoiceSupplier;
@@ -97,6 +98,7 @@ public:
 	__property String VanNum = {read = FVanNum, write = FVanNum};
 
 	__property String CargoType = {read = FCargoType, write = FCargoType};
+	__property int CargoTypeCode = {read = FCargoTypeCode, write = FCargoTypeCode};
 
 	__property String InvoiceNum = {read = FInvoiceNum, write = FInvoiceNum};
 

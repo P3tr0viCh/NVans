@@ -87,6 +87,10 @@ void __fastcall TMain::FormCreate(TObject *Sender) {
 	ServerSelectedRow = 1;
 	LocalSelectedRow = 1;
 
+#ifdef _DEBUG
+	miVanToString->Visible = true;
+#endif
+
 	TFileIni * FileIni = TFileIni::GetNewInstance();
 	try {
 		FileIni->ReadFormBounds(this);
@@ -342,6 +346,7 @@ void TMain::MenuItemAction(TMenuItemAction Action) {
 					break;
 				case TLocalColumns::CARGOTYPE:
 					LocalVan->CargoType = "";
+					LocalVan->CargoTypeCode = DEFAULT_CODE;
 					break;
 				case TLocalColumns::INVOICE_NUM:
 					LocalVan->InvoiceNum = "";
@@ -385,6 +390,32 @@ void TMain::MenuItemAction(TMenuItemAction Action) {
 		break;
 	case maSelectAll:
 		StringGridSelectAll(SG);
+
+		break;
+	case maVanToString:
+		TObject * Van;
+		String S;
+
+		if (SG->Tag == GRID_SERVER) {
+			Van = SG->Objects[TServerColumns::VAN_OBJECT][SG->Row];
+
+			if (Van != NULL) {
+				S = ((TOracleVan*)Van)->ToString();
+			}
+		}
+		else {
+			Van = SG->Objects[TLocalColumns::VAN_OBJECT][SG->Row];
+
+			if (Van != NULL) {
+				S = ((TLocalVan*)Van)->ToString();
+			}
+		}
+
+		if (!S.IsEmpty()) {
+			S = StringReplace(S, ",", "\n", TReplaceFlags() << rfReplaceAll);
+
+			MsgBox(S);
+		}
 
 		break;
 	}
@@ -1251,6 +1282,7 @@ void TMain::CopyData(bool CopyAll) {
 
 			if (CopyAll) {
 				LocalVan->CargoType = ServerVan->CargoType;
+				LocalVan->CargoTypeCode = ServerVan->CargoTypeCode;
 
 				LocalVan->InvoiceNum = ServerVan->InvoiceNum;
 
@@ -1559,22 +1591,24 @@ bool TMain::ServerSaveTrainToFile(TOracleVanList * ServerVanList,
 			// 2
 			Line->Add(ServerVanList->Items[i]->CargoType);
 			// 3
-			Line->Add(ServerVanList->Items[i]->InvoiceNum);
+			Line->Add(IntToStr(ServerVanList->Items[i]->CargoTypeCode));
 			// 4
-			Line->Add(ServerVanList->Items[i]->InvoiceSupplier);
+			Line->Add(ServerVanList->Items[i]->InvoiceNum);
 			// 5
-			Line->Add(ServerVanList->Items[i]->InvoiceRecipient);
+			Line->Add(ServerVanList->Items[i]->InvoiceSupplier);
 			// 6
-			Line->Add(ServerVanList->Items[i]->DepartStation);
+			Line->Add(ServerVanList->Items[i]->InvoiceRecipient);
 			// 7
-			Line->Add(ServerVanList->Items[i]->PurposeStation);
+			Line->Add(ServerVanList->Items[i]->DepartStation);
 			// 8
-			Line->Add(IntToStr(ServerVanList->Items[i]->Carrying));
+			Line->Add(ServerVanList->Items[i]->PurposeStation);
 			// 9
-			Line->Add(IntToStr(ServerVanList->Items[i]->TareT));
+			Line->Add(IntToStr(ServerVanList->Items[i]->Carrying));
 			// 10
-			Line->Add(IntToStr(ServerVanList->Items[i]->InvoiceNetto));
+			Line->Add(IntToStr(ServerVanList->Items[i]->TareT));
 			// 11
+			Line->Add(IntToStr(ServerVanList->Items[i]->InvoiceNetto));
+			// 12
 			Line->Add(IntToStr(ServerVanList->Items[i]->InvoiceTare));
 
 			List->Add(Line->DelimitedText);
@@ -1855,6 +1889,11 @@ void __fastcall TMain::StartSearchEvent(TObject * Sender, String &Text,
 	__finally {
 		RestoreCursor();
 	}
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TMain::miVanToStringClick(TObject *Sender) {
+	MenuItemAction(maVanToString);
 }
 
 // ---------------------------------------------------------------------------

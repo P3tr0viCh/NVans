@@ -77,6 +77,8 @@ void TDBOracleLoadTrain::Operation() {
 				->AsString));
 
 			Van->CargoType = Trim(Query->FieldByName("CARGOTYPE")->AsString);
+			Van->CargoTypeCode = Query->FieldByName("CARGOTYPE_CODE")
+				->AsInteger;
 
 			Van->InvoiceNum = Trim(Query->FieldByName("INVOICE_NUM")->AsString);
 

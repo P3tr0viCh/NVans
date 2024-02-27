@@ -62,6 +62,7 @@ __published:
 	TEdit *eDateTime;
 	TButton *btnServerSaveToFile;
 	TSaveDialog *SaveDialog;
+	TMenuItem *miVanToString;
 
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
@@ -107,6 +108,7 @@ __published:
 	void __fastcall sgLocalSelectCell(TObject *Sender, int ACol, int ARow,
 		bool &CanSelect);
 	void __fastcall FormKeyDown(TObject *Sender, WORD &Key, TShiftState Shift);
+	void __fastcall miVanToStringClick(TObject *Sender);
 
 
 private:
@@ -176,7 +178,7 @@ private:
 	void AvitekUpdateProt();
 
 	enum TMenuItemAction {
-		maCopy, maPaste, maClear, maSelectAll
+		maCopy, maPaste, maClear, maSelectAll, maVanToString
 	};
 
 	void MenuItemAction(TMenuItemAction Action);

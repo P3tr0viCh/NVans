@@ -68,8 +68,14 @@ void TDBLocalSaveVan::Operation() {
 		SQLGetParam(Query, "OVERLOAD", ftInteger)->Value = Van->Overload;
 
 		SQLGetParam(Query, "CARGOTYPE", ftString)->Value = Van->CargoType;
-		SQLGetParam(Query, "CARGOTYPE_CODE", ftString)->Value = Null();
-
+		if (Van->CargoTypeCode == DEFAULT_CODE) {
+			SQLGetParam(Query, "CARGOTYPE_CODE", ftString)->Value = Null();
+		}
+		else {
+			SQLGetParam(Query, "CARGOTYPE_CODE", ftInteger)->Value =
+				Van->CargoTypeCode;
+		}
+		
 		SQLGetParam(Query, "DEPART_STATION", ftString)->Value =
 			Van->DepartStation;
 		SQLGetParam(Query, "DEPART_STATION_CODE", ftString)->Value = Null();

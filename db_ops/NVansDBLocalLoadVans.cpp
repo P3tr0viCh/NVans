@@ -95,6 +95,8 @@ void TDBLocalLoadVans::Operation() {
 			Van->VanNum = Query->FieldByName("invnum")->AsString;
 
 			Van->CargoType = Trim(Query->FieldByName("cargotype")->AsString);
+			Van->CargoTypeCode = Query->FieldByName("cargotype_code")
+				->AsInteger;
 
 			Van->InvoiceNum = Trim(Query->FieldByName("invoice_num")->AsString);
 
