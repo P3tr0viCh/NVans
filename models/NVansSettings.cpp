@@ -28,17 +28,22 @@ __fastcall TSettings::TSettings() {
 
 	FSQLToLog = false;
 
+	FUseAutoReplace = false;
+
 	FScaleType = stDisabled;
 
 	FLocalConnection = new TDBConnectionMySQL();
-	FServerOracleConnection = new TDBConnectionOracle();
+	FOracleConnection = new TDBConnectionOracle();
+	FIsvsConnection = new TDBConnectionMySQL();
 
 	FLocalConnection->Database = LOCAL_DB_NAME;
+	FIsvsConnection->Database = ISVS_DB_NAME;
 }
 
 // ---------------------------------------------------------------------------
 __fastcall TSettings::~TSettings() {
-	FServerOracleConnection->Free();
+	FIsvsConnection->Free();
+	FOracleConnection->Free();
 	FLocalConnection->Free();
 }
 
@@ -57,12 +62,17 @@ bool __fastcall TSettings::Equals(TObject * Obj) {
 	if (Settings->SQLToLog != SQLToLog)
 		return false;
 
+	if (Settings->UseAutoReplace != UseAutoReplace)
+		return false;
+
 	if (Settings->ScaleType != ScaleType)
 		return false;
 
 	if (!Settings->LocalConnection->Equals(LocalConnection))
 		return false;
-	if (!Settings->ServerOracleConnection->Equals(ServerOracleConnection))
+	if (!Settings->OracleConnection->Equals(OracleConnection))
+		return false;
+	if (!Settings->IsvsConnection->Equals(IsvsConnection))
 		return false;
 
 	if (Settings->WMEProgramPath != WMEProgramPath)
@@ -79,10 +89,13 @@ void __fastcall TSettings::Assign(TSettings * Source) {
 
 	FSQLToLog = Source->SQLToLog;
 
+	FUseAutoReplace = Source->UseAutoReplace;
+
 	FScaleType = Source->ScaleType;
 
 	FLocalConnection->Assign(Source->LocalConnection);
-	FServerOracleConnection->Assign(Source->ServerOracleConnection);
+	FOracleConnection->Assign(Source->OracleConnection);
+	FIsvsConnection->Assign(Source->IsvsConnection);
 
 	FWMEProgramPath = Source->WMEProgramPath;
 	FWMEProgramParams = Source->WMEProgramParams;
@@ -99,12 +112,17 @@ String __fastcall TSettings::ToString() {
 	S += "SQLToLog=" + BoolToStr(SQLToLog);
 	S += ",";
 
+	S += "UseAutoReplace=" + BoolToStr(UseAutoReplace);
+	S += ",";
+
 	S += "ScaleType=" + IntToStr(ScaleType);
 	S += ",";
 
 	S += "LocalConnection=" + LocalConnection->ToString();
 	S += ",";
-	S += "ServerOracleConnection=" + ServerOracleConnection->ToString();
+	S += "OracleConnection=" + OracleConnection->ToString();
+	S += ",";
+	S += "IsvsConnection=" + IsvsConnection->ToString();
 	S += ",";
 
 	S += "WMEProgramPath=" + WMEProgramPath;
@@ -159,6 +177,9 @@ void TSettings::LoadSettings() {
 
 		SQLToLog = IniFile->ReadBool(Section, "SQLToLog", SQLToLog);
 
+		UseAutoReplace = IniFile->ReadBool(Section, "UseAutoReplace",
+			UseAutoReplace);
+
 		ScaleType = (TScaleType)IniFile->ReadInteger(Section, "ScaleType",
 			ScaleType);
 
@@ -180,21 +201,35 @@ void TSettings::LoadSettings() {
 
 		// -------------------------------------------------------------------
 		Section = "ServerOracleConnection";
-		ServerOracleConnection->Host =
-			IniFile->ReadString(Section, "Host", ServerOracleConnection->Host);
-		ServerOracleConnection->Port =
-			IniFile->ReadString(Section, "Port", ServerOracleConnection->Port);
-		ServerOracleConnection->Service =
-			IniFile->ReadString(Section, "Service",
-			ServerOracleConnection->Service);
-		ServerOracleConnection->User =
-			IniFile->ReadString(Section, "User", ServerOracleConnection->User);
-		ServerOracleConnection->Password =
+		OracleConnection->Host = IniFile->ReadString(Section, "Host",
+			OracleConnection->Host);
+		OracleConnection->Port = IniFile->ReadString(Section, "Port",
+			OracleConnection->Port);
+		OracleConnection->Service = IniFile->ReadString(Section, "Service",
+			OracleConnection->Service);
+		OracleConnection->User = IniFile->ReadString(Section, "User",
+			OracleConnection->User);
+		OracleConnection->Password =
 			Decrypt(IniFile->ReadString(Section, "Pass",
-			Encrypt(ServerOracleConnection->Password)));
-		ServerOracleConnection->Driver =
-			IniFile->ReadString(Section, "Driver",
-			ServerOracleConnection->Driver);
+			Encrypt(OracleConnection->Password)));
+		OracleConnection->Driver = IniFile->ReadString(Section, "Driver",
+			OracleConnection->Driver);
+
+		// -------------------------------------------------------------------
+		Section = "IsvsConnection";
+		IsvsConnection->Host = IniFile->ReadString(Section, "Host",
+			IsvsConnection->Host);
+		IsvsConnection->Port = IniFile->ReadString(Section, "Port",
+			IsvsConnection->Port);
+		IsvsConnection->Database = IniFile->ReadString(Section, "Database",
+			IsvsConnection->Database);
+		IsvsConnection->User = IniFile->ReadString(Section, "User",
+			IsvsConnection->User);
+		IsvsConnection->Password =
+			Decrypt(IniFile->ReadString(Section, "Pass",
+			Encrypt(IsvsConnection->Password)));
+		IsvsConnection->Driver = IniFile->ReadString(Section, "Driver",
+			IsvsConnection->Driver);
 
 		// -------------------------------------------------------------------
 		Section = "WME";
@@ -228,6 +263,8 @@ void TSettings::SaveSettings() {
 
 		IniFile->WriteBool(Section, "SQLToLog", SQLToLog);
 
+		IniFile->WriteBool(Section, "UseAutoReplace", UseAutoReplace);
+
 		IniFile->WriteInteger(Section, "ScaleType", ScaleType);
 
 		// -------------------------------------------------------------------
@@ -242,14 +279,23 @@ void TSettings::SaveSettings() {
 
 		// -------------------------------------------------------------------
 		Section = "ServerOracleConnection";
-		IniFile->WriteString(Section, "Host", ServerOracleConnection->Host);
-		IniFile->WriteString(Section, "Port", ServerOracleConnection->Port);
-		IniFile->WriteString(Section, "Service",
-			ServerOracleConnection->Service);
-		IniFile->WriteString(Section, "User", ServerOracleConnection->User);
+		IniFile->WriteString(Section, "Host", OracleConnection->Host);
+		IniFile->WriteString(Section, "Port", OracleConnection->Port);
+		IniFile->WriteString(Section, "Service", OracleConnection->Service);
+		IniFile->WriteString(Section, "User", OracleConnection->User);
 		IniFile->WriteString(Section, "Pass",
-			Encrypt(ServerOracleConnection->Password));
-		IniFile->WriteString(Section, "Driver", ServerOracleConnection->Driver);
+			Encrypt(OracleConnection->Password));
+		IniFile->WriteString(Section, "Driver", OracleConnection->Driver);
+
+		// -------------------------------------------------------------------
+		Section = "IsvsConnection";
+		IniFile->WriteString(Section, "Host", IsvsConnection->Host);
+		IniFile->WriteString(Section, "Port", IsvsConnection->Port);
+		IniFile->WriteString(Section, "Database", IsvsConnection->Database);
+		IniFile->WriteString(Section, "User", IsvsConnection->User);
+		IniFile->WriteString(Section, "Pass",
+			Encrypt(IsvsConnection->Password));
+		IniFile->WriteString(Section, "Driver", IsvsConnection->Driver);
 
 		// -------------------------------------------------------------------
 		Section = "WME";

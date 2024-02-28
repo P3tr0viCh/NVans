@@ -22,5 +22,7 @@
 #define IDS_SQL_LOCAL_PVANS_UPDATE					6131
 #define IDS_SQL_LOCAL_PVANS_INSERT					6132
 
+#define IDS_SQL_ISVS_CARGOTYPE_SELECT               6200
+
 // ---------------------------------------------------------------------------
 #endif

@@ -178,7 +178,7 @@ void TfrmServerTrains::LoadTrains() {
 	ProcMess();
 
 	TDBOracleLoadTrains * DBOracleLoadTrains =
-		new TDBOracleLoadTrains(Main->Settings->ServerOracleConnection, Main,
+		new TDBOracleLoadTrains(Main->Settings->OracleConnection, Main,
 		Filter);
 	try {
 		DBOracleLoadTrains->Tag = DB_OPERATION_ORACLE_LOAD_TRAINS;

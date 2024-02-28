@@ -29,6 +29,7 @@ IDS_ERROR_LOCAL_LOAD_VANS,              "Во время загрузки вагонов произошла оши
 IDS_ERROR_LOCAL_SAVE_VANS,              "Во время сохранения вагонов произошла ошибка:\n\n%s."
 IDS_ERROR_LOCAL_SAVE_VAN_PROPS,         "Во время сохранения характеристик вагонов произошла ошибка:\n\n%s."
 IDS_ERROR_LOCAL_LOAD_TRAINS,            "Во время загрузки состава произошла ошибка:\n\n%s."
+IDS_ERROR_ISVS_LOAD_CARGOTYPES,         "Во время загрузки списка родов груза произошла ошибка:\n\n%s."
 
 IDS_ERROR_SAVE_TO_FILE,                 "Во время сохранения состава в файл произошла ошибка:\n\n%s"
 
@@ -87,6 +88,9 @@ IDS_LOG_LOCAL_SAVE_VAN_PROPS_OK,                "local save vanprops, count=i:%d
 IDS_LOG_LOCAL_SAVE_VAN_PROPS_FAIL,              "local save vanprops fail: %s"
 IDS_LOG_LOCAL_LOAD_TRAINS_OK,                   "local load trains, count=%d"
 IDS_LOG_LOCAL_LOAD_TRAINS_FAIL,                 "local load trains fail: %s"
+
+IDS_LOG_ISVS_LOAD_CARGOTYPES_OK,                "isvs load cargotypes, count=%d"
+IDS_LOG_ISVS_LOAD_CARGOTYPES_FAIL,              "isvs load cargotypes fail: %s"
 
 IDS_LOG_COPY_DATA,                              "copy data, count=%d"
 IDS_LOG_COPY_DATA_NOT_FOUND,                    "copy data: not found"

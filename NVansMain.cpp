@@ -14,6 +14,8 @@
 #include <UtilsFileIni.h>
 #include <UtilsStringGrid.h>
 
+#include <CodeNamePair.h>
+
 #include <DBOperation.h>
 #include <DBOperationEvent.h>
 #include <DBOperationCheck.h>
@@ -35,6 +37,7 @@
 #include "NVansDBLocalLoadVans.h"
 #include "NVansDBLocalSaveVan.h"
 #include "NVansDBLocalSaveVanProps.h"
+#include "NVansDBIsvsLoadCargoTypes.h"
 
 #include "NVansLogin.h"
 #include "NVansSearch.h"
@@ -676,6 +679,8 @@ void TMain::SetKeyOracleTrain(TKeyOracleTrain * Value) {
 
 // ---------------------------------------------------------------------------
 void TMain::KeyOracleTrainChanged() {
+	UseAutoReplace = IsShift();
+
 	eRWNum->Tag = true;
 	eRWNum->Text = KeyOracleTrain->TrainNum;
 	eRWNum->Tag = false;
@@ -771,7 +776,7 @@ void TMain::ServerLoadTrain() {
 	ServerVanList = NULL;
 
 	TDBOracleLoadTrain * DBOracleLoadTrain =
-		new TDBOracleLoadTrain(Main->Settings->ServerOracleConnection, this,
+		new TDBOracleLoadTrain(Settings->OracleConnection, this,
 		KeyOracleTrain);
 	try {
 		DBOracleLoadTrain->Tag = DB_OPERATION_ORACLE_LOAD_TRAIN;
@@ -780,7 +785,7 @@ void TMain::ServerLoadTrain() {
 
 		DBOracleLoadTrain->Execute();
 
-		ServerVanList = DBOracleLoadTrain->VanList;
+		ServerVanList = AutoReplace(DBOracleLoadTrain->VanList);
 	}
 	__finally {
 		DBOracleLoadTrain->Free();
@@ -790,12 +795,89 @@ void TMain::ServerLoadTrain() {
 }
 
 // ---------------------------------------------------------------------------
+TOracleVanList * TMain::AutoReplace(TOracleVanList * ServerVanList) {
+	if (!Settings->UseAutoReplace) {
+		return ServerVanList;
+	}
+
+	if (ServerVanList->Count == 0) {
+		return ServerVanList;
+	}
+
+	if (UseAutoReplace) {
+		return ServerVanList;
+	}
+
+	TCodeNamePairList * CargoTypeList = new TCodeNamePairList();
+
+	TCodeNamePair * CargoType;
+
+	for (int i = 0; i < ServerVanList->Count; i++) {
+		if (ServerVanList->Items[i]->CargoTypeCode == 0) {
+			continue;
+		}
+
+		CargoType =
+			new TCodeNamePair(ServerVanList->Items[i]->CargoTypeCode, "");
+
+		if (CargoTypeList->Find(CargoType)) {
+			continue;
+		}
+
+		CargoTypeList->Add(CargoType);
+	}
+
+	if (CargoTypeList->Count == 0) {
+		return ServerVanList;
+	}
+
+	TDBIsvsLoadCargoTypes * DBIsvsLoadCargoTypes =
+		new TDBIsvsLoadCargoTypes(Settings->IsvsConnection, this,
+		CargoTypeList);
+	try {
+		DBIsvsLoadCargoTypes->Tag = DB_OPERATION_ISVS_LOAD_CARGOTYPES;
+
+		DBIsvsLoadCargoTypes->SQLToLog = Settings->SQLToLog;
+
+		DBIsvsLoadCargoTypes->Execute();
+
+		for (int i = 0; i < ServerVanList->Count; i++) {
+			if (ServerVanList->Items[i]->CargoTypeCode == 0) {
+				continue;
+			}
+
+			for (int j = 0; j < CargoTypeList->Count; j++) {
+				if (CargoTypeList->Items[j]->Name.IsEmpty()) {
+					continue;
+				}
+
+				if (CargoTypeList->Items[j]->Code == ServerVanList->Items[i]
+					->CargoTypeCode) {
+
+					ServerVanList->Items[i]->CargoType =
+						CargoTypeList->Items[j]->Name;
+
+					break;
+				}
+			}
+		}
+	}
+	__finally {
+		DBIsvsLoadCargoTypes->Free();
+
+		CargoTypeList->Free();
+	}
+
+	return ServerVanList;
+}
+
+// ---------------------------------------------------------------------------
 void TMain::ServerLoadTrainDateTime(TKeyOracleTrain * KeyOracleTrain) {
 	StartOperation(oLoad);
 
 	TDBOracleLoadTrainDateTime * DBOracleLoadTrainDateTime =
-		new TDBOracleLoadTrainDateTime(Main->Settings->ServerOracleConnection,
-		this, KeyOracleTrain);
+		new TDBOracleLoadTrainDateTime(Main->Settings->OracleConnection, this,
+		KeyOracleTrain);
 	try {
 		DBOracleLoadTrainDateTime->Tag =
 			DB_OPERATION_ORACLE_LOAD_TRAIN_DATETIME;
@@ -820,7 +902,7 @@ void TMain::LocalLoadVans() {
 	LocalChanged = false;
 
 	TDBLocalLoadVans * DBLocalLoadVans =
-		new TDBLocalLoadVans(Main->Settings->LocalConnection, this, DateLocal,
+		new TDBLocalLoadVans(Settings->LocalConnection, this, DateLocal,
 		LocalTrainNum);
 	try {
 		DBLocalLoadVans->Tag = DB_OPERATION_LOCAL_LOAD_VANS;
@@ -847,7 +929,7 @@ bool TMain::LocalSaveVans() {
 	StartOperation(oSave);
 
 	TDBLocalSaveVan * DBLocalSaveVan =
-		new TDBLocalSaveVan(Main->Settings->LocalConnection, this);
+		new TDBLocalSaveVan(Settings->LocalConnection, this);
 	try {
 		DBLocalSaveVan->Tag = DB_OPERATION_LOCAL_SAVE_VAN;
 
@@ -899,7 +981,7 @@ void TMain::LocalSaveVanProps() {
 	StartOperation(oSave);
 
 	TDBLocalSaveVanProps * DBLocalSaveVanProps =
-		new TDBLocalSaveVanProps(Main->Settings->LocalConnection, this,
+		new TDBLocalSaveVanProps(Settings->LocalConnection, this,
 		ServerVanList);
 	try {
 		DBLocalSaveVanProps->Tag = DB_OPERATION_LOCAL_SAVE_VAN_PROPS;
@@ -1425,6 +1507,7 @@ void TMain::DBOperationEventStart(TObject * Sender) {
 	case DB_OPERATION_LOCAL_LOAD_VANS:
 	case DB_OPERATION_LOCAL_SAVE_VAN:
 	case DB_OPERATION_LOCAL_SAVE_VAN_PROPS:
+	case DB_OPERATION_ISVS_LOAD_CARGOTYPES:
 		break;
 	default:
 		throw Exception("unknown dboperation start: " + Sender->ClassName());
@@ -1502,6 +1585,12 @@ void TMain::DBOperationEventEndOK(TObject * Sender) {
 			((TDBLocalSaveVanProps*)Sender)->UpdateCount)));
 
 		break;
+	case DB_OPERATION_ISVS_LOAD_CARGOTYPES:
+		Log = Format(IDS_LOG_ISVS_LOAD_CARGOTYPES_OK,
+			ARRAYOFCONST((((TDBIsvsLoadCargoTypes*)Sender)
+			->CargoTypeList->Count)));
+
+		break;
 	default:
 		throw Exception("unknown dboperation end ok: " + Sender->ClassName());
 	}
@@ -1558,6 +1647,11 @@ void TMain::DBOperationEventEndFail(TObject * Sender) {
 		break;
 	case DB_OPERATION_LOCAL_SAVE_VAN_PROPS:
 		LogId = IDS_LOG_LOCAL_SAVE_VAN_PROPS_FAIL;
+		MessageId = IDS_ERROR_ISVS_LOAD_CARGOTYPES;
+
+		break;
+	case DB_OPERATION_ISVS_LOAD_CARGOTYPES:
+		LogId = IDS_LOG_ISVS_LOAD_CARGOTYPES_FAIL;
 		MessageId = IDS_ERROR_LOCAL_SAVE_VAN_PROPS;
 
 		break;

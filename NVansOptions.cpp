@@ -60,13 +60,17 @@ void __fastcall TfrmOptions::FormCreate(TObject *Sender) {
 #endif
 
 	btnLocalCheck->Tag = ctLocal;
-	btnOracleCheck->Tag = ctServerOracle;
+	btnOracleCheck->Tag = ctOracle;
+	btnIsvsCheck->Tag = ctIsvs;
 
 	cboxLocalDriver->Items->Add(LoadStr(IDS_CONNECTION_MYSQL_DRIVER_0));
 	cboxLocalDriver->Items->Add(LoadStr(IDS_CONNECTION_MYSQL_DRIVER_1));
 
 	cboxOracleDriver->Items->Add(LoadStr(IDS_CONNECTION_ORACLE_DRIVER_0));
 	cboxOracleDriver->Items->Add(LoadStr(IDS_CONNECTION_ORACLE_DRIVER_1));
+
+	cboxIsvsDriver->Items->Add(LoadStr(IDS_CONNECTION_MYSQL_DRIVER_0));
+	cboxIsvsDriver->Items->Add(LoadStr(IDS_CONNECTION_MYSQL_DRIVER_1));
 }
 
 // ---------------------------------------------------------------------------
@@ -96,6 +100,8 @@ void TfrmOptions::UpdateForm() {
 
 	cboxSQLToLog->Checked = Settings->SQLToLog;
 
+	cboxUseAutoReplace->Checked = Settings->UseAutoReplace;
+
 	rgScaleType->ItemIndex = Settings->ScaleType;
 
 	eLocalHost->Text = Settings->LocalConnection->Host;
@@ -110,18 +116,30 @@ void TfrmOptions::UpdateForm() {
 		}
 	}
 
-	eOracleHost->Text = Settings->ServerOracleConnection->Host;
-	eOracleService->Text = Settings->ServerOracleConnection->Service;
-	eOracleUser->Text = Settings->ServerOracleConnection->User;
-	eOraclePass->Text = Settings->ServerOracleConnection->Password;
-	if (!Settings->ServerOracleConnection->Driver.IsEmpty()) {
+	eOracleHost->Text = Settings->OracleConnection->Host;
+	eOracleService->Text = Settings->OracleConnection->Service;
+	eOracleUser->Text = Settings->OracleConnection->User;
+	eOraclePass->Text = Settings->OracleConnection->Password;
+	if (!Settings->OracleConnection->Driver.IsEmpty()) {
 		cboxOracleDriver->ItemIndex =
 			cboxOracleDriver->Items->IndexOf
-			(Settings->ServerOracleConnection->Driver);
+			(Settings->OracleConnection->Driver);
 		if (cboxOracleDriver->ItemIndex == -1) {
 			cboxOracleDriver->ItemIndex =
 				cboxOracleDriver->Items->Add
-				(Settings->ServerOracleConnection->Driver);
+				(Settings->OracleConnection->Driver);
+		}
+	}
+
+	eIsvsHost->Text = Settings->IsvsConnection->Host;
+	eIsvsUser->Text = Settings->IsvsConnection->User;
+	eIsvsPass->Text = Settings->IsvsConnection->Password;
+	if (!Settings->IsvsConnection->Driver.IsEmpty()) {
+		cboxIsvsDriver->ItemIndex =
+			cboxIsvsDriver->Items->IndexOf(Settings->IsvsConnection->Driver);
+		if (cboxIsvsDriver->ItemIndex == -1) {
+			cboxIsvsDriver->ItemIndex =
+				cboxIsvsDriver->Items->Add(Settings->IsvsConnection->Driver);
 		}
 	}
 
@@ -137,16 +155,23 @@ void TfrmOptions::UpdateSettings() {
 
 	Settings->SQLToLog = cboxSQLToLog->Checked;
 
+	Settings->UseAutoReplace = cboxUseAutoReplace->Checked;
+
 	Settings->LocalConnection->Host = eLocalHost->Text;
 	Settings->LocalConnection->User = eLocalUser->Text;
 	Settings->LocalConnection->Password = eLocalPass->Text;
 	Settings->LocalConnection->Driver = cboxLocalDriver->Text;
 
-	Settings->ServerOracleConnection->Host = eOracleHost->Text;
-	Settings->ServerOracleConnection->Service = eOracleService->Text;
-	Settings->ServerOracleConnection->User = eOracleUser->Text;
-	Settings->ServerOracleConnection->Password = eOraclePass->Text;
-	Settings->ServerOracleConnection->Driver = cboxOracleDriver->Text;
+	Settings->OracleConnection->Host = eOracleHost->Text;
+	Settings->OracleConnection->Service = eOracleService->Text;
+	Settings->OracleConnection->User = eOracleUser->Text;
+	Settings->OracleConnection->Password = eOraclePass->Text;
+	Settings->OracleConnection->Driver = cboxOracleDriver->Text;
+
+	Settings->IsvsConnection->Host = eIsvsHost->Text;
+	Settings->IsvsConnection->User = eIsvsUser->Text;
+	Settings->IsvsConnection->Password = eIsvsPass->Text;
+	Settings->IsvsConnection->Driver = cboxIsvsDriver->Text;
 
 	Settings->WMEProgramPath = eWMEProgramPath->Text;
 	Settings->WMEProgramParams = eWMEProgramParams->Text;
@@ -200,7 +225,7 @@ TDBConnection * TfrmOptions::GetConnectionInfo(TConnectionType Type) {
 			Settings->LocalConnection->Database;
 
 		break;
-	case ctServerOracle:
+	case ctOracle:
 		Connection = new TDBConnectionOracle();
 
 		Connection->User = eOracleUser->Text;
@@ -209,6 +234,18 @@ TDBConnection * TfrmOptions::GetConnectionInfo(TConnectionType Type) {
 		((TDBConnectionOracle*) Connection)->Host = eOracleHost->Text;
 		((TDBConnectionOracle*) Connection)->Driver = cboxOracleDriver->Text;
 		((TDBConnectionOracle*) Connection)->Service = eOracleService->Text;
+
+		break;
+	case ctIsvs:
+		Connection = new TDBConnectionMySQL();
+
+		Connection->User = eIsvsUser->Text;
+		Connection->Password = eIsvsPass->Text;
+
+		((TDBConnectionMySQL*) Connection)->Host = eIsvsHost->Text;
+		((TDBConnectionMySQL*) Connection)->Driver = cboxIsvsDriver->Text;
+		((TDBConnectionMySQL*) Connection)->Database =
+			Settings->IsvsConnection->Database;
 
 		break;
 	}
@@ -233,11 +270,12 @@ void __fastcall TfrmOptions::btnOracleCheckClick(TObject * Sender) {
 
 		switch (ConnectionType) {
 		case ctLocal:
+		case ctIsvs:
 			DBOperationCheck =
 				new TDBOperationCheckMySQL
 				((TDBConnectionMySQL*) DBConnection, Main);
 			break;
-		case ctServerOracle:
+		case ctOracle:
 			DBOperationCheck =
 				new TDBOperationCheckOracle
 				((TDBConnectionOracle*) DBConnection, Main);

@@ -11,6 +11,7 @@
 #define CFG_EXT ".cfg"
 
 #define LOCAL_DB_NAME "wdb_disk"
+#define ISVS_DB_NAME "wdb3"
 
 // ---------------------------------------------------------------------------
 enum TScaleType {
@@ -28,10 +29,13 @@ private:
 
 	bool FSQLToLog;
 
+	bool FUseAutoReplace;
+
 	TScaleType FScaleType;
 
 	TDBConnectionMySQL * FLocalConnection;
-	TDBConnectionOracle * FServerOracleConnection;
+	TDBConnectionOracle * FOracleConnection;
+	TDBConnectionMySQL * FIsvsConnection;
 
 	String FWMEProgramPath;
 	String FWMEProgramParams;
@@ -66,11 +70,15 @@ public:
 
 	__property bool SQLToLog = {read = FSQLToLog, write = FSQLToLog};
 
+	__property bool UseAutoReplace = {
+		read = FUseAutoReplace, write = FUseAutoReplace};
+
 	__property TScaleType ScaleType = {read = FScaleType, write = FScaleType};
 
 	__property TDBConnectionMySQL * LocalConnection = {read = FLocalConnection};
-	__property TDBConnectionOracle * ServerOracleConnection = {
-		read = FServerOracleConnection};
+	__property TDBConnectionOracle * OracleConnection = {
+		read = FOracleConnection};
+	__property TDBConnectionMySQL * IsvsConnection = {read = FIsvsConnection};
 
 	__property String WMEProgramPath = {
 		read = FWMEProgramPath, write = FWMEProgramPath};

@@ -110,7 +110,6 @@ __published:
 	void __fastcall FormKeyDown(TObject *Sender, WORD &Key, TShiftState Shift);
 	void __fastcall miVanToStringClick(TObject *Sender);
 
-
 private:
 	TSettings * FSettings;
 
@@ -132,6 +131,8 @@ private:
 
 	int ServerSelectedRow;
 	int LocalSelectedRow;
+
+    bool UseAutoReplace;
 
 	// -----------------------------------------------------------------------
 	void SetControlsEnabled(const bool Enabled);
@@ -159,6 +160,8 @@ private:
 	void ServerLoadTrainDateTime(TKeyOracleTrain * KeyOracleTrain);
 
 	bool ServerSaveTrainToFile(TOracleVanList * ServerVanList, String FileName);
+
+	TOracleVanList * AutoReplace(TOracleVanList * ServerVanList);
 
 	void LocalLoadVans();
 	bool LocalSaveVans();

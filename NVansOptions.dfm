@@ -70,8 +70,8 @@ object frmOptions: TfrmOptions
           end
         end
         object cboxSQLToLog: TCheckBox
-          Left = 360
-          Top = 16
+          Left = 358
+          Top = 56
           Width = 200
           Height = 17
           Caption = #1047#1072#1087#1080#1089#1100' '#1079#1072#1087#1088#1086#1089#1086#1074' '#1082' '#1041#1044' '#1074' '#1083#1086#1075
@@ -89,6 +89,14 @@ object frmOptions: TfrmOptions
             #1040#1074#1080#1090#1077#1082': '#1057#1090#1072#1090#1080#1082#1072
             #1055#1091#1083#1100#1090' '#1088#1091#1095#1085#1086#1075#1086' '#1074#1074#1086#1076#1072)
           TabOrder = 1
+        end
+        object cboxUseAutoReplace: TCheckBox
+          Left = 358
+          Top = 16
+          Width = 200
+          Height = 17
+          Caption = #1048#1089#1087#1086#1083#1100#1079#1086#1074#1072#1090#1100' '#1072#1074#1090#1086#1079#1072#1084#1077#1085#1091
+          TabOrder = 3
         end
       end
       object tsLocalDatabase: TTabSheet
@@ -152,7 +160,7 @@ object frmOptions: TfrmOptions
           OnClick = btnOracleCheckClick
         end
       end
-      object tsServerOracleDatabase: TTabSheet
+      object tsOracleDatabase: TTabSheet
         Caption = #1057#1077#1088#1074#1077#1088' Oracle'
         ImageIndex = 1
         object lblOracleLDriver: TLabel
@@ -225,6 +233,70 @@ object frmOptions: TfrmOptions
           OnClick = btnOracleCheckClick
         end
       end
+      object tsIsvsDatabase: TTabSheet
+        Caption = #1048#1057#1042#1057
+        ImageIndex = 4
+        ExplicitLeft = -156
+        ExplicitTop = -1
+        object lblIsvsDriver: TLabel
+          Left = 8
+          Top = 122
+          Width = 53
+          Height = 17
+          Caption = #1044#1088#1072#1081#1074#1077#1088
+          FocusControl = cboxOracleDriver
+        end
+        object eIsvsHost: TLabeledEdit
+          Left = 8
+          Top = 32
+          Width = 240
+          Height = 25
+          EditLabel.Width = 142
+          EditLabel.Height = 17
+          EditLabel.Caption = #1040#1076#1088#1077#1089' '#1080#1083#1080' '#1080#1084#1103' '#1089#1077#1088#1074#1077#1088#1072
+          LabelSpacing = 4
+          TabOrder = 0
+        end
+        object eIsvsUser: TLabeledEdit
+          Left = 8
+          Top = 88
+          Width = 160
+          Height = 25
+          EditLabel.Width = 36
+          EditLabel.Height = 17
+          EditLabel.Caption = #1051#1086#1075#1080#1085
+          LabelSpacing = 4
+          TabOrder = 1
+        end
+        object eIsvsPass: TLabeledEdit
+          Left = 176
+          Top = 88
+          Width = 160
+          Height = 25
+          EditLabel.Width = 46
+          EditLabel.Height = 17
+          EditLabel.Caption = #1055#1072#1088#1086#1083#1100
+          LabelSpacing = 4
+          PasswordChar = '#'
+          TabOrder = 2
+        end
+        object cboxIsvsDriver: TComboBox
+          Left = 8
+          Top = 144
+          Width = 240
+          Height = 25
+          TabOrder = 3
+        end
+        object btnIsvsCheck: TButton
+          Left = 8
+          Top = 184
+          Width = 80
+          Height = 32
+          Caption = #1055#1088#1086#1074#1077#1088#1082#1072
+          TabOrder = 4
+          OnClick = btnOracleCheckClick
+        end
+      end
       object tsWME: TTabSheet
         Caption = #1055#1091#1083#1100#1090' '#1088#1091#1095#1085#1086#1075#1086' '#1074#1074#1086#1076#1072
         ImageIndex = 3
@@ -270,8 +342,6 @@ object frmOptions: TfrmOptions
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitLeft = 1
-    ExplicitTop = 307
     DesignSize = (
       576
       48)

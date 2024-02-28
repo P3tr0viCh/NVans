@@ -25,7 +25,7 @@ __published:
 	TButton *btnCancel;
 	TPageControl *PageControl;
 	TTabSheet *tsLocalDatabase;
-	TTabSheet *tsServerOracleDatabase;
+	TTabSheet *tsOracleDatabase;
 	TTabSheet *tsProgram;
 	TLabeledEdit *eOracleHost;
 	TLabeledEdit *eOracleService;
@@ -50,6 +50,14 @@ __published:
 	TLabeledEdit *eWMEProgramParams;
 	TButton *btnWMEProgramPath;
 	TOpenDialog *OpenDialog;
+	TCheckBox *cboxUseAutoReplace;
+	TTabSheet *tsIsvsDatabase;
+	TLabeledEdit *eIsvsHost;
+	TLabeledEdit *eIsvsUser;
+	TLabeledEdit *eIsvsPass;
+	TComboBox *cboxIsvsDriver;
+	TButton *btnIsvsCheck;
+	TLabel *lblIsvsDriver;
 
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
@@ -67,7 +75,7 @@ private:
 	void UpdateSettings();
 
 	enum TConnectionType {
-		ctLocal, ctServerOracle
+		ctLocal, ctOracle, ctIsvs
 	};
 
 	TDBConnection * GetConnectionInfo(TConnectionType Type);

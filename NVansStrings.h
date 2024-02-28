@@ -30,6 +30,7 @@
 #define IDS_ERROR_LOCAL_SAVE_VANS					 231
 #define IDS_ERROR_LOCAL_SAVE_VAN_PROPS				 232
 #define IDS_ERROR_LOCAL_LOAD_TRAINS					 233
+#define IDS_ERROR_ISVS_LOAD_CARGOTYPES               234
 
 #define IDS_ERROR_SAVE_TO_FILE                       240
 
@@ -89,15 +90,18 @@
 #define IDS_LOG_LOCAL_LOAD_TRAINS_OK				2406
 #define IDS_LOG_LOCAL_LOAD_TRAINS_FAIL				2407
 
-#define IDS_LOG_COPY_DATA							2500
-#define IDS_LOG_COPY_DATA_NOT_FOUND					2501
-#define IDS_LOG_COPY_DATA_OVERWRITE_CANCEL			2502
+#define IDS_LOG_ISVS_LOAD_CARGOTYPES_OK             2500
+#define IDS_LOG_ISVS_LOAD_CARGOTYPES_FAIL           2501
 
-#define IDS_LOG_SAVE_TO_FILE_OK                     2600
-#define IDS_LOG_SAVE_TO_FILE_FAIL                   2601
+#define IDS_LOG_COPY_DATA							2600
+#define IDS_LOG_COPY_DATA_NOT_FOUND					2601
+#define IDS_LOG_COPY_DATA_OVERWRITE_CANCEL			2602
 
-#define IDS_LOG_EXEC_FILE_OK                        2700
-#define IDS_LOG_EXEC_FILE_FAIL          			2701
+#define IDS_LOG_SAVE_TO_FILE_OK                     2700
+#define IDS_LOG_SAVE_TO_FILE_FAIL                   2701
+
+#define IDS_LOG_EXEC_FILE_OK                        2800
+#define IDS_LOG_EXEC_FILE_FAIL          			2801
 
 // ---------------------------------------------------------------------------
 #endif

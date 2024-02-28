@@ -1,0 +1,1 @@
+SELECT cargotype FROM lst_cargotype WHERE cargotype_code=:CARGOTYPE_CODE;

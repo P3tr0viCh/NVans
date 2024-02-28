@@ -1,3 +1,4 @@
+ISVS_CARGOTYPE_SELECT RCDATA "sql\\isvs_cargotype_select.sql"
 LOCAL_MTRAINS_SELECT RCDATA "sql\\local_mtrains_select.sql"
 LOCAL_MVANS_SELECT_BY_DT RCDATA "sql\\local_mvans_select_by_dt.sql"
 LOCAL_MVANS_SELECT_BY_TN RCDATA "sql\\local_mvans_select_by_tn.sql"

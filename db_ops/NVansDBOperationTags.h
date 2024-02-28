@@ -11,6 +11,7 @@
 #define DB_OPERATION_LOCAL_LOAD_VANS			6
 #define DB_OPERATION_LOCAL_SAVE_VAN				7
 #define DB_OPERATION_LOCAL_SAVE_VAN_PROPS		8
+#define DB_OPERATION_ISVS_LOAD_CARGOTYPES       9
 
 // ---------------------------------------------------------------------------
 #endif

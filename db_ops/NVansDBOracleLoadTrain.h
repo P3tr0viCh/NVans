@@ -14,8 +14,6 @@ class TDBOracleLoadTrain : public TDBOperation {
 private:
 	TKeyOracleTrain * FKeyOracleTrain;
 
-	bool FWithJoin;
-
 	TOracleVanList * FVanList;
 
 public:
