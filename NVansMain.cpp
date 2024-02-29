@@ -65,6 +65,8 @@ void __fastcall TMain::FormCreate(TObject *Sender) {
 
 	FKeyOracleTrain = new TKeyOracleTrain();
 
+	FUseAutoReplace = true;
+
 	FServerVanList = new TOracleVanList();
 	FLocalVanList = new TLocalVanList();
 
@@ -520,6 +522,8 @@ void TMain::SettingsChanged() {
 
 	UpdateScaleType();
 
+	btnServerLoadExt->Visible = Settings->UseAutoReplace;
+
 	EndOperation();
 }
 
@@ -679,8 +683,6 @@ void TMain::SetKeyOracleTrain(TKeyOracleTrain * Value) {
 
 // ---------------------------------------------------------------------------
 void TMain::KeyOracleTrainChanged() {
-	UseAutoReplace = IsShift();
-
 	eRWNum->Tag = true;
 	eRWNum->Text = KeyOracleTrain->TrainNum;
 	eRWNum->Tag = false;
@@ -775,37 +777,48 @@ void TMain::ServerLoadTrain() {
 
 	ServerVanList = NULL;
 
-	TDBOracleLoadTrain * DBOracleLoadTrain =
-		new TDBOracleLoadTrain(Settings->OracleConnection, this,
-		KeyOracleTrain);
+	TOracleVanList * VanList = new TOracleVanList();
+
 	try {
-		DBOracleLoadTrain->Tag = DB_OPERATION_ORACLE_LOAD_TRAIN;
+		TDBOracleLoadTrain * DBOracleLoadTrain =
+			new TDBOracleLoadTrain(Settings->OracleConnection, this,
+			KeyOracleTrain);
+		try {
+			DBOracleLoadTrain->Tag = DB_OPERATION_ORACLE_LOAD_TRAIN;
 
-		DBOracleLoadTrain->SQLToLog = Settings->SQLToLog;
+			DBOracleLoadTrain->SQLToLog = Settings->SQLToLog;
 
-		DBOracleLoadTrain->Execute();
+			DBOracleLoadTrain->Execute();
 
-		ServerVanList = AutoReplace(DBOracleLoadTrain->VanList);
+			VanList->Assign(DBOracleLoadTrain->VanList);
+		}
+		__finally {
+			DBOracleLoadTrain->Free();
+
+			EndOperation();
+		}
+
+		AutoReplace(VanList);
 	}
 	__finally {
-		DBOracleLoadTrain->Free();
+		ServerVanList = VanList;
 
-		EndOperation();
+		VanList->Free();
 	}
 }
 
 // ---------------------------------------------------------------------------
-TOracleVanList * TMain::AutoReplace(TOracleVanList * ServerVanList) {
+void TMain::AutoReplace(TOracleVanList * ServerVanList) {
 	if (!Settings->UseAutoReplace) {
-		return ServerVanList;
+		return;
 	}
 
 	if (ServerVanList->Count == 0) {
-		return ServerVanList;
+		return;
 	}
 
-	if (UseAutoReplace) {
-		return ServerVanList;
+	if (!UseAutoReplace) {
+		return;
 	}
 
 	TCodeNamePairList * CargoTypeList = new TCodeNamePairList();
@@ -828,7 +841,7 @@ TOracleVanList * TMain::AutoReplace(TOracleVanList * ServerVanList) {
 	}
 
 	if (CargoTypeList->Count == 0) {
-		return ServerVanList;
+		return;
 	}
 
 	TDBIsvsLoadCargoTypes * DBIsvsLoadCargoTypes =
@@ -867,8 +880,6 @@ TOracleVanList * TMain::AutoReplace(TOracleVanList * ServerVanList) {
 
 		CargoTypeList->Free();
 	}
-
-	return ServerVanList;
 }
 
 // ---------------------------------------------------------------------------
@@ -998,7 +1009,7 @@ void TMain::LocalSaveVanProps() {
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TMain::btnServerLoadClick(TObject * Sender) {
+void TMain::ServerLoadTrainPerform() {
 	if (eRWNum->Text.IsEmpty()) {
 		eRWNum->SetFocus();
 		MsgBoxErr(IDS_ERROR_NEED_RWNUM);
@@ -1007,6 +1018,20 @@ void __fastcall TMain::btnServerLoadClick(TObject * Sender) {
 
 	KeyOracleTrain->TrainNum = eRWNum->Text;
 	KeyOracleTrainChanged();
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TMain::btnServerLoadClick(TObject * Sender) {
+	UseAutoReplace = !IsShift();
+
+	ServerLoadTrainPerform();
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TMain::miServerLoadAsIsClick(TObject *Sender) {
+	UseAutoReplace = false;
+
+	ServerLoadTrainPerform();
 }
 
 // ---------------------------------------------------------------------------
@@ -1988,6 +2013,15 @@ void __fastcall TMain::StartSearchEvent(TObject * Sender, String &Text,
 // ---------------------------------------------------------------------------
 void __fastcall TMain::miVanToStringClick(TObject *Sender) {
 	MenuItemAction(maVanToString);
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TMain::btnServerLoadExtClick(TObject *Sender) {
+	TPoint P = ClientToScreen(TPoint(btnServerLoadExt->Left,
+		btnServerLoadExt->Height + btnServerLoadExt->Top));
+
+	pmServerLoadExt->Popup(P.X, P.Y);
+
 }
 
 // ---------------------------------------------------------------------------

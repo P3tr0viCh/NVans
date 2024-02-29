@@ -63,6 +63,9 @@ __published:
 	TButton *btnServerSaveToFile;
 	TSaveDialog *SaveDialog;
 	TMenuItem *miVanToString;
+	TButton *btnServerLoadExt;
+	TPopupMenu *pmServerLoadExt;
+	TMenuItem *miServerLoadAsIs;
 
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
@@ -109,6 +112,8 @@ __published:
 		bool &CanSelect);
 	void __fastcall FormKeyDown(TObject *Sender, WORD &Key, TShiftState Shift);
 	void __fastcall miVanToStringClick(TObject *Sender);
+	void __fastcall miServerLoadAsIsClick(TObject *Sender);
+	void __fastcall btnServerLoadExtClick(TObject *Sender);
 
 private:
 	TSettings * FSettings;
@@ -126,13 +131,13 @@ private:
 
 	bool FLocalChanged;
 
+	bool FUseAutoReplace;
+
 	TOracleVanList * FServerVanList;
 	TLocalVanList * FLocalVanList;
 
 	int ServerSelectedRow;
 	int LocalSelectedRow;
-
-    bool UseAutoReplace;
 
 	// -----------------------------------------------------------------------
 	void SetControlsEnabled(const bool Enabled);
@@ -159,9 +164,11 @@ private:
 	void ServerLoadTrain();
 	void ServerLoadTrainDateTime(TKeyOracleTrain * KeyOracleTrain);
 
+	void ServerLoadTrainPerform();
+
 	bool ServerSaveTrainToFile(TOracleVanList * ServerVanList, String FileName);
 
-	TOracleVanList * AutoReplace(TOracleVanList * ServerVanList);
+	void AutoReplace(TOracleVanList * ServerVanList);
 
 	void LocalLoadVans();
 	bool LocalSaveVans();
@@ -169,6 +176,7 @@ private:
 
 	bool CheckField(int Column1, int Column2, int Index1, int Index2);
 	bool DataExists(TIntegerPairList * Result);
+
 	void CopyData(bool CopyAll);
 	void SendDataToWME();
 
@@ -219,6 +227,9 @@ public:
 
 	__property bool LocalChanged = {
 		read = FLocalChanged, write = SetLocalChanged};
+
+	__property bool UseAutoReplace = {
+		read = FUseAutoReplace, write = FUseAutoReplace};
 
 	__property TOracleVanList * ServerVanList = {
 		read = FServerVanList, write = SetServerVanList};

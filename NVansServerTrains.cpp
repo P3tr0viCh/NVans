@@ -233,6 +233,7 @@ void __fastcall TfrmServerTrains::sgListDblClick(TObject *Sender) {
 		TrainList->Items[SelectedRow - 1]->TrainNum;
 	Main->KeyOracleTrain->DateTime =
 		TrainList->Items[SelectedRow - 1]->DateTime;
+	Main->UseAutoReplace = !IsShift();
 	Main->KeyOracleTrainChanged();
 }
 
