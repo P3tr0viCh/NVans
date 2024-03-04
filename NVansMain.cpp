@@ -794,8 +794,6 @@ void TMain::ServerLoadTrain() {
 		}
 		__finally {
 			DBOracleLoadTrain->Free();
-
-			EndOperation();
 		}
 
 		AutoReplace(VanList);
@@ -804,6 +802,8 @@ void TMain::ServerLoadTrain() {
 		ServerVanList = VanList;
 
 		VanList->Free();
+
+		EndOperation();
 	}
 }
 
@@ -1690,69 +1690,23 @@ void TMain::DBOperationEventEndFail(TObject * Sender) {
 }
 
 // ---------------------------------------------------------------------------
-bool TMain::ServerSaveTrainToFile(TOracleVanList * ServerVanList,
-	String FileName) {
-	TStringList * Line = new TStringList();
-	TStringList * List = new TStringList();
-
+bool TMain::SaveServerVanListToFile(TOracleVanList * ServerVanList,
+	String FileName, TSaveFileType SaveFileType) {
 	try {
-		Line->Delimiter = ';';
-		Line->QuoteChar = '"';
-		Line->StrictDelimiter = true;
+		::SaveServerVanListToFile(ServerVanList, FileName, SaveFileType);
 
-		for (int i = 0; i < ServerVanList->Count; i++) {
-			Line->Clear();
+		WriteToLog(Format(IDS_LOG_SAVE_TO_FILE_OK, FileName));
 
-			// 0
-			Line->Add(DateTimeToStr(ServerVanList->Items[i]->InvoiceDateTime));
-			// 1
-			Line->Add(ServerVanList->Items[i]->VanNum);
-			// 2
-			Line->Add(ServerVanList->Items[i]->CargoType);
-			// 3
-			Line->Add(IntToStr(ServerVanList->Items[i]->CargoTypeCode));
-			// 4
-			Line->Add(ServerVanList->Items[i]->InvoiceNum);
-			// 5
-			Line->Add(ServerVanList->Items[i]->InvoiceSupplier);
-			// 6
-			Line->Add(ServerVanList->Items[i]->InvoiceRecipient);
-			// 7
-			Line->Add(ServerVanList->Items[i]->DepartStation);
-			// 8
-			Line->Add(ServerVanList->Items[i]->PurposeStation);
-			// 9
-			Line->Add(IntToStr(ServerVanList->Items[i]->Carrying));
-			// 10
-			Line->Add(IntToStr(ServerVanList->Items[i]->TareT));
-			// 11
-			Line->Add(IntToStr(ServerVanList->Items[i]->InvoiceNetto));
-			// 12
-			Line->Add(IntToStr(ServerVanList->Items[i]->InvoiceTare));
-
-			List->Add(Line->DelimitedText);
-		}
-
-		try {
-			List->SaveToFile(FileName);
-
-			WriteToLog(Format(IDS_LOG_SAVE_TO_FILE_OK, FileName));
-		}
-		catch (Exception * E) {
-			WriteToLog(Format(IDS_LOG_SAVE_TO_FILE_FAIL,
-				ARRAYOFCONST((FileName, E->Message))));
-
-			MsgBoxErr(Format(IDS_ERROR_SAVE_TO_FILE, E->Message));
-
-			return false;
-		}
+		return true;
 	}
-	__finally {
-		List->Free();
-		Line->Free();
-	}
+	catch (Exception * E) {
+		WriteToLog(Format(IDS_LOG_SAVE_TO_FILE_FAIL,
+			ARRAYOFCONST((FileName, E->Message))));
 
-	return true;
+		MsgBoxErr(Format(IDS_ERROR_SAVE_TO_FILE, E->Message));
+
+		return false;
+	}
 }
 
 // ---------------------------------------------------------------------------
@@ -1763,7 +1717,16 @@ void __fastcall TMain::btnServerSaveToFileClick(TObject * Sender) {
 		StartOperation(oSave);
 
 		try {
-			ServerSaveTrainToFile(ServerVanList, SaveDialog->FileName);
+			switch (SaveDialog->FilterIndex) {
+			case 1:
+				SaveServerVanListToFile(ServerVanList,
+					SaveDialog->FileName, ftCsv);
+				break;
+			case 2:
+				SaveServerVanListToFile(ServerVanList, SaveDialog->FileName,
+					ftJson);
+				break;
+			}
 		}
 		__finally {
 			EndOperation();
@@ -1803,7 +1766,7 @@ void TMain::SendDataToWME() {
 
 		String FileName = Settings->WMEProgramPath;
 
-		String DataFileName = SlashSep(GetTempFolderPath(), "NVans2WME.csv");
+		String DataFileName = SlashSep(GetTempFolderPath(), "NVans2WME.json");
 
 		TOracleVanList * VanList = new TOracleVanList();
 		try {
@@ -1820,7 +1783,7 @@ void TMain::SendDataToWME() {
 				}
 			}
 
-			if (!ServerSaveTrainToFile(VanList, DataFileName)) {
+			if (!SaveServerVanListToFile(VanList, DataFileName, ftJson)) {
 				return;
 			}
 		}

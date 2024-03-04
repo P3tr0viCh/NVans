@@ -57,7 +57,6 @@ object Main: TMain
     OnMouseDown = sgServerMouseDown
     OnMouseUp = sgServerMouseUp
     OnSelectCell = sgServerSelectCell
-    ExplicitLeft = 24
   end
   object sgLocal: TStringGrid
     Left = 0
@@ -325,7 +324,7 @@ object Main: TMain
   end
   object SaveDialog: TSaveDialog
     DefaultExt = 'csv'
-    Filter = 'CSV ('#1088#1072#1079#1076#1077#1083#1080#1090#1077#1083#1080' - '#1079#1072#1087#1103#1090#1099#1077') |*.csv|'#1042#1089#1077' '#1092#1072#1081#1083#1099'|*.*'
+    Filter = 'CSV ('#1088#1072#1079#1076#1077#1083#1080#1090#1077#1083#1080' '#8211' '#1079#1072#1087#1103#1090#1099#1077') |*.csv|JSON|*.json'
     Options = [ofOverwritePrompt, ofHideReadOnly, ofPathMustExist, ofEnableSizing]
     Left = 680
     Top = 80

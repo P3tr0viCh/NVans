@@ -28,6 +28,8 @@
 
 #include "NVansKeyOracleTrain.h"
 
+#include "NVansSaveToFile.h"
+
 // ---------------------------------------------------------------------------
 class TMain : public TForm, public IDBOperationEvent {
 __published:
@@ -166,8 +168,6 @@ private:
 
 	void ServerLoadTrainPerform();
 
-	bool ServerSaveTrainToFile(TOracleVanList * ServerVanList, String FileName);
-
 	void AutoReplace(TOracleVanList * ServerVanList);
 
 	void LocalLoadVans();
@@ -179,6 +179,9 @@ private:
 
 	void CopyData(bool CopyAll);
 	void SendDataToWME();
+
+	bool SaveServerVanListToFile(TOracleVanList * ServerVanList,
+		String FileName, TSaveFileType SaveFileType);
 
 	enum TAvitekBtn {
 		abSave, abUpdate
