@@ -77,9 +77,18 @@ void TDBOracleLoadTrain::Operation() {
 				->AsString));
 
 			Van->CargoType = Trim(Query->FieldByName("CARGOTYPE")->AsString);
-			Van->CargoTypeCode =
-				StrToIntDef(Trim(Query->FieldByName("CARGOTYPE_CODE")
-				->AsString), DEFAULT_CODE);
+
+			// ---------------------------------------------------------------
+			String CargoTypeCode =
+				Trim(Query->FieldByName("CARGOTYPE_CODE")->AsString);
+
+			Van->CargoTypeCode = StrToIntDef(CargoTypeCode, DEFAULT_CODE);
+
+			if (Van->CargoTypeCode > 1000 && CargoTypeCode.Length() < 6) {
+				Van->CargoTypeCode = Van->CargoTypeCode * 10 +
+					GetRusControlNumber(Van->CargoTypeCode, 5);
+			}
+			// ---------------------------------------------------------------
 
 			Van->InvoiceNum = Trim(Query->FieldByName("INVOICE_NUM")->AsString);
 
