@@ -14,8 +14,6 @@
 #include <UtilsFileIni.h>
 #include <UtilsStringGrid.h>
 
-#include <CodeNamePair.h>
-
 #include <DBOperation.h>
 #include <DBOperationEvent.h>
 #include <DBOperationCheck.h>
@@ -37,6 +35,7 @@
 #include "NVansDBLocalLoadVans.h"
 #include "NVansDBLocalSaveVan.h"
 #include "NVansDBLocalSaveVanProps.h"
+#include "NVansDBIsvsLoadStations.h"
 #include "NVansDBIsvsLoadCargoTypes.h"
 
 #include "NVansLogin.h"
@@ -821,65 +820,124 @@ void TMain::AutoReplace(TOracleVanList * ServerVanList) {
 		return;
 	}
 
+	TCodeNamePairList * StationList = new TCodeNamePairList();
 	TCodeNamePairList * CargoTypeList = new TCodeNamePairList();
 
+	TCodeNamePair * Station;
 	TCodeNamePair * CargoType;
 
-	for (int i = 0; i < ServerVanList->Count; i++) {
-		if (ServerVanList->Items[i]->CargoTypeCode == 0) {
-			continue;
-		}
-
-		CargoType =
-			new TCodeNamePair(ServerVanList->Items[i]->CargoTypeCode, "");
-
-		if (CargoTypeList->Find(CargoType)) {
-			continue;
-		}
-
-		CargoTypeList->Add(CargoType);
-	}
-
-	if (CargoTypeList->Count == 0) {
-		return;
-	}
-
-	TDBIsvsLoadCargoTypes * DBIsvsLoadCargoTypes =
-		new TDBIsvsLoadCargoTypes(Settings->IsvsConnection, this,
-		CargoTypeList);
 	try {
-		DBIsvsLoadCargoTypes->Tag = DB_OPERATION_ISVS_LOAD_CARGOTYPES;
-
-		DBIsvsLoadCargoTypes->SQLToLog = Settings->SQLToLog;
-
-		DBIsvsLoadCargoTypes->Execute();
-
 		for (int i = 0; i < ServerVanList->Count; i++) {
-			if (ServerVanList->Items[i]->CargoTypeCode == 0) {
-				continue;
-			}
+			if (ServerVanList->Items[i]->CargoTypeCode != 0) {
+				CargoType =
+					new TCodeNamePair
+					(ServerVanList->Items[i]->CargoTypeCode, "");
 
-			for (int j = 0; j < CargoTypeList->Count; j++) {
-				if (CargoTypeList->Items[j]->Name.IsEmpty()) {
+				if (CargoTypeList->Find(CargoType)) {
 					continue;
 				}
 
-				if (CargoTypeList->Items[j]->Code == ServerVanList->Items[i]
-					->CargoTypeCode) {
+				CargoTypeList->Add(CargoType);
+			}
 
-					ServerVanList->Items[i]->CargoType =
-						CargoTypeList->Items[j]->Name;
+			if (ServerVanList->Items[i]->DepartStationCode != 0) {
+				Station =
+					new TCodeNamePair
+					(ServerVanList->Items[i]->DepartStationCode, "");
 
-					break;
+				if (StationList->Find(Station)) {
+					continue;
 				}
+
+				StationList->Add(Station);
+			}
+
+			if (ServerVanList->Items[i]->PurposeStationCode != 0) {
+				Station =
+					new TCodeNamePair
+					(ServerVanList->Items[i]->PurposeStationCode, "");
+
+				if (StationList->Find(Station)) {
+					continue;
+				}
+
+				StationList->Add(Station);
+			}
+		}
+
+		TDBIsvsLoadCargoTypes * DBIsvsLoadCargoTypes =
+			new TDBIsvsLoadCargoTypes(Settings->IsvsConnection, this,
+			CargoTypeList);
+		try {
+			DBIsvsLoadCargoTypes->Tag = DB_OPERATION_ISVS_LOAD_CARGOTYPES;
+
+			DBIsvsLoadCargoTypes->SQLToLog = Settings->SQLToLog;
+
+			DBIsvsLoadCargoTypes->Execute();
+		}
+		__finally {
+			DBIsvsLoadCargoTypes->Free();
+		}
+
+		TDBIsvsLoadStations * DBIsvsLoadStations =
+			new TDBIsvsLoadStations(Settings->IsvsConnection, this,
+			StationList);
+		try {
+			DBIsvsLoadStations->Tag = DB_OPERATION_ISVS_LOAD_STATIONS;
+
+			DBIsvsLoadStations->SQLToLog = Settings->SQLToLog;
+
+			DBIsvsLoadStations->Execute();
+		}
+		__finally {
+			DBIsvsLoadStations->Free();
+		}
+
+		String Name;
+
+		for (int i = 0; i < ServerVanList->Count; i++) {
+			Name = FindNameByCode(ServerVanList->Items[i]->CargoTypeCode,
+				CargoTypeList);
+			if (!Name.IsEmpty()) {
+				ServerVanList->Items[i]->CargoType = Name;
+			}
+
+			Name = FindNameByCode(ServerVanList->Items[i]->DepartStationCode,
+				StationList);
+			if (!Name.IsEmpty()) {
+				ServerVanList->Items[i]->DepartStation = Name;
+			}
+
+			Name = FindNameByCode(ServerVanList->Items[i]->PurposeStationCode,
+				StationList);
+			if (!Name.IsEmpty()) {
+				ServerVanList->Items[i]->PurposeStation = Name;
 			}
 		}
 	}
 	__finally {
-		DBIsvsLoadCargoTypes->Free();
-
 		CargoTypeList->Free();
+		StationList->Free();
 	}
+}
+
+// ---------------------------------------------------------------------------
+String TMain::FindNameByCode(int Code, TCodeNamePairList * List) {
+	if (Code == DEFAULT_CODE) {
+		return "";
+	}
+
+	for (int i = 0; i < List->Count; i++) {
+		if (List->Items[i]->Name.IsEmpty()) {
+			continue;
+		}
+
+		if (List->Items[i]->Code == Code) {
+			return List->Items[i]->Name;
+		}
+	}
+
+	return "";
 }
 
 // ---------------------------------------------------------------------------
@@ -1532,6 +1590,7 @@ void TMain::DBOperationEventStart(TObject * Sender) {
 	case DB_OPERATION_LOCAL_LOAD_VANS:
 	case DB_OPERATION_LOCAL_SAVE_VAN:
 	case DB_OPERATION_LOCAL_SAVE_VAN_PROPS:
+	case DB_OPERATION_ISVS_LOAD_STATIONS:
 	case DB_OPERATION_ISVS_LOAD_CARGOTYPES:
 		break;
 	default:
@@ -1610,6 +1669,11 @@ void TMain::DBOperationEventEndOK(TObject * Sender) {
 			((TDBLocalSaveVanProps*)Sender)->UpdateCount)));
 
 		break;
+	case DB_OPERATION_ISVS_LOAD_STATIONS:
+		Log = Format(IDS_LOG_ISVS_LOAD_STATIONS_OK,
+			ARRAYOFCONST((((TDBIsvsLoadStations*)Sender)->StationList->Count)));
+
+		break;
 	case DB_OPERATION_ISVS_LOAD_CARGOTYPES:
 		Log = Format(IDS_LOG_ISVS_LOAD_CARGOTYPES_OK,
 			ARRAYOFCONST((((TDBIsvsLoadCargoTypes*)Sender)
@@ -1672,12 +1736,17 @@ void TMain::DBOperationEventEndFail(TObject * Sender) {
 		break;
 	case DB_OPERATION_LOCAL_SAVE_VAN_PROPS:
 		LogId = IDS_LOG_LOCAL_SAVE_VAN_PROPS_FAIL;
-		MessageId = IDS_ERROR_ISVS_LOAD_CARGOTYPES;
+		MessageId = IDS_ERROR_LOCAL_SAVE_VAN_PROPS;
+
+		break;
+	case DB_OPERATION_ISVS_LOAD_STATIONS:
+		LogId = IDS_LOG_ISVS_LOAD_STATIONS_FAIL;
+		MessageId = IDS_ERROR_ISVS_LOAD_STATIONS;
 
 		break;
 	case DB_OPERATION_ISVS_LOAD_CARGOTYPES:
 		LogId = IDS_LOG_ISVS_LOAD_CARGOTYPES_FAIL;
-		MessageId = IDS_ERROR_LOCAL_SAVE_VAN_PROPS;
+		MessageId = IDS_ERROR_ISVS_LOAD_CARGOTYPES;
 
 		break;
 	default:

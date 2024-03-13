@@ -1,5 +1,5 @@
 // ---------------------------------------------------------------------------
-
+
 #ifndef NVansOracleVanH
 #define NVansOracleVanH
 
@@ -23,8 +23,11 @@ private:
 	String FInvoiceNum;
 	String FInvoiceSupplier;
 	String FInvoiceRecipient;
+
 	String FDepartStation;
+	int FDepartStationCode;
 	String FPurposeStation;
+	int FPurposeStationCode;
 
 	int FCarrying;
 	int FTareT;
@@ -52,7 +55,8 @@ public:
 	__property String VanNum = {read = FVanNum, write = FVanNum};
 
 	__property String CargoType = {read = FCargoType, write = FCargoType};
-	__property int CargoTypeCode = {read = FCargoTypeCode, write = FCargoTypeCode};
+	__property int CargoTypeCode = {
+		read = FCargoTypeCode, write = FCargoTypeCode};
 
 	__property String InvoiceNum = {read = FInvoiceNum, write = FInvoiceNum};
 
@@ -63,8 +67,12 @@ public:
 
 	__property String DepartStation = {
 		read = FDepartStation, write = FDepartStation};
+	__property int DepartStationCode = {
+		read = FDepartStationCode, write = FDepartStationCode};
 	__property String PurposeStation = {
 		read = FPurposeStation, write = FPurposeStation};
+	__property int PurposeStationCode = {
+		read = FPurposeStationCode, write = FPurposeStationCode};
 
 	__property int Carrying = {read = FCarrying, write = FCarrying};
 	__property int TareT = {read = FTareT, write = FTareT};
@@ -78,3 +86,4 @@ typedef TObjList<TOracleVan>TOracleVanList;
 
 // ---------------------------------------------------------------------------
 #endif
+

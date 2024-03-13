@@ -24,6 +24,9 @@ void TOracleVan::Init() {
 
 	FInvoiceDateTime = DEFAULT_DATETIME;
 
+	FDepartStationCode = DEFAULT_CODE;
+	FPurposeStationCode = DEFAULT_CODE;
+
 	FCarrying = 0;
 	FTareT = 0;
 	FInvoiceNetto = 0;
@@ -67,7 +70,11 @@ bool __fastcall TOracleVan::Equals(TObject * Obj) {
 
 	if (DepartStation != Van->DepartStation)
 		return false;
+	if (DepartStationCode != Van->DepartStationCode)
+		return false;
 	if (PurposeStation != Van->PurposeStation)
+		return false;
+	if (PurposeStationCode != Van->PurposeStationCode)
 		return false;
 
 	if (Carrying != Van->Carrying)
@@ -100,7 +107,9 @@ void __fastcall TOracleVan::Assign(TOracleVan * Source) {
 	InvoiceRecipient = Source->InvoiceRecipient;
 
 	DepartStation = Source->DepartStation;
+	DepartStationCode = Source->DepartStationCode;
 	PurposeStation = Source->PurposeStation;
+	PurposeStationCode = Source->PurposeStationCode;
 
 	Carrying = Source->Carrying;
 	TareT = Source->TareT;
@@ -119,20 +128,28 @@ String __fastcall TOracleVan::ToString() {
 	S += "InvoiceDateTime=" + DateTimeToStr(FInvoiceDateTime);
 	S += ",";
 	S += "VanNum=" + VanNum;
+
 	S += ",";
 	S += "CargoType=" + CargoType;
 	S += ",";
 	S += "CargoTypeCode=" + IntToStr(CargoTypeCode);
+
 	S += ",";
 	S += "InvoiceNum=" + InvoiceNum;
 	S += ",";
 	S += "InvoiceSupplier=" + InvoiceSupplier;
 	S += ",";
 	S += "InvoiceRecipient=" + InvoiceRecipient;
+
 	S += ",";
 	S += "DepartStation=" + DepartStation;
 	S += ",";
+	S += "DepartStationCode=" + IntToStr(DepartStationCode);
+	S += ",";
 	S += "PurposeStation=" + PurposeStation;
+	S += ",";
+	S += "PurposeStationCode=" + IntToStr(PurposeStationCode);
+
 	S += ",";
 	S += "Carrying=" + IntToStr(Carrying);
 	S += ",";

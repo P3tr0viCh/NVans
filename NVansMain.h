@@ -16,6 +16,7 @@
 #include <Vcl.Dialogs.hpp>
 
 #include <IntegerPair.h>
+#include <CodeNamePair.h>
 
 #include <DBOperationEvent.h>
 
@@ -169,6 +170,8 @@ private:
 	void ServerLoadTrainPerform();
 
 	void AutoReplace(TOracleVanList * ServerVanList);
+
+	String FindNameByCode(int Code, TCodeNamePairList * List);
 
 	void LocalLoadVans();
 	bool LocalSaveVans();

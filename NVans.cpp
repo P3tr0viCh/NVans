@@ -7,11 +7,11 @@
 #include "NVansStrings.h"
 
 // ---------------------------------------------------------------------------
-USEFORM("NVansLocalTrains.cpp", frmLocalTrains);
 USEFORM("NVansLogin.cpp", frmLogin);
+USEFORM("NVansLocalTrains.cpp", frmLocalTrains);
+USEFORM("NVansMain.cpp", Main);
 USEFORM("NVansSearch.cpp", frmSearch);
 USEFORM("NVansOptions.cpp", frmOptions);
-USEFORM("NVansMain.cpp", Main);
 USEFORM("NVansServerTrains.cpp", frmServerTrains);
 //---------------------------------------------------------------------------
 int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int) {

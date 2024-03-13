@@ -11,26 +11,26 @@
 #include "NVansStrings.h"
 #include "NVansStringsSQL.h"
 
-#include "NVansDBIsvsLoadCargoTypes.h"
+#include "NVansDBIsvsLoadStations.h"
 
 // ---------------------------------------------------------------------------
 #pragma package(smart_init)
 
 // ---------------------------------------------------------------------------
-__fastcall TDBIsvsLoadCargoTypes::TDBIsvsLoadCargoTypes
+__fastcall TDBIsvsLoadStations::TDBIsvsLoadStations
 	(TDBConnection * DBConnection, IDBOperationEvent * DBOperationEvent,
-	TCodeNamePairList * CargoTypeList)
+	TCodeNamePairList * StationList)
 	: TDBOperation(DBConnection, DBOperationEvent) {
-	FCargoTypeList = CargoTypeList;
+	FStationList = StationList;
 }
 
 // ---------------------------------------------------------------------------
-__fastcall TDBIsvsLoadCargoTypes::~TDBIsvsLoadCargoTypes() {
+__fastcall TDBIsvsLoadStations::~TDBIsvsLoadStations() {
 }
 
 // ---------------------------------------------------------------------------
-void TDBIsvsLoadCargoTypes::Operation() {
-	if (CargoTypeList->Count == 0) {
+void TDBIsvsLoadStations::Operation() {
+	if (StationList->Count == 0) {
 		return;
 	}
 
@@ -40,22 +40,22 @@ void TDBIsvsLoadCargoTypes::Operation() {
 	try {
 		Query->Connection = Connection;
 
-		SQLSetText(Query, IDS_SQL_ISVS_LST_CARGOTYPE_SELECT);
+		SQLSetText(Query, IDS_SQL_ISVS_LST_STATION_SELECT);
 
 		if (SQLToLog) {
 			WriteToLog(Query->SQL->Text);
 		}
 
-		for (int i = 0; i < CargoTypeList->Count; i++) {
+		for (int i = 0; i < StationList->Count; i++) {
 			ProcMess();
 			if (CheckExit()) {
 				throw EAbort(IDS_LOG_ERROR_TERMINATED_IN_WORK_PROGRESS);
 			}
 
-			CargoTypeList->Items[i]->Name = "";
+			StationList->Items[i]->Name = "";
 
-			SQLGetParam(Query, "CARGOTYPE_CODE", ftInteger)->Value =
-				CargoTypeList->Items[i]->Code;
+			SQLGetParam(Query, "STATION_CODE", ftInteger)->Value =
+				StationList->Items[i]->Code;
 
 			if (SQLToLog) {
 				WriteToLog(SQLParamsToStr(Query));
@@ -64,8 +64,8 @@ void TDBIsvsLoadCargoTypes::Operation() {
 			Query->Open();
 
 			if (Query->RecordCount > 0) {
-				CargoTypeList->Items[i]->Name =
-					Query->FieldByName("cargotype")->AsString;
+				StationList->Items[i]->Name =
+					Query->FieldByName("station")->AsString;
 			}
 
 			Query->Close();

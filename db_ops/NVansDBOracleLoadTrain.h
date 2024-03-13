@@ -16,6 +16,9 @@ private:
 
 	TOracleVanList * FVanList;
 
+	// -----------------------------------------------------------------------
+	int QueryCode(TADOQuery * Query, String FieldName);
+
 public:
 	__fastcall TDBOracleLoadTrain(TDBConnection * DBConnection,
 		IDBOperationEvent * DBOperationEvent, TKeyOracleTrain * KeyOracleTrain);
