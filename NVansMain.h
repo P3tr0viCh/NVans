@@ -171,8 +171,6 @@ private:
 
 	void AutoReplace(TOracleVanList * ServerVanList);
 
-	String FindNameByCode(int Code, TCodeNamePairList * List);
-
 	void LocalLoadVans();
 	bool LocalSaveVans();
 	void LocalSaveVanProps();

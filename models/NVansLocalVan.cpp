@@ -26,6 +26,9 @@ void TLocalVan::Init() {
 
 	FCargoTypeCode = DEFAULT_CODE;
 
+	FDepartStationCode = DEFAULT_CODE;
+	FPurposeStationCode = DEFAULT_CODE;
+
 	FDateTime = DEFAULT_DATETIME;
 
 	FCarrying = 0;
@@ -88,9 +91,14 @@ bool __fastcall TLocalVan::Equals(TObject * Obj) {
 		return false;
 	if (InvoiceRecipient != Van->InvoiceRecipient)
 		return false;
+
 	if (DepartStation != Van->DepartStation)
 		return false;
+	if (DepartStationCode != Van->DepartStationCode)
+		return false;
 	if (PurposeStation != Van->PurposeStation)
+		return false;
+	if (PurposeStationCode != Van->PurposeStationCode)
 		return false;
 
 	if (Carrying != Van->Carrying)
@@ -155,7 +163,9 @@ void __fastcall TLocalVan::Assign(TLocalVan * Source) {
 	InvoiceRecipient = Source->InvoiceRecipient;
 
 	DepartStation = Source->DepartStation;
+	DepartStationCode = Source->DepartStationCode;
 	PurposeStation = Source->PurposeStation;
+	PurposeStationCode = Source->PurposeStationCode;
 
 	Carrying = Source->Carrying;
 
@@ -193,20 +203,28 @@ String __fastcall TLocalVan::ToString() {
 	S += "DateTime=" + DateTimeToStr(DateTime);
 	S += ",";
 	S += "VanNum=" + VanNum;
+
 	S += ",";
 	S += "CargoType=" + CargoType;
 	S += ",";
 	S += "CargoTypeCode=" + IntToStr(CargoTypeCode);
+
 	S += ",";
 	S += "InvoiceNum=" + InvoiceNum;
 	S += ",";
 	S += "InvoiceSupplier=" + InvoiceSupplier;
 	S += ",";
 	S += "InvoiceRecipient=" + InvoiceRecipient;
+
 	S += ",";
 	S += "DepartStation=" + DepartStation;
 	S += ",";
+	S += "DepartStationCode=" + IntToStr(DepartStationCode);
+	S += ",";
 	S += "PurposeStation=" + PurposeStation;
+	S += ",";
+	S += "PurposeStationCode=" + IntToStr(PurposeStationCode);
+
 	S += ",";
 	S += "Carrying=" + IntToStr(Carrying);
 	S += ",";

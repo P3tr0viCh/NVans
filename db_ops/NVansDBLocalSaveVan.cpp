@@ -36,6 +36,26 @@ void TDBLocalSaveVan::SetVan(TLocalVan * Van) {
 }
 
 // ---------------------------------------------------------------------------
+void SQLSetInt(TADOQuery * Query, String Name, int Value) {
+	SQLGetParam(Query, Name, ftInteger)->Value = Value;
+}
+
+// ---------------------------------------------------------------------------
+void SQLSetCode(TADOQuery * Query, String Name, int Code) {
+	if (Code == DEFAULT_CODE) {
+		SQLGetParam(Query, Name, ftString)->Value = Null();
+	}
+	else {
+		SQLSetInt(Query, Name, Code);
+	}
+}
+
+// ---------------------------------------------------------------------------
+void SQLSetString(TADOQuery * Query, String Name, String Value) {
+	SQLGetParam(Query, Name, ftString)->Value = Value;
+}
+
+// ---------------------------------------------------------------------------
 void TDBLocalSaveVan::Operation() {
 	Connection->Open();
 
@@ -49,58 +69,46 @@ void TDBLocalSaveVan::Operation() {
 			WriteToLog(Query->SQL->Text);
 		}
 
-		SQLGetParam(Query, "ID", ftInteger)->Value = Van->ID;
+		SQLSetInt(Query, "ID", Van->ID);
 
-		SQLGetParam(Query, "INVNUM", ftString)->Value = Van->VanNum;
+		SQLSetString(Query, "INVNUM", Van->VanNum);
 
-		SQLGetParam(Query, "CARRYING", ftInteger)->Value = Van->Carrying;
-		SQLGetParam(Query, "LOADNORM", ftInteger)->Value = Van->Carrying;
+		SQLSetInt(Query, "CARRYING", Van->Carrying);
+		SQLSetInt(Query, "LOADNORM", Van->Carrying);
 
-		SQLGetParam(Query, "TARE", ftInteger)->Value = Van->Tare;
-		SQLGetParam(Query, "TARE_T", ftInteger)->Value = Van->TareT;
-		SQLGetParam(Query, "ISCALES_TARE", ftInteger)->Value =
-			Van->TareScaleNum;
-		SQLGetParam(Query, "IDATETIME_TARE", ftString)->Value =
-			DateTimeToSQLStr(Van->TareDateTime);
+		SQLSetInt(Query, "TARE", Van->Tare);
+		SQLSetInt(Query, "TARE_T", Van->TareT);
+		SQLSetInt(Query, "ISCALES_TARE", Van->TareScaleNum);
+		SQLSetString(Query, "IDATETIME_TARE",
+			DateTimeToSQLStr(Van->TareDateTime));
 
-		SQLGetParam(Query, "NETTO", ftInteger)->Value = Van->Netto;
+		SQLSetInt(Query, "NETTO", Van->Netto);
 
-		SQLGetParam(Query, "OVERLOAD", ftInteger)->Value = Van->Overload;
+		SQLSetInt(Query, "OVERLOAD", Van->Overload);
 
-		SQLGetParam(Query, "CARGOTYPE", ftString)->Value = Van->CargoType;
-		if (Van->CargoTypeCode == DEFAULT_CODE) {
-			SQLGetParam(Query, "CARGOTYPE_CODE", ftString)->Value = Null();
-		}
-		else {
-			SQLGetParam(Query, "CARGOTYPE_CODE", ftInteger)->Value =
-				Van->CargoTypeCode;
-		}
-		
-		SQLGetParam(Query, "DEPART_STATION", ftString)->Value =
-			Van->DepartStation;
-		SQLGetParam(Query, "DEPART_STATION_CODE", ftString)->Value = Null();
-		SQLGetParam(Query, "PURPOSE_STATION", ftString)->Value =
-			Van->PurposeStation;
-		SQLGetParam(Query, "PURPOSE_STATION_CODE", ftString)->Value = Null();
+		SQLSetString(Query, "CARGOTYPE", Van->CargoType);
+		SQLSetCode(Query, "CARGOTYPE_CODE", Van->CargoTypeCode);
 
-		SQLGetParam(Query, "INVOICE_NUM", ftString)->Value = Van->InvoiceNum;
+		SQLSetString(Query, "DEPART_STATION", Van->DepartStation);
+		SQLSetCode(Query, "DEPART_STATION_CODE", Van->DepartStationCode);
+		SQLSetString(Query, "PURPOSE_STATION", Van->PurposeStation);
+		SQLSetCode(Query, "PURPOSE_STATION_CODE", Van->PurposeStationCode);
 
-		SQLGetParam(Query, "INVOICE_SUPPLIER", ftString)->Value =
-			Van->InvoiceSupplier;
-		SQLGetParam(Query, "INVOICE_SUPPLIER_CODE", ftString)->Value = Null();
-		SQLGetParam(Query, "INVOICE_CONSIGN", ftString)->Value =
-			Van->InvoiceRecipient;
-		SQLGetParam(Query, "INVOICE_CONSIGN_CODE", ftString)->Value = Null();
+		SQLSetString(Query, "INVOICE_NUM", Van->InvoiceNum);
 
-		SQLGetParam(Query, "INVOICE_NETTO", ftInteger)->Value =
-			Van->InvoiceNetto;
-		SQLGetParam(Query, "INVOICE_TARE", ftInteger)->Value = Van->InvoiceTare;
+		SQLSetString(Query, "INVOICE_SUPPLIER", Van->InvoiceSupplier);
+		SQLSetCode(Query, "INVOICE_SUPPLIER_CODE", DEFAULT_CODE);
+		SQLSetString(Query, "INVOICE_CONSIGN", Van->InvoiceRecipient);
+		SQLSetCode(Query, "INVOICE_CONSIGN_CODE", DEFAULT_CODE);
+
+		SQLSetInt(Query, "INVOICE_NETTO", Van->InvoiceNetto);
+		SQLSetInt(Query, "INVOICE_TARE", Van->InvoiceTare);
 
 		// TODO
-		SQLGetParam(Query, "DISBALONG", ftInteger)->Value = 0;
-		SQLGetParam(Query, "DISBCROSS", ftInteger)->Value = 0;
-		SQLGetParam(Query, "TOL_DISBALONG", ftInteger)->Value = 0;
-		SQLGetParam(Query, "TOL_DISBCROSS", ftInteger)->Value = 0;
+		SQLSetInt(Query, "DISBALONG", 0);
+		SQLSetInt(Query, "DISBCROSS", 0);
+		SQLSetInt(Query, "TOL_DISBALONG", 0);
+		SQLSetInt(Query, "TOL_DISBCROSS", 0);
 
 		if (SQLToLog) {
 			WriteToLog(SQLParamsToStr(Query));

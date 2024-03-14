@@ -189,7 +189,7 @@ void __fastcall TMain::FormShow(TObject *Sender) {
 // ---------------------------------------------------------------------------
 void __fastcall TMain::btnAboutClick(TObject *Sender) {
 	ShowAbout(18, MAXBYTE, MAXBYTE, MAXBYTE, NULL, NULL, NULL, NULL, NULL,
-		LoadStr(IDS_COPYRIGHT));
+		LoadStr(IDS_COPYRIGHT), "LIC_#2");
 }
 
 // ---------------------------------------------------------------------------
@@ -807,6 +807,51 @@ void TMain::ServerLoadTrain() {
 }
 
 // ---------------------------------------------------------------------------
+bool ListCodeExists(TCodeNamePairList * List, int Code) {
+	if (Code == DEFAULT_CODE) {
+		return true;
+	}
+
+	for (int i = 0; i < List->Count; i++) {
+		if (List->Items[i]->Code == Code) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+// ---------------------------------------------------------------------------
+void ListAddCode(TCodeNamePairList * List, int Code) {
+	if (Code == DEFAULT_CODE) {
+		return;
+	}
+
+	if (!ListCodeExists(List, Code)) {
+		List->Add(new TCodeNamePair(Code, ""));
+	}
+}
+
+// ---------------------------------------------------------------------------
+String ListGetNameByCode(TCodeNamePairList * List, int Code) {
+	if (Code == DEFAULT_CODE) {
+		return "";
+	}
+
+	for (int i = 0; i < List->Count; i++) {
+		if (List->Items[i]->Name.IsEmpty()) {
+			continue;
+		}
+
+		if (List->Items[i]->Code == Code) {
+			return List->Items[i]->Name;
+		}
+	}
+
+	return "";
+}
+
+// ---------------------------------------------------------------------------
 void TMain::AutoReplace(TOracleVanList * ServerVanList) {
 	if (!Settings->UseAutoReplace) {
 		return;
@@ -824,45 +869,15 @@ void TMain::AutoReplace(TOracleVanList * ServerVanList) {
 	TCodeNamePairList * CargoTypeList = new TCodeNamePairList();
 
 	TCodeNamePair * Station;
-	TCodeNamePair * CargoType;
 
 	try {
 		for (int i = 0; i < ServerVanList->Count; i++) {
-			if (ServerVanList->Items[i]->CargoTypeCode != 0) {
-				CargoType =
-					new TCodeNamePair
-					(ServerVanList->Items[i]->CargoTypeCode, "");
+			ListAddCode(CargoTypeList, ServerVanList->Items[i]->CargoTypeCode);
 
-				if (CargoTypeList->Find(CargoType)) {
-					continue;
-				}
-
-				CargoTypeList->Add(CargoType);
-			}
-
-			if (ServerVanList->Items[i]->DepartStationCode != 0) {
-				Station =
-					new TCodeNamePair
-					(ServerVanList->Items[i]->DepartStationCode, "");
-
-				if (StationList->Find(Station)) {
-					continue;
-				}
-
-				StationList->Add(Station);
-			}
-
-			if (ServerVanList->Items[i]->PurposeStationCode != 0) {
-				Station =
-					new TCodeNamePair
-					(ServerVanList->Items[i]->PurposeStationCode, "");
-
-				if (StationList->Find(Station)) {
-					continue;
-				}
-
-				StationList->Add(Station);
-			}
+			ListAddCode(StationList,
+				ServerVanList->Items[i]->DepartStationCode);
+			ListAddCode(StationList,
+				ServerVanList->Items[i]->PurposeStationCode);
 		}
 
 		TDBIsvsLoadCargoTypes * DBIsvsLoadCargoTypes =
@@ -896,20 +911,20 @@ void TMain::AutoReplace(TOracleVanList * ServerVanList) {
 		String Name;
 
 		for (int i = 0; i < ServerVanList->Count; i++) {
-			Name = FindNameByCode(ServerVanList->Items[i]->CargoTypeCode,
-				CargoTypeList);
+			Name = ListGetNameByCode(CargoTypeList,
+				ServerVanList->Items[i]->CargoTypeCode);
 			if (!Name.IsEmpty()) {
 				ServerVanList->Items[i]->CargoType = Name;
 			}
 
-			Name = FindNameByCode(ServerVanList->Items[i]->DepartStationCode,
-				StationList);
+			Name = ListGetNameByCode(StationList,
+				ServerVanList->Items[i]->DepartStationCode);
 			if (!Name.IsEmpty()) {
 				ServerVanList->Items[i]->DepartStation = Name;
 			}
 
-			Name = FindNameByCode(ServerVanList->Items[i]->PurposeStationCode,
-				StationList);
+			Name = ListGetNameByCode(StationList,
+				ServerVanList->Items[i]->PurposeStationCode);
 			if (!Name.IsEmpty()) {
 				ServerVanList->Items[i]->PurposeStation = Name;
 			}
@@ -919,25 +934,6 @@ void TMain::AutoReplace(TOracleVanList * ServerVanList) {
 		CargoTypeList->Free();
 		StationList->Free();
 	}
-}
-
-// ---------------------------------------------------------------------------
-String TMain::FindNameByCode(int Code, TCodeNamePairList * List) {
-	if (Code == DEFAULT_CODE) {
-		return "";
-	}
-
-	for (int i = 0; i < List->Count; i++) {
-		if (List->Items[i]->Name.IsEmpty()) {
-			continue;
-		}
-
-		if (List->Items[i]->Code == Code) {
-			return List->Items[i]->Name;
-		}
-	}
-
-	return "";
 }
 
 // ---------------------------------------------------------------------------
@@ -1086,7 +1082,7 @@ void __fastcall TMain::btnServerLoadClick(TObject * Sender) {
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TMain::miServerLoadAsIsClick(TObject *Sender) {
+void __fastcall TMain::miServerLoadAsIsClick(TObject * Sender) {
 	UseAutoReplace = false;
 
 	ServerLoadTrainPerform();
@@ -1455,7 +1451,9 @@ void TMain::CopyData(bool CopyAll) {
 				LocalVan->InvoiceRecipient = ServerVan->InvoiceRecipient;
 
 				LocalVan->DepartStation = ServerVan->DepartStation;
+				LocalVan->DepartStationCode = ServerVan->DepartStationCode;
 				LocalVan->PurposeStation = ServerVan->PurposeStation;
+				LocalVan->PurposeStationCode = ServerVan->PurposeStationCode;
 			}
 
 			LocalVan->Carrying = ServerVan->Carrying;
@@ -1500,7 +1498,7 @@ void __fastcall TMain::sgServerSelectCell(TObject * Sender, int ACol, int ARow,
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TMain::sgLocalSelectCell(TObject *Sender, int ACol, int ARow,
+void __fastcall TMain::sgLocalSelectCell(TObject * Sender, int ACol, int ARow,
 	bool &CanSelect) {
 	StringGridInvalidateRow(sgLocal, LocalSelectedRow);
 
@@ -1946,7 +1944,7 @@ void TMain::UpdateStatusBar() {
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TMain::sgServerMouseUp(TObject *Sender, TMouseButton Button,
+void __fastcall TMain::sgServerMouseUp(TObject * Sender, TMouseButton Button,
 	TShiftState Shift, int X, int Y) {
 	if (Button != mbLeft) {
 		return;
@@ -1977,7 +1975,7 @@ void __fastcall TMain::sgServerMouseUp(TObject *Sender, TMouseButton Button,
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TMain::sgServerMouseDown(TObject *Sender, TMouseButton Button,
+void __fastcall TMain::sgServerMouseDown(TObject * Sender, TMouseButton Button,
 	TShiftState Shift, int X, int Y) {
 	if (ActiveControl == NULL) {
 		return;
@@ -1995,7 +1993,7 @@ void __fastcall TMain::sgServerMouseDown(TObject *Sender, TMouseButton Button,
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TMain::FormKeyDown(TObject *Sender, WORD &Key,
+void __fastcall TMain::FormKeyDown(TObject * Sender, WORD & Key,
 	TShiftState Shift) {
 	if (Shift.Empty() && Key == VK_F3) {
 		frmSearch->Show();
@@ -2003,7 +2001,7 @@ void __fastcall TMain::FormKeyDown(TObject *Sender, WORD &Key,
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TMain::StartSearchEvent(TObject * Sender, String &Text,
+void __fastcall TMain::StartSearchEvent(TObject * Sender, String & Text,
 	bool &Found) {
 	if (Text.IsEmpty()) {
 		return;
@@ -2043,12 +2041,12 @@ void __fastcall TMain::StartSearchEvent(TObject * Sender, String &Text,
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TMain::miVanToStringClick(TObject *Sender) {
+void __fastcall TMain::miVanToStringClick(TObject * Sender) {
 	MenuItemAction(maVanToString);
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TMain::btnServerLoadExtClick(TObject *Sender) {
+void __fastcall TMain::btnServerLoadExtClick(TObject * Sender) {
 	TPoint P = ClientToScreen(TPoint(btnServerLoadExt->Left,
 		btnServerLoadExt->Height + btnServerLoadExt->Top));
 

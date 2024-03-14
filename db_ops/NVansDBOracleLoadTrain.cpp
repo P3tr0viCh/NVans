@@ -34,13 +34,6 @@ __fastcall TDBOracleLoadTrain::~TDBOracleLoadTrain() {
 }
 
 // ---------------------------------------------------------------------------
-int TDBOracleLoadTrain::QueryCode(TADOQuery * Query, String FieldName) {
-	String CargoTypeCode = Trim(Query->FieldByName(FieldName)->AsString);
-
-	return StrToIntDef(CargoTypeCode, DEFAULT_CODE);
-}
-
-// ---------------------------------------------------------------------------
 void TDBOracleLoadTrain::Operation() {
 	Connection->Open();
 
@@ -86,7 +79,7 @@ void TDBOracleLoadTrain::Operation() {
 			// ---------------------------------------------------------------
 			Van->CargoType = Trim(Query->FieldByName("CARGOTYPE")->AsString);
 
-			Van->CargoTypeCode = QueryCode(Query, "CARGOTYPE_CODE");
+			Van->CargoTypeCode = SQLGetStringAsInt(Query, "CARGOTYPE_CODE");
 			if (Van->CargoTypeCode > 1000 && Van->CargoTypeCode < 100000) {
 				Van->CargoTypeCode = Van->CargoTypeCode * 10 +
 					GetRusControlNumber(Van->CargoTypeCode, 5);
@@ -103,7 +96,8 @@ void TDBOracleLoadTrain::Operation() {
 			// ---------------------------------------------------------------
 			Van->DepartStation =
 				Trim(Query->FieldByName("DEPART_STATION")->AsString);
-			Van->DepartStationCode = QueryCode(Query, "DEPART_STATION_CODE");
+			Van->DepartStationCode =
+				SQLGetStringAsInt(Query, "DEPART_STATION_CODE");
 
 			// UIT number
 			if (Van->DepartStationCode == 999) {
@@ -113,7 +107,8 @@ void TDBOracleLoadTrain::Operation() {
 			// ---------------------------------------------------------------
 			Van->PurposeStation =
 				Trim(Query->FieldByName("PURPOSE_STATION")->AsString);
-			Van->PurposeStationCode = QueryCode(Query, "PURPOSE_STATION_CODE");
+			Van->PurposeStationCode =
+				SQLGetStringAsInt(Query, "PURPOSE_STATION_CODE");
 
 			// ---------------------------------------------------------------
 			Van->Carrying = Query->FieldByName("CARRYING")->AsInteger;
