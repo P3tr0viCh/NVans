@@ -110,11 +110,11 @@
         <LinkPackageStatics>rtl.lib;vcl.lib;dbrtl.lib;adortl.lib</LinkPackageStatics>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Icon_MainIcon>NVans_Icon.ico</Icon_MainIcon>
-        <VerInfo_Keys>CompanyName=П3тр0виЧъ;FileDescription=Натурный лист;FileVersion=1.6.0.0;InternalName=NVans;LegalCopyright=© П3тр0виЧъ;LegalTrademarks=П3тр0виЧъ™;OriginalFilename=NVans.exe;ProgramID=ru.p3tr0vich.$(MSBuildProjectName);ProductName=Натурный лист;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=П3тр0виЧъ;FileDescription=Натурный лист;FileVersion=1.7.0.0;InternalName=NVans;LegalCopyright=© П3тр0виЧъ;LegalTrademarks=П3тр0виЧъ™;OriginalFilename=NVans.exe;ProgramID=ru.p3tr0vich.$(MSBuildProjectName);ProductName=Натурный лист;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Debug>true</VerInfo_Debug>
         <VerInfo_MajorVer>1</VerInfo_MajorVer>
-        <VerInfo_MinorVer>6</VerInfo_MinorVer>
+        <VerInfo_MinorVer>7</VerInfo_MinorVer>
         <VerInfo_AutoGenVersion>true</VerInfo_AutoGenVersion>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
@@ -127,11 +127,11 @@
         <LinkPackageStatics>rtl.lib;vcl.lib;dbrtl.lib;adortl.lib</LinkPackageStatics>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Icon_MainIcon>NVans_Icon.ico</Icon_MainIcon>
-        <VerInfo_Keys>CompanyName=П3тр0виЧъ;FileDescription=Натурный лист;FileVersion=1.6.0.0;InternalName=NVans;LegalCopyright=© П3тр0виЧъ;LegalTrademarks=П3тр0виЧъ™;OriginalFilename=NVans.exe;ProgramID=ru.p3tr0vich.$(MSBuildProjectName);ProductName=Натурный лист;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=П3тр0виЧъ;FileDescription=Натурный лист;FileVersion=1.7.0.0;InternalName=NVans;LegalCopyright=© П3тр0виЧъ;LegalTrademarks=П3тр0виЧъ™;OriginalFilename=NVans.exe;ProgramID=ru.p3tr0vich.$(MSBuildProjectName);ProductName=Натурный лист;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <Defines>DISABLE_CHECK_CRC;$(Defines)</Defines>
         <VerInfo_MajorVer>1</VerInfo_MajorVer>
-        <VerInfo_MinorVer>6</VerInfo_MinorVer>
+        <VerInfo_MinorVer>7</VerInfo_MinorVer>
         <VerInfo_AutoGenVersion>true</VerInfo_AutoGenVersion>
     </PropertyGroup>
     <ItemGroup>
@@ -505,7 +505,7 @@
                 </Excluded_Packages>
             </CPlusPlusBuilder.Personality>
             <Deployment Version="3">
-                <DeployFile LocalName="sql\oracle_nvans_train.sql" Configuration="Debug" Class="ProjectFile">
+                <DeployFile LocalName="sql\local_mtrains_select.sql" Configuration="Release" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
@@ -576,18 +576,6 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="sql\local_mvans_select_by_dt.sql" Configuration="Debug" Class="ProjectFile">
-                    <Platform Name="Win32">
-                        <RemoteDir>.\</RemoteDir>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="sql\oracle_nvans_trains_by_dt.sql" Configuration="Debug" Class="ProjectFile">
-                    <Platform Name="Win32">
-                        <RemoteDir>.\</RemoteDir>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
                 <DeployFile LocalName="sql\local_pvans_update.sql" Configuration="Release" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
@@ -595,6 +583,18 @@
                     </Platform>
                 </DeployFile>
                 <DeployFile LocalName="sql\oracle_nvans_train.sql" Configuration="Release" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="sql\local_mvans_select_by_dt.sql" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="sql\oracle_nvans_trains_by_dt.sql" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
@@ -706,6 +706,12 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="sql\oracle_nvans_train.sql" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="sql\local_pvans_update.sql" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
@@ -714,12 +720,6 @@
                 </DeployFile>
                 <DeployFile Condition="'$(DynamicRTL)'=='true' And '$(Multithreaded)'!='true'" LocalName="$(BDS)\bin64\cc64250.dll" Class="DependencyModule">
                     <Platform Name="Win64">
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="sql\local_mtrains_select.sql" Configuration="Release" Class="ProjectFile">
-                    <Platform Name="Win32">
-                        <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

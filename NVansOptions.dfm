@@ -37,6 +37,10 @@ object frmOptions: TfrmOptions
       object tsProgram: TTabSheet
         Caption = #1055#1088#1086#1075#1088#1072#1084#1084#1072
         ImageIndex = 3
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object gbOptionsPass: TGroupBox
           Left = 8
           Top = 8
@@ -101,6 +105,10 @@ object frmOptions: TfrmOptions
       end
       object tsLocalDatabase: TTabSheet
         Caption = #1051#1086#1082#1072#1083#1100#1085#1072#1103' '#1073#1072#1079#1072' '#1076#1072#1085#1085#1099#1093
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblLocalDriver: TLabel
           Left = 8
           Top = 122
@@ -163,6 +171,10 @@ object frmOptions: TfrmOptions
       object tsOracleDatabase: TTabSheet
         Caption = #1057#1077#1088#1074#1077#1088' Oracle'
         ImageIndex = 1
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblOracleLDriver: TLabel
           Left = 8
           Top = 122
@@ -238,6 +250,8 @@ object frmOptions: TfrmOptions
         ImageIndex = 4
         ExplicitLeft = -156
         ExplicitTop = -1
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblIsvsDriver: TLabel
           Left = 8
           Top = 122
@@ -300,6 +314,10 @@ object frmOptions: TfrmOptions
       object tsWME: TTabSheet
         Caption = #1055#1091#1083#1100#1090' '#1088#1091#1095#1085#1086#1075#1086' '#1074#1074#1086#1076#1072
         ImageIndex = 3
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object eWMEProgramPath: TLabeledEdit
           Left = 8
           Top = 32

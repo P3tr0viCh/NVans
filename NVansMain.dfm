@@ -248,13 +248,12 @@ object Main: TMain
     BevelOuter = bvNone
     TabOrder = 2
     object btnSaveVanProps: TButton
-      Left = 304
+      Left = 360
       Top = 8
       Width = 112
       Height = 32
       Caption = #1061#1072#1088#1072#1082#1090#1077#1088#1080#1089#1090#1080#1082#1080
-      Enabled = False
-      TabOrder = 2
+      TabOrder = 3
       OnClick = btnSaveVanPropsClick
     end
     object btnCopyDataAll: TButton
@@ -263,19 +262,25 @@ object Main: TMain
       Width = 112
       Height = 32
       Caption = #1050#1086#1087#1080#1088#1086#1074#1072#1090#1100
-      Enabled = False
       TabOrder = 0
       OnClick = btnCopyDataAllClick
     end
     object btnCopyDataMass: TButton
-      Tag = 1
       Left = 128
       Top = 8
-      Width = 160
+      Width = 96
       Height = 32
-      Caption = #1050#1086#1087#1080#1088#1086#1074#1072#1090#1100' '#1090#1086#1083#1100#1082#1086' '#1074#1077#1089
-      Enabled = False
+      Caption = #1058#1086#1083#1100#1082#1086' '#1074#1077#1089
       TabOrder = 1
+      OnClick = btnCopyDataAllClick
+    end
+    object btnCopyDataVanNums: TButton
+      Left = 232
+      Top = 8
+      Width = 112
+      Height = 32
+      Caption = #1058#1086#1083#1100#1082#1086' '#1085#1086#1084#1077#1088#1072
+      TabOrder = 2
       OnClick = btnCopyDataAllClick
     end
   end

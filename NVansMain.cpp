@@ -91,6 +91,10 @@ void __fastcall TMain::FormCreate(TObject *Sender) {
 	ServerSelectedRow = 1;
 	LocalSelectedRow = 1;
 
+	btnCopyDataAll->Tag = cdAll;
+	btnCopyDataMass->Tag = cdMass;
+	btnCopyDataVanNums->Tag = cdVanNums;
+
 #ifdef _DEBUG
 	miVanToString->Visible = true;
 #endif
@@ -483,6 +487,8 @@ void TMain::UpdateScaleType() {
 		Settings->ScaleType == stAvitekSta;
 
 	btnCopyDataMass->Visible = sgLocal->Visible;
+	btnCopyDataVanNums->Visible = sgLocal->Visible;
+
 	btnSaveVanProps->Visible = sgLocal->Visible;
 
 	PanelLocal->Visible = sgLocal->Visible;
@@ -578,11 +584,13 @@ void TMain::EndOperation() {
 		btnCopyDataAll->Enabled =
 			btnSaveVanProps->Enabled && LocalVanList->Count > 0;
 		btnCopyDataMass->Enabled = btnCopyDataAll->Enabled;
+		btnCopyDataVanNums->Enabled = btnCopyDataAll->Enabled;
 
 		break;
 	case stWME:
 		btnCopyDataAll->Enabled = ServerVanList->Count > 0;
 		btnCopyDataMass->Enabled = btnCopyDataAll->Enabled;
+		btnCopyDataVanNums->Enabled = btnCopyDataAll->Enabled;
 
 		break;
 	}
@@ -1097,12 +1105,8 @@ void __fastcall TMain::btnLocalLoadClick(TObject * Sender) {
 	}
 
 #ifdef _DEBUG
-	if (true) {
-		DateLocal = StrToDate("12.02.2019");
-	}
-	else {
-		DateLocal = StrToDate("02.02.2021");
-	}
+	DateLocal = StrToDate("12.02.2019");
+	// DateLocal = StrToDate("02.02.2021");
 #else
 	DateLocal = Now();
 #endif
@@ -1278,7 +1282,7 @@ void __fastcall TMain::btnCopyDataAllClick(TObject * Sender) {
 			return;
 		}
 
-		CopyData(((TButton*) Sender)->Tag == 0);
+		CopyData((TCopyData)((TButton*) Sender)->Tag);
 
 		break;
 	case stWME:
@@ -1361,7 +1365,7 @@ bool TMain::DataExists(TIntegerPairList * Result) {
 }
 
 // ---------------------------------------------------------------------------
-void TMain::CopyData(bool CopyAll) {
+void TMain::CopyData(TCopyData CopyData) {
 	TStringList * Source = new TStringList();
 	TStringList * Dest = new TStringList();
 
@@ -1415,7 +1419,7 @@ void TMain::CopyData(bool CopyAll) {
 		sgLocal->Row = Selection.Top;
 		sgLocal->Selection = Selection;
 
-		if (CopyAll) {
+		if (CopyData != cdMass) {
 			if (DataExists(Result)) {
 				if (!MsgBoxYesNo(IDS_QUESTION_DATA_OVERWRITE)) {
 					WriteToLog(IDS_LOG_COPY_DATA_OVERWRITE_CANCEL);
@@ -1441,7 +1445,7 @@ void TMain::CopyData(bool CopyAll) {
 
 			LocalVan->VanNum = ServerVan->VanNum;
 
-			if (CopyAll) {
+			if (CopyData == cdAll) {
 				LocalVan->CargoType = ServerVan->CargoType;
 				LocalVan->CargoTypeCode = ServerVan->CargoTypeCode;
 
@@ -1456,18 +1460,20 @@ void TMain::CopyData(bool CopyAll) {
 				LocalVan->PurposeStationCode = ServerVan->PurposeStationCode;
 			}
 
-			LocalVan->Carrying = ServerVan->Carrying;
+			if (CopyData == cdMass) {
+				LocalVan->Carrying = ServerVan->Carrying;
 
-			LocalVan->TareT = ServerVan->TareT;
+				LocalVan->TareT = ServerVan->TareT;
 
-			if (LocalVan->TareIndex == tiTrafaret) {
-				LocalVan->Tare = LocalVan->TareT;
-				LocalVan->TareScaleNum = LocalVan->ScaleNum;
-				LocalVan->TareDateTime = Now();
+				if (LocalVan->TareIndex == tiTrafaret) {
+					LocalVan->Tare = LocalVan->TareT;
+					LocalVan->TareScaleNum = LocalVan->ScaleNum;
+					LocalVan->TareDateTime = Now();
+				}
+
+				LocalVan->InvoiceNetto = ServerVan->InvoiceNetto;
+				LocalVan->InvoiceTare = ServerVan->InvoiceTare;
 			}
-
-			LocalVan->InvoiceNetto = ServerVan->InvoiceNetto;
-			LocalVan->InvoiceTare = ServerVan->InvoiceTare;
 
 			LocalVan->CalcFields = true;
 

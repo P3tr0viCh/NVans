@@ -151,7 +151,7 @@ void TfrmOptions::UpdateForm() {
 void TfrmOptions::UpdateSettings() {
 	Settings->OptionsPass = eOptionsPass->Text;
 
-	Settings->ScaleType = rgScaleType->ItemIndex;
+	Settings->ScaleType = (TScaleType) rgScaleType->ItemIndex;
 
 	Settings->SQLToLog = cboxSQLToLog->Checked;
 
@@ -258,7 +258,6 @@ void __fastcall TfrmOptions::btnOracleCheckClick(TObject * Sender) {
 	TDBConnection * DBConnection;
 	TDBOperationCheck * DBOperationCheck;
 
-	bool Result = false;
 	String ResultMessage;
 
 	ShowWaitCursor();
@@ -284,7 +283,7 @@ void __fastcall TfrmOptions::btnOracleCheckClick(TObject * Sender) {
 
 		DBOperationCheck->Tag = DB_OPERATION_CHECK;
 
-		Result = DBOperationCheck->Execute();
+		DBOperationCheck->Execute();
 	}
 	__finally {
 		DBOperationCheck->Free();

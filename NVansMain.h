@@ -69,6 +69,7 @@ __published:
 	TButton *btnServerLoadExt;
 	TPopupMenu *pmServerLoadExt;
 	TMenuItem *miServerLoadAsIs;
+	TButton *btnCopyDataVanNums;
 
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
@@ -178,7 +179,11 @@ private:
 	bool CheckField(int Column1, int Column2, int Index1, int Index2);
 	bool DataExists(TIntegerPairList * Result);
 
-	void CopyData(bool CopyAll);
+	enum TCopyData {
+		cdAll, cdMass, cdVanNums
+	};
+
+	void CopyData(TCopyData CopyData);
 	void SendDataToWME();
 
 	bool SaveServerVanListToFile(TOracleVanList * ServerVanList,
